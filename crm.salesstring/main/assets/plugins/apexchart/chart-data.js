@@ -1,6 +1,6 @@
 'use strict';
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     function generateData(baseval, count, yrange) {
         var i = 0;
@@ -24,15 +24,15 @@ $(document).ready(function() {
             columnConfig = {
                 colors: ['#7638ff', '#fda600'],
                 series: [{
-                        name: "Received",
-                        type: "column",
-                        data: [70, 150, 80, 180, 150, 175, 201, 60, 200, 120, 190, 160, 50]
-                    },
-                    {
-                        name: "Pending",
-                        type: "column",
-                        data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16, 80]
-                    }
+                    name: "Received",
+                    type: "column",
+                    data: [70, 150, 80, 180, 150, 175, 201, 60, 200, 120, 190, 160, 50]
+                },
+                {
+                    name: "Pending",
+                    type: "column",
+                    data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16, 80]
+                }
                 ],
                 chart: {
                     type: 'bar',
@@ -70,7 +70,7 @@ $(document).ready(function() {
                 },
                 tooltip: {
                     y: {
-                        formatter: function(val) {
+                        formatter: function (val) {
                             return "$ " + val + " thousands"
                         }
                     }
@@ -150,7 +150,7 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val;
                     }
                 }
@@ -205,7 +205,7 @@ $(document).ready(function() {
                     style: {
                         fontSize: '12px'
                     },
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "$" + val.toFixed(1) + "M";
                     }
                 }
@@ -278,17 +278,17 @@ $(document).ready(function() {
             },
 
             series: [{
-                    name: "Actual Revenue",
-                    data: [120, 210, 290, 260, 240, 420, 460, 380, 300, 320, 480, 600]
-                },
-                {
-                    name: "Forecasted",
-                    data: [110, 200, 270, 230, 220, 300, 270, 220, 180, 210, 420, 520]
-                },
-                {
-                    name: "Prior Year",
-                    data: [60, 120, 160, 140, 130, 220, 260, 210, 170, 160, 330, 510]
-                }
+                name: "Actual Revenue",
+                data: [120, 210, 290, 260, 240, 420, 460, 380, 300, 320, 480, 600]
+            },
+            {
+                name: "Forecasted",
+                data: [110, 200, 270, 230, 220, 300, 270, 220, 180, 210, 420, 520]
+            },
+            {
+                name: "Prior Year",
+                data: [60, 120, 160, 140, 130, 220, 260, 210, 170, 160, 330, 510]
+            }
             ],
 
             stroke: {
@@ -326,7 +326,7 @@ $(document).ready(function() {
 
             yaxis: {
                 labels: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "$" + val + "K";
                     },
                     style: {
@@ -345,7 +345,7 @@ $(document).ready(function() {
                 shared: true,
                 intersect: false,
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "$" + val + "K";
                     }
                 }
@@ -415,7 +415,7 @@ $(document).ready(function() {
                 tickAmount: 6,
                 labels: {
                     show: true,
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "" + val.toFixed(1) + "M";
                     },
                 }
@@ -439,7 +439,7 @@ $(document).ready(function() {
 
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val + "%";
                     }
                 }
@@ -466,13 +466,13 @@ $(document).ready(function() {
             },
 
             series: [{
-                    name: 'Current',
-                    data: [156, 28.4, 47]
-                },
-                {
-                    name: 'Previous',
-                    data: [152, 26.9, 42]
-                }
+                name: 'Current',
+                data: [156, 28.4, 47]
+            },
+            {
+                name: 'Previous',
+                data: [152, 26.9, 42]
+            }
             ],
 
             plotOptions: {
@@ -492,7 +492,7 @@ $(document).ready(function() {
                     fontSize: '14px',
                     fontWeight: 600
                 },
-                formatter: function(val, opts) {
+                formatter: function (val, opts) {
                     if (opts.dataPointIndex === 1) {
                         return val + "%";
                     }
@@ -532,7 +532,7 @@ $(document).ready(function() {
 
             tooltip: {
                 y: {
-                    formatter: function(val, opts) {
+                    formatter: function (val, opts) {
                         if (opts.dataPointIndex === 1) {
                             return val + "%";
                         }
@@ -579,7 +579,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -622,7 +622,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -665,7 +665,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -707,7 +707,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -749,7 +749,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -793,7 +793,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -837,7 +837,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -878,7 +878,7 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function(seriesName) {
+                        formatter: function (seriesName) {
                             return ''
                         }
                     }
@@ -923,14 +923,14 @@ $(document).ready(function() {
                                 value: {
                                     show: true,
                                     fontSize: '12px',
-                                    formatter: function(val) {
+                                    formatter: function (val) {
                                         return val + "%";
                                     }
                                 },
                                 total: {
                                     show: true,
                                     showAlways: true,
-                                    formatter: function(w) {
+                                    formatter: function (w) {
                                         return w.globals.seriesTotals.reduce((a, b) => {
                                             return 45;
                                         }, 0);
@@ -1078,16 +1078,16 @@ $(document).ready(function() {
             },
 
             series: [{
-                    name: 'Inprogress',
-                    data: [19, 65, 19, 19, 19, 19, 19]
-                }, {
-                    name: 'Active',
-                    data: [89, 45, 89, 46, 61, 25, 79]
-                },
-                {
-                    name: 'Completed',
-                    data: [39, 39, 39, 80, 48, 48, 48]
-                }
+                name: 'Inprogress',
+                data: [19, 65, 19, 19, 19, 19, 19]
+            }, {
+                name: 'Active',
+                data: [89, 45, 89, 46, 61, 25, 79]
+            },
+            {
+                name: 'Completed',
+                data: [39, 39, 39, 80, 48, 48, 48]
+            }
             ],
             xaxis: {
                 categories: ['15 Jan', '16 Jan', '17 Jan', '18 Jan', '19 Jan', '20 Jan', '21 Jan'],
@@ -1120,7 +1120,7 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "" + val + "%"
                     }
                 }
@@ -1199,7 +1199,7 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "" + val + "%"
                     }
                 }
@@ -1250,7 +1250,7 @@ $(document).ready(function() {
             },
             series: [{
                 name: 'Companies Registered',
-                data: [40, 30, 80, 25, 60, 25, 40, ] // you can adjust this data
+                data: [40, 30, 80, 25, 60, 25, 40,] // you can adjust this data
             }],
             xaxis: {
                 categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -1282,7 +1282,7 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val + " companies";
                     }
                 }
@@ -1324,7 +1324,7 @@ $(document).ready(function() {
                     fontWeight: '500',
                     colors: ['#1D1D1D']
                 },
-                formatter: function(val, opt) {
+                formatter: function (val, opt) {
                     // Show label from category with value
                     return categories[opt.dataPointIndex] + ": " + val;
                     show
@@ -1378,11 +1378,11 @@ $(document).ready(function() {
                 },
                 y: {
                     title: {
-                        formatter: function() {
+                        formatter: function () {
                             return ''; // Hide the title
                         }
                     },
-                    formatter: function(val, opts) {
+                    formatter: function (val, opts) {
                         return categories[opts.dataPointIndex] + ': ' + val;
                     }
                 }
@@ -1501,48 +1501,62 @@ $(document).ready(function() {
     }
 
     // Mixed Chart
-    if ($('#mixed-chart').length > 0) {
+    if ($("#mixed-chart").length > 0) {
+
+        const data = window.dashboardData.trafficSources;
+
         var options = {
             chart: {
                 height: 350,
-                type: 'line',
+                type: "line",
                 toolbar: {
-                    show: false,
+                    show: false
                 }
             },
-            colors: ['#3550DC', '#888ea8'],
-            series: [{
-                name: 'Website Blog',
-                type: 'column',
-                data: [440, 505, 414, 671, 227, 413, 201, 352, 752, 320, 257, 160]
-            }, {
-                name: 'Social Media',
-                type: 'line',
-                data: [23, 42, 35, 27, 43, 22, 17, 31, 22, 22, 12, 16]
-            }],
+
+            colors: ["#3550DC", "#888ea8"],
+
+            series: [
+                {
+                    name: "Website Blog",
+                    type: "column",
+                    data: data.websiteBlog
+                },
+                {
+                    name: "Social Media",
+                    type: "line",
+                    data: data.socialMedia
+                }
+            ],
+
             stroke: {
                 width: [0, 4]
             },
+
             title: {
-                text: 'Traffic Sources'
+                text: data.title
             },
-            labels: ['01 Jan 2001', '02 Jan 2001', '03 Jan 2001', '04 Jan 2001', '05 Jan 2001', '06 Jan 2001', '07 Jan 2001', '08 Jan 2001', '09 Jan 2001', '10 Jan 2001', '11 Jan 2001', '12 Jan 2001'],
+
+            labels: data.labels,
+
             xaxis: {
-                type: 'datetime'
+                type: "datetime"
             },
-            yaxis: [{
-                title: {
-                    text: 'Website Blog',
+
+            yaxis: [
+                {
+                    title: {
+                        text: "Website Blog"
+                    }
                 },
-
-            }, {
-                opposite: true,
-                title: {
-                    text: 'Social Media'
+                {
+                    opposite: true,
+                    title: {
+                        text: "Social Media"
+                    }
                 }
-            }]
-
-        }
+            ]
+        };
 
         var chart = new ApexCharts(
             document.querySelector("#mixed-chart"),
@@ -1609,7 +1623,7 @@ $(document).ready(function() {
                         total: {
                             show: true,
                             label: 'Total',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return 249
                             }
                         }
@@ -1667,7 +1681,7 @@ $(document).ready(function() {
                                 fontWeight: 700,
                                 offsetY: 10,
                                 color: '#051321',
-                                formatter: function() {
+                                formatter: function () {
                                     return "$3656"; // ✅ Always shows this value
                                 }
                             }
@@ -1724,7 +1738,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -1781,7 +1795,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -1839,7 +1853,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -1896,7 +1910,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -1953,7 +1967,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2010,7 +2024,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2067,7 +2081,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2124,7 +2138,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2181,7 +2195,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2238,7 +2252,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2295,7 +2309,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2352,7 +2366,7 @@ $(document).ready(function() {
                                 fontWeight: 600,
                                 offsetY: 0,
                                 color: '#7539FF',
-                                formatter: function() {
+                                formatter: function () {
                                     return '75%'; // or any other center label
                                 }
                             }
@@ -2729,7 +2743,7 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return "$ " + val + " thousands"
                     }
                 }
@@ -2774,14 +2788,14 @@ $(document).ready(function() {
             colors: ['#E9EDF4', '#3D5EE1', '#E9EDF4', '#E9EDF4', '#E9EDF4'], // Set specific colors for each bar
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val + "%"
                     }
                 }
             },
             dataLabels: {
                 enabled: true,
-                formatter: function(val) {
+                formatter: function (val) {
                     return val + "%";
                 },
                 offsetY: -20,
@@ -2825,13 +2839,13 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val + "%";
                     }
                 },
                 shared: true,
                 intersect: false,
-                custom: function({
+                custom: function ({
                     series,
                     seriesIndex,
                     dataPointIndex,
@@ -2981,13 +2995,13 @@ $(document).ready(function() {
             },
             tooltip: {
                 y: {
-                    formatter: function(val) {
+                    formatter: function (val) {
                         return val + "%";
                     }
                 },
                 shared: true,
                 intersect: false,
-                custom: function({
+                custom: function ({
                     series,
                     seriesIndex,
                     dataPointIndex,
@@ -3160,43 +3174,43 @@ $(document).ready(function() {
                 name: "Reports",
                 colors: ['#FFC38F'],
                 data: [{
-                        x: 'Jan',
-                        y: 400,
-                    }, {
-                        x: 'Feb',
-                        y: 130
-                    }, {
-                        x: 'Mar',
-                        y: 240
-                    }, {
-                        x: 'Apr',
-                        y: 450
-                    }, {
-                        x: 'May',
-                        y: 250
-                    }, {
-                        x: 'Jun',
-                        y: 180
-                    }, {
-                        x: 'Jul',
-                        y: 300
-                    }, {
-                        x: 'Aug',
-                        y: 240
-                    }, {
-                        x: 'Sep',
-                        y: 300
-                    }, {
-                        x: 'Oct',
-                        y: 150
-                    }, {
-                        x: 'Nov',
-                        y: 250
-                    },
-                    {
-                        x: 'Dec',
-                        y: 500
-                    }
+                    x: 'Jan',
+                    y: 400,
+                }, {
+                    x: 'Feb',
+                    y: 130
+                }, {
+                    x: 'Mar',
+                    y: 240
+                }, {
+                    x: 'Apr',
+                    y: 450
+                }, {
+                    x: 'May',
+                    y: 250
+                }, {
+                    x: 'Jun',
+                    y: 180
+                }, {
+                    x: 'Jul',
+                    y: 300
+                }, {
+                    x: 'Aug',
+                    y: 240
+                }, {
+                    x: 'Sep',
+                    y: 300
+                }, {
+                    x: 'Oct',
+                    y: 150
+                }, {
+                    x: 'Nov',
+                    y: 250
+                },
+                {
+                    x: 'Dec',
+                    y: 500
+                }
                 ]
             }],
             chart: {
@@ -3249,7 +3263,7 @@ $(document).ready(function() {
             },
             legend: {
                 position: 'bottom',
-                formatter: function(val, opts) {
+                formatter: function (val, opts) {
                     return val + " - " + opts.w.globals.series[opts.seriesIndex]
                 }
             },
@@ -3313,7 +3327,7 @@ if ($('#deals-report').length > 0) {
         tooltip: {
             marker: false,
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val + " Deals"
                 }
             }
@@ -3336,7 +3350,7 @@ if ($('#storage-chart').length > 0) {
             },
             offsetY: -10,
             events: {
-                rendered: function() {
+                rendered: function () {
                     // Adding the center text
                     var chartElement = document.querySelector("#donutChart");
                     var innerText = '<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">' +
@@ -3476,7 +3490,7 @@ if ($('#work-chart').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(e) {
+                    formatter: function (e) {
                         return ""
                     }
                 }
@@ -3567,7 +3581,7 @@ if ($('#productive-chart').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(e) {
+                    formatter: function (e) {
                         return ""
                     }
                 }
@@ -3658,7 +3672,7 @@ if ($('#unproductive-chart').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(e) {
+                    formatter: function (e) {
                         return ""
                     }
                 }
@@ -3878,7 +3892,7 @@ if ($('#utilization-chart').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(e) {
+                    formatter: function (e) {
                         return ""
                     }
                 }
@@ -3973,19 +3987,19 @@ if ($('#invoice-report').length > 0) {
         yaxis: {
             labels: {
                 offsetX: -15,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k"; // Display values with 'k' suffix
                 }
             },
         },
         tooltip: {
             x: {
-                formatter: function(value) {
+                formatter: function (value) {
                     return value; // Tooltip shows month labels
                 }
             },
             y: {
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k"; // Tooltip shows amounts with 'k' suffix
                 }
             }
@@ -4156,7 +4170,7 @@ if ($('#project-report').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(value, {
+                formatter: function (value, {
                     seriesIndex
                 }) {
                     return 'Value: ' + value; // Customize the tooltip text
@@ -4225,7 +4239,7 @@ if ($('#employee-reports').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return "$ " + val + " thousands";
                 }
             }
@@ -4293,7 +4307,7 @@ if ($('#leave-report').length > 0) {
         }, {
             name: 'Others',
             data: [25, 20, 30, 35, 50, 60, 25, 20, 30, 35, 50, 60] // Replace with your data
-        }, ],
+        },],
         chart: {
             type: 'bar',
             height: 210, // Change this value to your desired height
@@ -4311,7 +4325,7 @@ if ($('#leave-report').length > 0) {
             }
         }],
         xaxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', ] // Update to match your time frame
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',] // Update to match your time frame
         },
         yaxis: {
             labels: {
@@ -4338,10 +4352,10 @@ if ($('#daily-report').length > 0) {
     var options = {
         series: [{
             name: "Present",
-            data: [60, 40, 30, 20, 70, ] // Sample data for Present
+            data: [60, 40, 30, 20, 70,] // Sample data for Present
         }, {
             name: "Absent",
-            data: [20, 60, 45, 60, 80, ] // Sample data for Absent
+            data: [20, 60, 45, 60, 80,] // Sample data for Absent
         }],
         chart: {
             height: 130, // Changed height
@@ -4414,7 +4428,7 @@ if ($('#revenue-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return "$ " + val + "k"
                 }
             }
@@ -4435,7 +4449,7 @@ if ($('#revenue-chart2').length > 0) {
     var revenueData = [50, 30, 75, 60, 40, 55, 42];
 
     // ⚪ Auto-calc remaining (100 - revenue)
-    var remainingData = revenueData.map(function(val) {
+    var remainingData = revenueData.map(function (val) {
         return 100 - val;
     });
 
@@ -4451,13 +4465,13 @@ if ($('#revenue-chart2').length > 0) {
         },
 
         series: [{
-                name: 'Revenue',
-                data: revenueData
-            },
-            {
-                name: 'Remaining',
-                data: remainingData
-            }
+            name: 'Revenue',
+            data: revenueData
+        },
+        {
+            name: 'Remaining',
+            data: remainingData
+        }
         ],
 
         plotOptions: {
@@ -4521,7 +4535,7 @@ if ($('#revenue-chart2').length > 0) {
         },
 
         tooltip: {
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex,
@@ -4610,13 +4624,13 @@ if ($('#renewal_expiry').length > 0) {
         },
 
         series: [{
-                name: 'Renewed Contracts',
-                data: [40, 35, 50, 45, 55, 60]
-            },
-            {
-                name: 'Expired Contracts',
-                data: [12, 15, 8, 10, 7, 14]
-            }
+            name: 'Renewed Contracts',
+            data: [40, 35, 50, 45, 55, 60]
+        },
+        {
+            name: 'Expired Contracts',
+            data: [12, 15, 8, 10, 7, 14]
+        }
         ],
 
         plotOptions: {
@@ -4677,7 +4691,7 @@ if ($('#renewal_expiry').length > 0) {
         tooltip: {
             marker: false,
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val;
                 }
             }
@@ -4745,15 +4759,15 @@ if ($('#growth-trend').length > 0) {
                 opacityTo: 0.05,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: '#EF4444',
-                        opacity: 0.4
-                    },
-                    {
-                        offset: 100,
-                        color: '#EF4444',
-                        opacity: 0.05
-                    }
+                    offset: 0,
+                    color: '#EF4444',
+                    opacity: 0.4
+                },
+                {
+                    offset: 100,
+                    color: '#EF4444',
+                    opacity: 0.05
+                }
                 ]
             }
         },
@@ -4781,7 +4795,7 @@ if ($('#growth-trend').length > 0) {
             max: 1000,
             tickAmount: 5,
             labels: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val + "k";
                 },
                 style: {
@@ -4819,11 +4833,11 @@ if ($('#growth-trend').length > 0) {
             },
             y: {
                 padding: 0,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k"; // Shows '1k' in tooltip
                 },
                 title: {
-                    formatter: function() {
+                    formatter: function () {
                         return ''; // Keeps the series name hidden as per your request
                     }
                 }
@@ -4843,29 +4857,74 @@ if ($('#growth-trend').length > 0) {
     chart.render();
 }
 
-if ($('#traffic-sources-chart').length > 0) {
 
-    var options = {
+let trafficSourcesChart = null;
+
+function loadTrafficSourcesChart(data) {
+    if ($('#traffic-sources-chart').length === 0) return;
+
+    const traffic = data?.trafficSources;
+    if (!traffic || !traffic.series || !traffic.labels) {
+        console.error("trafficSources data is missing or invalid!");
+        return;
+    }
+
+    // Update external HTML Labels & Values
+    traffic.labels.forEach((label, index) => {
+        $("#traffic-label-" + index).text(label);
+        $("#traffic-value-" + index).text(
+            Number(traffic.series[index] || 0).toLocaleString()
+        );
+    });
+
+    const options = {
         chart: {
             type: 'donut',
             height: 250,
+            toolbar: {
+                show: false
+            }
         },
 
-        series: [6598, 2458, 1456, 845],
+        series: traffic.series,
 
-        labels: ['Organic Search', 'Direct Traffic', 'Referral Traffic', 'Social Media'],
+        labels: traffic.labels,
 
-        colors: ['#2EAD5F', '#3B82F6', '#F59E0B', '#8B0A8B'],
+        colors: [
+            '#2EAD5F',
+            '#3B82F6',
+            '#F59E0B',
+            '#8B0A8B'
+        ],
 
         plotOptions: {
             pie: {
                 expandOnClick: false,
                 donut: {
-                    size: '60%',
+                    size: '65%',
+
                     labels: {
                         show: true,
+
+                        name: {
+                            show: true
+                        },
+
+                        value: {
+                            show: true,
+                            formatter: function (val) {
+                                return Number(val).toLocaleString();
+                            }
+                        },
+
                         total: {
-                            show: false
+                            show: true,
+                            label: 'Total Traffic',
+
+                            formatter: function (w) {
+                                const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                return Number(total).toLocaleString();
+                            }
                         }
                     }
                 }
@@ -4874,42 +4933,42 @@ if ($('#traffic-sources-chart').length > 0) {
 
         stroke: {
             width: 6,
-            colors: ['#fff'] // white spacing between segments
+            colors: ['#fff']
         },
 
         dataLabels: {
             enabled: true,
-            formatter: function(val) {
+            formatter: function (val) {
                 return Math.round(val) + "%";
             },
             style: {
                 fontSize: '12px',
                 fontWeight: 600
-            },
-            dropShadow: {
-                enabled: false
             }
         },
 
         legend: {
-            show: false // ✅ No legend
+            show: false
         },
 
         tooltip: {
             y: {
-                formatter: function(val) {
-                    return val.toLocaleString();
+                formatter: function (val) {
+                    return Number(val).toLocaleString() + " Visits";
                 }
             }
         }
     };
 
-    var chart = new ApexCharts(
-        document.querySelector("#traffic-sources-chart"),
-        options
-    );
-
-    chart.render();
+    if (trafficSourcesChart) {
+        trafficSourcesChart.updateOptions(options);
+    } else {
+        trafficSourcesChart = new ApexCharts(
+            document.querySelector("#traffic-sources-chart"),
+            options
+        );
+        trafficSourcesChart.render();
+    }
 }
 
 if ($('#region-wise-growth').length > 0) {
@@ -4961,7 +5020,7 @@ if ($('#region-wise-growth').length > 0) {
                         show: true,
                         total: {
                             show: true,
-                            formatter: function() {
+                            formatter: function () {
                                 return '100%';
                             }
                         }
@@ -4973,7 +5032,7 @@ if ($('#region-wise-growth').length > 0) {
         dataLabels: {
             enabled: false,
             textAnchor: 'middle',
-            formatter: function(val, opts) {
+            formatter: function (val, opts) {
                 return opts.w.globals.labels[opts.seriesIndex] + '\n' +
                     Math.round(val) + '%';
             },
@@ -5495,7 +5554,7 @@ if ($('#pipeline_chart').length > 0) {
         series: [{
             name: "",
             data: [1380, 1100, 990, 880, 740, 540],
-        }, ],
+        },],
         chart: {
             type: 'bar',
             height: 280,
@@ -5519,7 +5578,7 @@ if ($('#pipeline_chart').length > 0) {
         ],
         dataLabels: {
             enabled: true,
-            formatter: function(val, opt) {
+            formatter: function (val, opt) {
                 return opt.w.globals.labels[opt.dataPointIndex]
             },
             dropShadow: {
@@ -5638,7 +5697,7 @@ if ($('#donut-chart-2').length > 0) {
                         total: {
                             show: true,
                             label: 'Google',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return '40%';
                             }
                         }
@@ -5692,13 +5751,13 @@ if ($('#revenue-income').length > 0) {
             },
         },
         series: [{
-                name: 'Income',
-                data: [40, 30, 45, 80, 85, 90, 80, 80, 80, 85, 20, 80]
-            },
-            {
-                name: 'Expenses (bg)',
-                data: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-            }
+            name: 'Income',
+            data: [40, 30, 45, 80, 85, 90, 80, 80, 80, 85, 20, 80]
+        },
+        {
+            name: 'Expenses (bg)',
+            data: [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+        }
         ],
         xaxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -5718,7 +5777,7 @@ if ($('#revenue-income').length > 0) {
                     colors: '#6B7280',
                     fontSize: '13px',
                 },
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "K";
                 }
             }
@@ -5738,7 +5797,7 @@ if ($('#revenue-income').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val / 10 + " k";
                 }
             }
@@ -5781,198 +5840,198 @@ if ($('#heat_chart').length > 0) {
             "#F37438",
         ],
         series: [{
-                name: "0",
-                data: [{
-                        x: 'Mon',
-                        y: 22
-                    },
-                    {
-                        x: 'Tue',
-                        y: 29
-                    },
-                    {
-                        x: 'Wed',
-                        y: 13
-                    },
-                    {
-                        x: 'Thu',
-                        y: 32
-                    },
-                    {
-                        x: 'Fri',
-                        y: 32
-                    },
-                    {
-                        x: 'Sat',
-                        y: 32
-                    },
-                    {
-                        x: 'Sun',
-                        y: 32
-                    },
-                ]
+            name: "0",
+            data: [{
+                x: 'Mon',
+                y: 22
             },
             {
-                name: "20",
-                data: [{
-                        x: 'Mon',
-                        y: 22,
-                        color: '#ff5722'
-                    },
-                    {
-                        x: 'Tue',
-                        y: 29
-                    },
-                    {
-                        x: 'Wed',
-                        y: 13
-                    },
-                    {
-                        x: 'Thu',
-                        y: 32
-                    },
-                    {
-                        x: 'Fri',
-                        y: 32
-                    },
-                    {
-                        x: 'Sat',
-                        y: 32
-                    },
-                    {
-                        x: 'Sun',
-                        y: 32
-                    },
-                ]
+                x: 'Tue',
+                y: 29
             },
             {
-                name: "40",
-                data: [{
-                        x: 'Mon',
-                        y: 22
-                    },
-                    {
-                        x: 'Tue',
-                        y: 29
-                    },
-                    {
-                        x: 'Wed',
-                        y: 13
-                    },
-                    {
-                        x: 'Thu',
-                        y: 32
-                    },
-                    {
-                        x: 'Fri',
-                        y: 32
-                    },
-                    {
-                        x: 'Sat',
-                        y: 32
-                    },
-                    {
-                        x: 'Sun',
-                        y: 32
-                    },
-                ]
+                x: 'Wed',
+                y: 13
             },
             {
-                name: "60",
-                data: [{
-                        x: 'Mon',
-                        y: 0
-                    },
-                    {
-                        x: 'Tue',
-                        y: 29
-                    },
-                    {
-                        x: 'Wed',
-                        y: 13
-                    },
-                    {
-                        x: 'Thu',
-                        y: 32
-                    },
-                    {
-                        x: 'Fri',
-                        y: 0
-                    },
-                    {
-                        x: 'Sat',
-                        y: 0
-                    },
-                    {
-                        x: 'Sun',
-                        y: 32
-                    },
-                ]
+                x: 'Thu',
+                y: 32
             },
             {
-                name: "80",
-                data: [{
-                        x: 'Mon',
-                        y: 0
-                    },
-                    {
-                        x: 'Tue',
-                        y: 20
-                    },
-                    {
-                        x: 'Wed',
-                        y: 13
-                    },
-                    {
-                        x: 'Thu',
-                        y: 32
-                    },
-                    {
-                        x: 'Fri',
-                        y: 0
-                    },
-                    {
-                        x: 'Sat',
-                        y: 0
-                    },
-                    {
-                        x: 'Sun',
-                        y: 32
-                    },
-                ]
+                x: 'Fri',
+                y: 32
             },
             {
-                name: "120",
-                data: [{
-                        x: 'Mon',
-                        y: 0
-                    },
-                    {
-                        x: 'Tue',
-                        y: 0
-                    },
-                    {
-                        x: 'Wed',
-                        y: 75
-                    },
-                    {
-                        x: 'Thu',
-                        y: 0
-                    },
-                    {
-                        x: 'Fri',
-                        y: 0
-                    },
-                    {
-                        x: 'Sat',
-                        y: 0
-                    },
-                    {
-                        x: 'Sun',
-                        y: 0
-                    },
-                ]
+                x: 'Sat',
+                y: 32
             },
+            {
+                x: 'Sun',
+                y: 32
+            },
+            ]
+        },
+        {
+            name: "20",
+            data: [{
+                x: 'Mon',
+                y: 22,
+                color: '#ff5722'
+            },
+            {
+                x: 'Tue',
+                y: 29
+            },
+            {
+                x: 'Wed',
+                y: 13
+            },
+            {
+                x: 'Thu',
+                y: 32
+            },
+            {
+                x: 'Fri',
+                y: 32
+            },
+            {
+                x: 'Sat',
+                y: 32
+            },
+            {
+                x: 'Sun',
+                y: 32
+            },
+            ]
+        },
+        {
+            name: "40",
+            data: [{
+                x: 'Mon',
+                y: 22
+            },
+            {
+                x: 'Tue',
+                y: 29
+            },
+            {
+                x: 'Wed',
+                y: 13
+            },
+            {
+                x: 'Thu',
+                y: 32
+            },
+            {
+                x: 'Fri',
+                y: 32
+            },
+            {
+                x: 'Sat',
+                y: 32
+            },
+            {
+                x: 'Sun',
+                y: 32
+            },
+            ]
+        },
+        {
+            name: "60",
+            data: [{
+                x: 'Mon',
+                y: 0
+            },
+            {
+                x: 'Tue',
+                y: 29
+            },
+            {
+                x: 'Wed',
+                y: 13
+            },
+            {
+                x: 'Thu',
+                y: 32
+            },
+            {
+                x: 'Fri',
+                y: 0
+            },
+            {
+                x: 'Sat',
+                y: 0
+            },
+            {
+                x: 'Sun',
+                y: 32
+            },
+            ]
+        },
+        {
+            name: "80",
+            data: [{
+                x: 'Mon',
+                y: 0
+            },
+            {
+                x: 'Tue',
+                y: 20
+            },
+            {
+                x: 'Wed',
+                y: 13
+            },
+            {
+                x: 'Thu',
+                y: 32
+            },
+            {
+                x: 'Fri',
+                y: 0
+            },
+            {
+                x: 'Sat',
+                y: 0
+            },
+            {
+                x: 'Sun',
+                y: 32
+            },
+            ]
+        },
+        {
+            name: "120",
+            data: [{
+                x: 'Mon',
+                y: 0
+            },
+            {
+                x: 'Tue',
+                y: 0
+            },
+            {
+                x: 'Wed',
+                y: 75
+            },
+            {
+                x: 'Thu',
+                y: 0
+            },
+            {
+                x: 'Fri',
+                y: 0
+            },
+            {
+                x: 'Sat',
+                y: 0
+            },
+            {
+                x: 'Sun',
+                y: 0
+            },
+            ]
+        },
         ]
     };
     var chart = new ApexCharts(document.querySelector("#heat_chart"), options);
@@ -6043,7 +6102,7 @@ if ($('#user-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val + " units";
                 }
             }
@@ -6130,16 +6189,16 @@ if ($('#utilization').length > 0) {
             colors: ['transparent']
         },
         series: [{
-                name: 'Inprogress',
-                data: [60, 80, 100, 70, 30, 50, 70, 90, 50, 70]
-            }, {
-                name: 'Active',
-                data: [30, 20, 2, 10, 60, 20, 30, 2, 20, 10]
-            },
-            {
-                name: 'Completed',
-                data: [10, 2, 2, 20, 10, 30, 2, 10, 30, 20]
-            }
+            name: 'Inprogress',
+            data: [60, 80, 100, 70, 30, 50, 70, 90, 50, 70]
+        }, {
+            name: 'Active',
+            data: [30, 20, 2, 10, 60, 20, 30, 2, 20, 10]
+        },
+        {
+            name: 'Completed',
+            data: [10, 2, 2, 20, 10, 30, 2, 10, 30, 20]
+        }
         ],
         xaxis: {
             categories: ['1 hr', '2 hr', '3 hr', '4 hr', '5 hr', '6 hr', '7 hr', '8 hr', '9 hr', '10 hr'],
@@ -6149,7 +6208,7 @@ if ($('#utilization').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return "" + val + "%"
                 }
             }
@@ -6238,7 +6297,7 @@ if ($('#car-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val
                 }
             }
@@ -6257,13 +6316,13 @@ if ($('#car-chart').length > 0) {
 if ($('#locationChart').length > 0) {
     var sCol1 = {
         series: [{
-                group: 'budget',
-                data: [20000]
-            },
-            {
-                group: 'budget',
-                data: [40000]
-            }
+            group: 'budget',
+            data: [20000]
+        },
+        {
+            group: 'budget',
+            data: [40000]
+        }
         ],
         chart: {
             type: 'bar',
@@ -6319,20 +6378,20 @@ if ($('#summary_chart').length > 0) {
                 enableShades: false,
                 colorScale: {
                     ranges: [{
-                            from: 1,
-                            to: 70,
-                            color: '#FFF5ED'
-                        },
-                        {
-                            from: 0,
-                            to: 0,
-                            color: '#FFCDA4'
-                        },
-                        {
-                            from: 80,
-                            to: 100,
-                            color: '#FE9738'
-                        },
+                        from: 1,
+                        to: 70,
+                        color: '#FFF5ED'
+                    },
+                    {
+                        from: 0,
+                        to: 0,
+                        color: '#FFCDA4'
+                    },
+                    {
+                        from: 80,
+                        to: 100,
+                        color: '#FE9738'
+                    },
                     ],
                 },
 
@@ -6385,293 +6444,293 @@ if ($('#summary_chart').length > 0) {
             },
         },
         series: [{
-                name: "Sat",
-                data: [{
-                        x: '09:00',
-                        y: 90
-                    },
-                    {
-                        x: '10:00',
-                        y: 100
-                    },
-                    {
-                        x: '11:00',
-                        y: 0
-                    },
-                    {
-                        x: '12:00',
-                        y: 50
-                    },
-                    {
-                        x: '01:00',
-                        y: 90
-                    },
-                    {
-                        x: '02:00',
-                        y: 90
-                    },
-                    {
-                        x: '04:00',
-                        y: 60
-                    },
-                    {
-                        x: '05:00',
-                        y: 100
-                    },
-                    {
-                        x: '06:00',
-                        y: 90
-                    },
-                    {
-                        x: '07:00',
-                        y: 80
-                    },
-                    {
-                        x: '08:00',
-                        y: 70
-                    },
-                ]
+            name: "Sat",
+            data: [{
+                x: '09:00',
+                y: 90
             },
             {
-                name: "Fri",
-                data: [{
-                        x: '09:00',
-                        y: 50
-                    },
-                    {
-                        x: '10:00',
-                        y: 60
-                    },
-                    {
-                        x: '11:00',
-                        y: 60
-                    },
-                    {
-                        x: '12:00',
-                        y: 50
-                    },
-                    {
-                        x: '01:00',
-                        y: 0
-                    },
-                    {
-                        x: '02:00',
-                        y: 60
-                    },
-                    {
-                        x: '04:00',
-                        y: 60
-                    },
-                    {
-                        x: '05:00',
-                        y: 0
-                    },
-                    {
-                        x: '06:00',
-                        y: 0
-                    },
-                    {
-                        x: '07:00',
-                        y: 0
-                    },
-                    {
-                        x: '08:00',
-                        y: 70
-                    },
-                ]
+                x: '10:00',
+                y: 100
             },
             {
-                name: "Thu",
-                data: [{
-                        x: '09:00',
-                        y: 50
-                    },
-                    {
-                        x: '10:00',
-                        y: 0
-                    },
-                    {
-                        x: '11:00',
-                        y: 60
-                    },
-                    {
-                        x: '12:00',
-                        y: 90
-                    },
-                    {
-                        x: '01:00',
-                        y: 60
-                    },
-                    {
-                        x: '02:00',
-                        y: 0
-                    },
-                    {
-                        x: '04:00',
-                        y: 0
-                    },
-                    {
-                        x: '05:00',
-                        y: 100
-                    },
-                    {
-                        x: '06:00',
-                        y: 60
-                    },
-                    {
-                        x: '07:00',
-                        y: 80
-                    },
-                    {
-                        x: '08:00',
-                        y: 70
-                    },
-                ]
+                x: '11:00',
+                y: 0
             },
             {
-                name: "Wed",
-                data: [{
-                        x: '09:00',
-                        y: 0
-                    },
-                    {
-                        x: '10:00',
-                        y: 0
-                    },
-                    {
-                        x: '11:00',
-                        y: 60
-                    },
-                    {
-                        x: '12:00',
-                        y: 0
-                    },
-                    {
-                        x: '01:00',
-                        y: 90
-                    },
-                    {
-                        x: '02:00',
-                        y: 0
-                    },
-                    {
-                        x: '04:00',
-                        y: 0
-                    },
-                    {
-                        x: '05:00',
-                        y: 0
-                    },
-                    {
-                        x: '06:00',
-                        y: 0
-                    },
-                    {
-                        x: '07:00',
-                        y: 90
-                    },
-                    {
-                        x: '08:00',
-                        y: 0
-                    },
-                ]
+                x: '12:00',
+                y: 50
             },
             {
-                name: "Tue",
-                data: [{
-                        x: '09:00',
-                        y: 0
-                    },
-                    {
-                        x: '10:00',
-                        y: 50
-                    },
-                    {
-                        x: '11:00',
-                        y: 0
-                    },
-                    {
-                        x: '12:00',
-                        y: 0
-                    },
-                    {
-                        x: '01:00',
-                        y: 60
-                    },
-                    {
-                        x: '02:00',
-                        y: 90
-                    },
-                    {
-                        x: '04:00',
-                        y: 0
-                    },
-                    {
-                        x: '05:00',
-                        y: 90
-                    },
-                    {
-                        x: '06:00',
-                        y: 0
-                    },
-                    {
-                        x: '07:00',
-                        y: 0
-                    },
-                    {
-                        x: '08:00',
-                        y: 0
-                    },
-                ]
+                x: '01:00',
+                y: 90
             },
             {
-                name: "Mon",
-                data: [{
-                        x: '09:00',
-                        y: 90
-                    },
-                    {
-                        x: '10:00',
-                        y: 0
-                    },
-                    {
-                        x: '11:00',
-                        y: 90
-                    },
-                    {
-                        x: '12:00',
-                        y: 80
-                    },
-                    {
-                        x: '01:00',
-                        y: 80
-                    },
-                    {
-                        x: '02:00',
-                        y: 90
-                    },
-                    {
-                        x: '04:00',
-                        y: 80
-                    },
-                    {
-                        x: '05:00',
-                        y: 90
-                    },
-                    {
-                        x: '06:00',
-                        y: 90
-                    },
-                    {
-                        x: '07:00',
-                        y: 90
-                    },
-                    {
-                        x: '08:00',
-                        y: 0
-                    },
-                ]
+                x: '02:00',
+                y: 90
             },
+            {
+                x: '04:00',
+                y: 60
+            },
+            {
+                x: '05:00',
+                y: 100
+            },
+            {
+                x: '06:00',
+                y: 90
+            },
+            {
+                x: '07:00',
+                y: 80
+            },
+            {
+                x: '08:00',
+                y: 70
+            },
+            ]
+        },
+        {
+            name: "Fri",
+            data: [{
+                x: '09:00',
+                y: 50
+            },
+            {
+                x: '10:00',
+                y: 60
+            },
+            {
+                x: '11:00',
+                y: 60
+            },
+            {
+                x: '12:00',
+                y: 50
+            },
+            {
+                x: '01:00',
+                y: 0
+            },
+            {
+                x: '02:00',
+                y: 60
+            },
+            {
+                x: '04:00',
+                y: 60
+            },
+            {
+                x: '05:00',
+                y: 0
+            },
+            {
+                x: '06:00',
+                y: 0
+            },
+            {
+                x: '07:00',
+                y: 0
+            },
+            {
+                x: '08:00',
+                y: 70
+            },
+            ]
+        },
+        {
+            name: "Thu",
+            data: [{
+                x: '09:00',
+                y: 50
+            },
+            {
+                x: '10:00',
+                y: 0
+            },
+            {
+                x: '11:00',
+                y: 60
+            },
+            {
+                x: '12:00',
+                y: 90
+            },
+            {
+                x: '01:00',
+                y: 60
+            },
+            {
+                x: '02:00',
+                y: 0
+            },
+            {
+                x: '04:00',
+                y: 0
+            },
+            {
+                x: '05:00',
+                y: 100
+            },
+            {
+                x: '06:00',
+                y: 60
+            },
+            {
+                x: '07:00',
+                y: 80
+            },
+            {
+                x: '08:00',
+                y: 70
+            },
+            ]
+        },
+        {
+            name: "Wed",
+            data: [{
+                x: '09:00',
+                y: 0
+            },
+            {
+                x: '10:00',
+                y: 0
+            },
+            {
+                x: '11:00',
+                y: 60
+            },
+            {
+                x: '12:00',
+                y: 0
+            },
+            {
+                x: '01:00',
+                y: 90
+            },
+            {
+                x: '02:00',
+                y: 0
+            },
+            {
+                x: '04:00',
+                y: 0
+            },
+            {
+                x: '05:00',
+                y: 0
+            },
+            {
+                x: '06:00',
+                y: 0
+            },
+            {
+                x: '07:00',
+                y: 90
+            },
+            {
+                x: '08:00',
+                y: 0
+            },
+            ]
+        },
+        {
+            name: "Tue",
+            data: [{
+                x: '09:00',
+                y: 0
+            },
+            {
+                x: '10:00',
+                y: 50
+            },
+            {
+                x: '11:00',
+                y: 0
+            },
+            {
+                x: '12:00',
+                y: 0
+            },
+            {
+                x: '01:00',
+                y: 60
+            },
+            {
+                x: '02:00',
+                y: 90
+            },
+            {
+                x: '04:00',
+                y: 0
+            },
+            {
+                x: '05:00',
+                y: 90
+            },
+            {
+                x: '06:00',
+                y: 0
+            },
+            {
+                x: '07:00',
+                y: 0
+            },
+            {
+                x: '08:00',
+                y: 0
+            },
+            ]
+        },
+        {
+            name: "Mon",
+            data: [{
+                x: '09:00',
+                y: 90
+            },
+            {
+                x: '10:00',
+                y: 0
+            },
+            {
+                x: '11:00',
+                y: 90
+            },
+            {
+                x: '12:00',
+                y: 80
+            },
+            {
+                x: '01:00',
+                y: 80
+            },
+            {
+                x: '02:00',
+                y: 90
+            },
+            {
+                x: '04:00',
+                y: 80
+            },
+            {
+                x: '05:00',
+                y: 90
+            },
+            {
+                x: '06:00',
+                y: 90
+            },
+            {
+                x: '07:00',
+                y: 90
+            },
+            {
+                x: '08:00',
+                y: 0
+            },
+            ]
+        },
         ]
     };
     var chart = new ApexCharts(document.querySelector("#summary_chart"), options);
@@ -6683,7 +6742,7 @@ if ($('#hours_chart').length > 0) {
         series: [{
             name: 'Worked Hours',
             data: [8, 6, 5, 6, 5, 7],
-        }, ],
+        },],
         grid: {
             show: false,
             xaxis: {
@@ -6787,7 +6846,7 @@ if ($('#total_tasks').length > 0) {
                         total: {
                             show: true,
                             label: 'Leads',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return '589';
                             }
                         }
@@ -6832,7 +6891,7 @@ if ($('#total_sales').length > 0) {
                         total: {
                             show: true,
                             label: 'Leads',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return '589';
                             }
                         }
@@ -6953,7 +7012,7 @@ if ($('#revenue_chart').length > 0) {
         }, {
             name: 'Received ',
             data: [30, 30, 80, 70, 80, 80, 80]
-        }, ],
+        },],
         grid: {
             borderColor: '#E2E4E6',
             strokeDashArray: 5,
@@ -7016,7 +7075,7 @@ if ($('#sales_analytics').length > 0) {
         }, {
             name: 'Pending ',
             data: [40, 60, 60, 60, 20, 80, 40, 20, 50, 70, 40, 60]
-        }, ],
+        },],
         grid: {
             borderColor: '#E2E4E6',
             strokeDashArray: 5,
@@ -7071,7 +7130,7 @@ if ($('#invoice_analytics').length > 0) {
                         total: {
                             show: true,
                             label: 'Leads',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return '589';
                             }
                         }
@@ -7127,30 +7186,30 @@ if ($('#s-col-1').length > 0) {
         series: [{
             name: 'Data',
             data: [{
-                    x: 'A',
-                    y: 80,
-                    fillColor: '#3550DC'
-                },
-                {
-                    x: 'B',
-                    y: 35,
-                    fillColor: '#3550DC'
-                },
-                {
-                    x: 'C',
-                    y: 50,
-                    fillColor: '#3550DC'
-                },
-                {
-                    x: 'D',
-                    y: 45,
-                    fillColor: '#3550DC'
-                },
-                {
-                    x: 'E',
-                    y: 35,
-                    fillColor: '#3550DC'
-                }
+                x: 'A',
+                y: 80,
+                fillColor: '#3550DC'
+            },
+            {
+                x: 'B',
+                y: 35,
+                fillColor: '#3550DC'
+            },
+            {
+                x: 'C',
+                y: 50,
+                fillColor: '#3550DC'
+            },
+            {
+                x: 'D',
+                y: 45,
+                fillColor: '#3550DC'
+            },
+            {
+                x: 'E',
+                y: 35,
+                fillColor: '#3550DC'
+            }
             ]
         }],
         xaxis: {
@@ -7210,30 +7269,30 @@ if ($('#s-col-2').length > 0) {
         series: [{
             name: 'Data',
             data: [{
-                    x: 'A',
-                    y: 90,
-                    fillColor: '#01B664'
-                },
-                {
-                    x: 'B',
-                    y: 35,
-                    fillColor: '#01B664'
-                },
-                {
-                    x: 'C',
-                    y: 40,
-                    fillColor: '#01B664'
-                },
-                {
-                    x: 'D',
-                    y: 65,
-                    fillColor: '#01B664'
-                },
-                {
-                    x: 'E',
-                    y: 55,
-                    fillColor: '#01B664'
-                }
+                x: 'A',
+                y: 90,
+                fillColor: '#01B664'
+            },
+            {
+                x: 'B',
+                y: 35,
+                fillColor: '#01B664'
+            },
+            {
+                x: 'C',
+                y: 40,
+                fillColor: '#01B664'
+            },
+            {
+                x: 'D',
+                y: 65,
+                fillColor: '#01B664'
+            },
+            {
+                x: 'E',
+                y: 55,
+                fillColor: '#01B664'
+            }
             ]
         }],
         xaxis: {
@@ -7293,30 +7352,30 @@ if ($('#s-col-3').length > 0) {
         series: [{
             name: 'Data',
             data: [{
-                    x: 'A',
-                    y: 90,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'B',
-                    y: 65,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'C',
-                    y: 60,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'D',
-                    y: 45,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'E',
-                    y: 25,
-                    fillColor: '#FF0000'
-                }
+                x: 'A',
+                y: 90,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'B',
+                y: 65,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'C',
+                y: 60,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'D',
+                y: 45,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'E',
+                y: 25,
+                fillColor: '#FF0000'
+            }
             ]
         }],
         xaxis: {
@@ -7376,30 +7435,30 @@ if ($('#s-col-4').length > 0) {
         series: [{
             name: 'Data',
             data: [{
-                    x: 'A',
-                    y: 80,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'B',
-                    y: 85,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'C',
-                    y: 50,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'D',
-                    y: 55,
-                    fillColor: '#FF0000'
-                },
-                {
-                    x: 'E',
-                    y: 95,
-                    fillColor: '#FF0000'
-                }
+                x: 'A',
+                y: 80,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'B',
+                y: 85,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'C',
+                y: 50,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'D',
+                y: 55,
+                fillColor: '#FF0000'
+            },
+            {
+                x: 'E',
+                y: 95,
+                fillColor: '#FF0000'
+            }
             ]
         }],
         xaxis: {
@@ -7456,15 +7515,15 @@ if ($('#chart-1').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#1F9CC6",
-                        opacity: 0.5
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0
-                    }
+                    offset: 0,
+                    color: "#1F9CC6",
+                    opacity: 0.5
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0
+                }
                 ]
             }
         },
@@ -7494,7 +7553,7 @@ if ($('#chart-1').length > 0) {
         },
         tooltip: {
             enabled: true,
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex
@@ -7538,15 +7597,15 @@ if ($('#chart-2').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#08BC90",
-                        opacity: 0.5
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0
-                    }
+                    offset: 0,
+                    color: "#08BC90",
+                    opacity: 0.5
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0
+                }
                 ]
             }
         },
@@ -7576,7 +7635,7 @@ if ($('#chart-2').length > 0) {
         },
         tooltip: {
             enabled: true,
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex
@@ -7620,15 +7679,15 @@ if ($('#chart-3').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#4A77FC",
-                        opacity: 0.5
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0
-                    }
+                    offset: 0,
+                    color: "#4A77FC",
+                    opacity: 0.5
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0
+                }
                 ]
             }
         },
@@ -7658,7 +7717,7 @@ if ($('#chart-3').length > 0) {
         },
         tooltip: {
             enabled: true,
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex
@@ -7702,15 +7761,15 @@ if ($('#chart-4').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#1ABE17",
-                        opacity: 0.5
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0
-                    }
+                    offset: 0,
+                    color: "#1ABE17",
+                    opacity: 0.5
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0
+                }
                 ]
             }
         },
@@ -7740,7 +7799,7 @@ if ($('#chart-4').length > 0) {
         },
         tooltip: {
             enabled: true,
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex
@@ -7786,13 +7845,13 @@ if ($('#chart-5').length > 0) {
             show: false
         },
         series: [{
-                name: 'New Patients',
-                data: [25, 30, 70, 25, 20, 40, 35]
-            },
-            {
-                name: 'Old Patients',
-                data: [20, 25, 15, 75, 50, 25, 10],
-            }
+            name: 'New Patients',
+            data: [25, 30, 70, 25, 20, 40, 35]
+        },
+        {
+            name: 'Old Patients',
+            data: [20, 25, 15, 75, 50, 25, 10],
+        }
         ],
         colors: ['#43A6CC', '#42C39B'],
         xaxis: {
@@ -7818,7 +7877,7 @@ if ($('#chart-5').length > 0) {
                 style: {
                     fontSize: '14px'
                 },
-                formatter: function(val) {
+                formatter: function (val) {
                     return val;
                 }
             }
@@ -7878,15 +7937,15 @@ if ($('#chart-6').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#E65100",
-                        opacity: 0.4
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0
-                    }
+                    offset: 0,
+                    color: "#E65100",
+                    opacity: 0.4
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0
+                }
                 ]
             }
         },
@@ -7926,7 +7985,7 @@ if ($('#chart-6').length > 0) {
         tooltip: {
             enabled: true,
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return `$${val}`;
                 }
             }
@@ -7965,13 +8024,13 @@ if ($('#chart-7').length > 0) {
             colors: ['transparent']
         },
         series: [{
-                name: 'Inprogress',
-                data: [60, 50, 25, 20, 60, 55, 10, 120, 30, 10, 50, 60] // 12 points
-            },
-            {
-                name: 'Completed',
-                data: [35, 30, 10, 5, 40, 5, 5, 25, 15, 5, 30, 35] // 12 points
-            }
+            name: 'Inprogress',
+            data: [60, 50, 25, 20, 60, 55, 10, 120, 30, 10, 50, 60] // 12 points
+        },
+        {
+            name: 'Completed',
+            data: [35, 30, 10, 5, 40, 5, 5, 25, 15, 5, 30, 35] // 12 points
+        }
         ],
         xaxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -8009,7 +8068,7 @@ if ($('#chart-7').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val;
                 }
             }
@@ -8057,15 +8116,15 @@ if ($('#chart-col-1').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#3550dc",
-                        opacity: 0.4
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0.8
-                    }
+                    offset: 0,
+                    color: "#3550dc",
+                    opacity: 0.4
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0.8
+                }
                 ]
             }
         },
@@ -8129,15 +8188,15 @@ if ($('#chart-col-2').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#f9b801",
-                        opacity: 0.4
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0.8
-                    }
+                    offset: 0,
+                    color: "#f9b801",
+                    opacity: 0.4
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0.8
+                }
                 ]
             }
         },
@@ -8201,15 +8260,15 @@ if ($('#chart-col-3').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#3550dc",
-                        opacity: 0.4
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0.8
-                    }
+                    offset: 0,
+                    color: "#3550dc",
+                    opacity: 0.4
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0.8
+                }
                 ]
             }
         },
@@ -8273,15 +8332,15 @@ if ($('#chart-col-4').length > 0) {
                 opacityTo: 0,
                 stops: [0, 90, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#3e9ab5",
-                        opacity: 0.4
-                    },
-                    {
-                        offset: 100,
-                        color: "#ffffff",
-                        opacity: 0.8
-                    }
+                    offset: 0,
+                    color: "#3e9ab5",
+                    opacity: 0.4
+                },
+                {
+                    offset: 100,
+                    color: "#ffffff",
+                    opacity: 0.8
+                }
                 ]
             }
         },
@@ -8398,7 +8457,7 @@ if ($('#productivetime-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val
                 }
             }
@@ -8438,7 +8497,7 @@ if ($('#unproductivetime-chart').length > 0) {
                 distributed: true,
             },
         },
-        colors: ['#35839a', '#F0ECFF', '#35839a', '#F0ECFF', ],
+        colors: ['#35839a', '#F0ECFF', '#35839a', '#F0ECFF',],
         states: {
             hover: {
                 filter: {
@@ -8493,7 +8552,7 @@ if ($('#unproductivetime-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val
                 }
             }
@@ -8533,7 +8592,7 @@ if ($('#manualtime-chart').length > 0) {
                 distributed: true,
             },
         },
-        colors: ['#EBF4F2', '#56A89B', '#EBF4F2', '#56A89B', ],
+        colors: ['#EBF4F2', '#56A89B', '#EBF4F2', '#56A89B',],
         states: {
             hover: {
                 filter: {
@@ -8588,7 +8647,7 @@ if ($('#manualtime-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val
                 }
             }
@@ -8683,7 +8742,7 @@ if ($('#worktime-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val
                 }
             }
@@ -8717,7 +8776,7 @@ if ($('#timeline_chart').length > 0) {
                         total: {
                             show: true,
                             label: 'Leads',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 return '589';
                             }
                         }
@@ -8772,16 +8831,16 @@ if ($('#project-chart').length > 0) {
         },
 
         series: [{
-                name: 'Inprogress',
-                data: [19, 65, 19, 19, 19, 19, 19]
-            }, {
-                name: 'Active',
-                data: [89, 45, 89, 46, 61, 25, 79]
-            },
-            {
-                name: 'Completed',
-                data: [39, 39, 39, 80, 48, 48, 48]
-            }
+            name: 'Inprogress',
+            data: [19, 65, 19, 19, 19, 19, 19]
+        }, {
+            name: 'Active',
+            data: [89, 45, 89, 46, 61, 25, 79]
+        },
+        {
+            name: 'Completed',
+            data: [39, 39, 39, 80, 48, 48, 48]
+        }
         ],
         xaxis: {
             categories: ['15 Jan', '16 Jan', '17 Jan', '18 Jan', '19 Jan', '20 Jan', '21 Jan'],
@@ -8814,7 +8873,7 @@ if ($('#project-chart').length > 0) {
         },
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return "" + val + "%"
                 }
             }
@@ -8974,7 +9033,7 @@ if ($('#deals-year').length > 0) {
 if ($('#last-chart').length > 0) {
     var options = {
         series: [{
-            data: [400, 220, 448, ]
+            data: [400, 220, 448,]
         }],
         chart: {
             type: 'bar',
@@ -9295,7 +9354,7 @@ if ($('#project-type').length > 0) {
         },
         legend: {
             position: 'bottom',
-            formatter: function(val, opts) {
+            formatter: function (val, opts) {
                 return val + " - " + opts.w.globals.series[opts.seriesIndex]
             }
         },
@@ -9431,7 +9490,7 @@ if ($('#contacts-analysis').length > 0) {
         },
         legend: {
             position: 'bottom',
-            formatter: function(val, opts) {
+            formatter: function (val, opts) {
                 return val + " - " + opts.w.globals.series[opts.seriesIndex]
             }
         },
@@ -9466,35 +9525,35 @@ if ($('#deal-aging').length > 0) {
 
     var options = {
         series: [{
-                name: 'Won',
-                data: [
-                    [4, 30000],
-                    [5, 35000],
-                    [6, 42000],
-                    [8, 33000],
-                    [12, 38000],
-                    [16, 45000],
-                    [20, 52000],
-                    [25, 55000],
-                    [27, 62000],
-                    [30, 48000]
-                ]
-            },
-            {
-                name: 'Lost',
-                data: [
-                    [4, 11000],
-                    [5, 21000],
-                    [7, 16000],
-                    [9, 19000],
-                    [11, 25000],
-                    [15, 31000],
-                    [18, 35000],
-                    [22, 38000],
-                    [26, 41000],
-                    [29, 54000]
-                ]
-            }
+            name: 'Won',
+            data: [
+                [4, 30000],
+                [5, 35000],
+                [6, 42000],
+                [8, 33000],
+                [12, 38000],
+                [16, 45000],
+                [20, 52000],
+                [25, 55000],
+                [27, 62000],
+                [30, 48000]
+            ]
+        },
+        {
+            name: 'Lost',
+            data: [
+                [4, 11000],
+                [5, 21000],
+                [7, 16000],
+                [9, 19000],
+                [11, 25000],
+                [15, 31000],
+                [18, 35000],
+                [22, 38000],
+                [26, 41000],
+                [29, 54000]
+            ]
+        }
         ],
 
         chart: {
@@ -9529,7 +9588,7 @@ if ($('#deal-aging').length > 0) {
                 style: {
                     fontSize: '14px'
                 },
-                formatter: function(val) {
+                formatter: function (val) {
                     return '$' + (val / 1000) + 'K';
                 }
             }
@@ -9547,7 +9606,7 @@ if ($('#deal-aging').length > 0) {
         tooltip: {
             marker: false,
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return '$' + val.toLocaleString();
                 }
             }
@@ -9562,13 +9621,13 @@ if ($('#login-split').length > 0) {
 
     var options = {
         series: [{
-                name: "Successful Logins",
-                data: [400, 430, 500, 400, 405, 470, 460, 560, 480, 550]
-            },
-            {
-                name: "Failed Logins",
-                data: [160, 200, 280, 220, 230, 180, 240, 320, 240, 310]
-            }
+            name: "Successful Logins",
+            data: [400, 430, 500, 400, 405, 470, 460, 560, 480, 550]
+        },
+        {
+            name: "Failed Logins",
+            data: [160, 200, 280, 220, 230, 180, 240, 320, 240, 310]
+        }
         ],
 
         chart: {
@@ -9781,7 +9840,7 @@ if ($('#monthly-estimation').length > 0) {
             max: 1000000,
             tickAmount: 4,
             labels: {
-                formatter: function(value) {
+                formatter: function (value) {
                     return "$" + (value / 1000) + "K";
                 },
                 style: {
@@ -9812,15 +9871,15 @@ if ($('#monthly_contract').length > 0) {
 
     var options = {
         series: [{
-                name: "Revenue",
-                type: "column",
-                data: [42, 38, 45, 40, 48, 52, 47, 56, 51, 58, 60, 63]
-            },
-            {
-                name: "Revenue Line",
-                type: "line",
-                data: [42, 38, 45, 40, 48, 52, 47, 56, 51, 58, 60, 63]
-            }
+            name: "Revenue",
+            type: "column",
+            data: [42, 38, 45, 40, 48, 52, 47, 56, 51, 58, 60, 63]
+        },
+        {
+            name: "Revenue Line",
+            type: "line",
+            data: [42, 38, 45, 40, 48, 52, 47, 56, 51, 58, 60, 63]
+        }
         ],
 
         chart: {
@@ -10194,20 +10253,20 @@ if ($('#revenue-split-report').length > 0) {
 
     var options = {
         series: [{
-                name: "Revenue A",
-                type: "column",
-                data: [20, 15, 45, 65, 40, 30, 48, 50, 47, 46, 46, 47]
-            },
-            {
-                name: "Revenue B",
-                type: "column",
-                data: [55, 50, 28, 80, 85, 75, 85, 120, 98, 80, 68, 98]
-            },
-            {
-                name: "Total",
-                type: "line",
-                data: [105, 75, 130, 170, 150, 130, 150, 190, 160, 145, 130, 165]
-            }
+            name: "Revenue A",
+            type: "column",
+            data: [20, 15, 45, 65, 40, 30, 48, 50, 47, 46, 46, 47]
+        },
+        {
+            name: "Revenue B",
+            type: "column",
+            data: [55, 50, 28, 80, 85, 75, 85, 120, 98, 80, 68, 98]
+        },
+        {
+            name: "Total",
+            type: "line",
+            data: [105, 75, 130, 170, 150, 130, 150, 190, 160, 145, 130, 165]
+        }
         ],
 
         chart: {
@@ -10264,7 +10323,7 @@ if ($('#revenue-split-report').length > 0) {
             max: 250,
             tickAmount: 5,
             labels: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return "$" + val + "K";
                 },
                 style: {
@@ -10386,7 +10445,7 @@ if ($('#attendance-status').length > 0) {
 
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val;
                 }
             }
@@ -10444,7 +10503,7 @@ if ($('#risk-level').length > 0) {
 
         tooltip: {
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val;
                 }
             }
@@ -10474,7 +10533,7 @@ if ($('#project-stage').length > 0) {
         series: [{
             name: "",
             data: [1200, 1000, 800, 600, 400, 200],
-        }, ],
+        },],
         chart: {
             type: 'bar',
             height: 420,
@@ -10504,7 +10563,7 @@ if ($('#project-stage').length > 0) {
 
         dataLabels: {
             enabled: true,
-            formatter: function(val, opt) {
+            formatter: function (val, opt) {
                 return opt.w.globals.labels[opt.dataPointIndex]
             },
             dropShadow: {
@@ -10590,7 +10649,7 @@ if ($('#leads-chart').length > 0) {
 if ($('#last-chart-2').length > 0) {
     var options = {
         series: [{
-            data: [400, 220, 448, ]
+            data: [400, 220, 448,]
         }],
         chart: {
             type: 'bar',
@@ -10815,26 +10874,21 @@ if ($('#pipelineChart').length > 0) {
     // Ensure the target container exists before running
     if ($("#performance-stats").length === 0) return;
 
-    // Store chart instance globally so it can be destroyed/updated
+    // Store chart instance and current state globally
     window.salesPerformanceChart = null;
+    let currentSalesData = [];
+    let currentMonthlyTarget = 0;
+    let currentMode = "weekly"; // Changed default mode to weekly
 
     // ==========================================
     // 1. REUSABLE HELPER FUNCTIONS
     // ==========================================
 
-    /**
-     * Formats a number to standard Indian currency (e.g., ₹10,00,000)
-     */
     const formatINR = (val) => {
         if (isNaN(val) || val === null) return "₹0";
-        return "₹" + parseFloat(val).toLocaleString("en-IN", {
-            maximumFractionDigits: 0
-        });
+        return "₹" + parseFloat(val).toLocaleString("en-IN", { maximumFractionDigits: 0 });
     };
 
-    /**
-     * Formats a number to short Indian currency (e.g., ₹1.5L, ₹10K)
-     */
     const formatShortINR = (val) => {
         if (isNaN(val) || val === null || val === 0) return "₹0";
         let num = parseFloat(val);
@@ -10847,18 +10901,12 @@ if ($('#pipelineChart').length > 0) {
         return sign + "₹" + num.toFixed(0);
     };
 
-    /**
-     * Calculates the percentage safely and clamps it visually if needed
-     */
     const calcPercentage = (achieved, target) => {
         if (!target || target <= 0) return "0.0";
         let percent = (achieved / target) * 100;
         return percent.toFixed(1);
     };
 
-    /**
-     * Safely updates a DOM element's text if it exists
-     */
     const updateUIElement = (selector, text) => {
         const el = $(selector);
         if (el.length > 0) {
@@ -10870,12 +10918,12 @@ if ($('#pipelineChart').length > 0) {
     // 2. MAIN UPDATE FUNCTION
     // ==========================================
 
-    /**
-     * Main function to calculate stats, build chart, and update UI.
-     * Can be called dynamically with new data.
-     */
-    window.updateSalesPerformance = function (newSalesData, newMonthlyTarget) {
-        
+    window.updateSalesPerformance = function (newSalesData, newMonthlyTarget, mode = currentMode) {
+        // Update global state
+        currentSalesData = newSalesData;
+        currentMonthlyTarget = newMonthlyTarget;
+        currentMode = mode;
+
         // --- Date Calculations ---
         const now = new Date();
         const currentYear = now.getFullYear();
@@ -10885,7 +10933,22 @@ if ($('#pipelineChart').length > 0) {
         const totalDays = new Date(currentYear, currentMonthIndex + 1, 0).getDate();
 
         // Safely parse monthly target
-        const target = (isNaN(newMonthlyTarget) || newMonthlyTarget <= 0) ? 0 : parseFloat(newMonthlyTarget);
+        const monthlyTarget = (isNaN(newMonthlyTarget) || newMonthlyTarget <= 0) ? 0 : parseFloat(newMonthlyTarget);
+        const dailyTargetRate = totalDays > 0 ? (monthlyTarget / totalDays) : 0;
+
+        // --- View Mode Filter (Weekly vs Monthly) ---
+        let startDay = 1;
+        let endDay = totalDays;
+
+        if (mode === "weekly") {
+            // Display only 14 days up to today (or up to day 14 if early in the month)
+            endDay = Math.max(today, 14);
+            if (endDay > totalDays) endDay = totalDays;
+            startDay = Math.max(1, endDay - 13);
+        }
+
+        const displayedDaysCount = endDay - startDay + 1;
+        const activeTarget = mode === "weekly" ? (dailyTargetRate * displayedDaysCount) : monthlyTarget;
 
         // --- Data Processing ---
         const categories = [];
@@ -10895,8 +10958,10 @@ if ($('#pipelineChart').length > 0) {
         const dayNames = [];
 
         let achievedSales = 0;
+        let visibleCompletedDays = 0;
+        let visibleRemainingDays = 0;
 
-        for (let i = 1; i <= totalDays; i++) {
+        for (let i = startDay; i <= endDay; i++) {
             categories.push(i);
 
             // Construct full date for tooltips
@@ -10905,12 +10970,13 @@ if ($('#pipelineChart').length > 0) {
             dayNames.push(dateObj.toLocaleString('en-IN', { weekday: 'long' }));
 
             if (i <= today) {
-                // Sanitize daily sales value (handle invalid, null, negative)
-                let rawVal = newSalesData[i - 1];
+                // Sanitize daily sales value
+                let rawVal = currentSalesData[i - 1];
                 let val = (rawVal === null || isNaN(rawVal) || rawVal < 0) ? 0 : parseFloat(rawVal);
-                
+
                 chartData.push(val);
                 achievedSales += val;
+                visibleCompletedDays++;
 
                 // Color Logic
                 if (i === today) {
@@ -10924,30 +10990,26 @@ if ($('#pipelineChart').length > 0) {
                 // Future days are marked as pending
                 chartData.push(0);
                 barColors.push("#E5E7EB"); // Light Gray for future
+                visibleRemainingDays++;
             }
         }
 
-        // --- Calculations ---
-        const pendingSales = Math.max(target - achievedSales, 0);
-        const achievementPercent = calcPercentage(achievedSales, target);
-        const remainingDays = Math.max(totalDays - today, 0);
-        const averageSales = today > 0 ? (achievedSales / today) : 0;
-        const requiredDailySales = remainingDays > 0 ? (pendingSales / remainingDays) : 0;
-        
-        // Determine the baseline target line for the chart (Daily target rate)
-        const dailyTargetRate = totalDays > 0 ? (target / totalDays) : 0;
+        // --- Calculations (Based strictly on displayed days) ---
+        const pendingSales = Math.max(activeTarget - achievedSales, 0);
+        const achievementPercent = calcPercentage(achievedSales, activeTarget);
+        const averageSales = visibleCompletedDays > 0 ? (achievedSales / visibleCompletedDays) : 0;
+        const requiredDailySales = visibleRemainingDays > 0 ? (pendingSales / visibleRemainingDays) : 0;
 
         // --- Update UI Summary Cards ---
-        updateUIElement("#salesTarget", formatINR(target));
+        updateUIElement("#salesTarget", formatINR(activeTarget));
         updateUIElement("#salesAchieved", formatINR(achievedSales));
         updateUIElement("#salesPending", formatINR(pendingSales));
         updateUIElement("#salesPercent", achievementPercent + "%");
-        updateUIElement("#remainingDays", remainingDays);
+        updateUIElement("#remainingDays", visibleRemainingDays);
         updateUIElement("#averageSales", formatINR(averageSales));
         updateUIElement("#requiredDailySales", formatINR(requiredDailySales));
 
         // --- Container Prep ---
-        // Allow horizontal scrolling on mobile by modifying container styles
         $("#performance-stats").css({
             "overflow-x": "auto",
             "overflow-y": "hidden"
@@ -10962,17 +11024,14 @@ if ($('#pipelineChart').length > 0) {
             chart: {
                 type: "bar",
                 height: 400,
-                minWidth: 600, // Forces scroll on small screens
+                minWidth: 600,
                 toolbar: { show: false },
                 zoom: { enabled: false },
                 animations: {
                     enabled: true,
                     easing: "easeinout",
                     speed: 800,
-                    dynamicAnimation: {
-                        enabled: true,
-                        speed: 350
-                    }
+                    dynamicAnimation: { enabled: true, speed: 350 }
                 },
                 fontFamily: "Inter, system-ui, sans-serif"
             },
@@ -10991,7 +11050,7 @@ if ($('#pipelineChart').length > 0) {
             },
             plotOptions: {
                 bar: {
-                    distributed: true, // Applies individual colors
+                    distributed: true,
                     borderRadius: 6,
                     borderRadiusApplication: "end",
                     columnWidth: "60%"
@@ -11000,11 +11059,7 @@ if ($('#pipelineChart').length > 0) {
             dataLabels: {
                 enabled: true,
                 offsetY: -20,
-                style: {
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    colors: ["#4B5563"]
-                },
+                style: { fontSize: "11px", fontWeight: 600, colors: ["#4B5563"] },
                 formatter: function (val) {
                     if (!val || val === 0) return "";
                     return formatShortINR(val);
@@ -11018,47 +11073,43 @@ if ($('#pipelineChart').length > 0) {
             xaxis: {
                 categories: categories,
                 title: {
-                    text: `${currentMonthName} ${currentYear}`,
+                    text: mode === "weekly" ? `Last 14 Days (${currentMonthName} ${currentYear})` : `${currentMonthName} ${currentYear}`,
                     style: { color: "#6B7280", fontWeight: 500 }
                 },
                 axisBorder: { show: false },
                 axisTicks: { show: false },
-                labels: {
-                    style: { colors: "#6B7280", fontSize: "12px" }
-                }
+                labels: { style: { colors: "#6B7280", fontSize: "12px" } }
             },
             yaxis: {
                 labels: {
-                    formatter: function (value) {
-                        return formatShortINR(value);
-                    },
+                    formatter: function (value) { return formatShortINR(value); },
                     style: { colors: "#6B7280", fontWeight: 500 }
                 }
             },
-            annotations: {
-                yaxis: [{
-                    y: dailyTargetRate,
-                    borderColor: '#3B82F6',
-                    strokeDashArray: 5,
-                    borderWidth: 2,
-                    label: {
-                        borderColor: '#3B82F6',
-                        style: { color: '#fff', background: '#3B82F6', fontSize: '11px', fontWeight: 600 },
-                        text: 'Daily Target: ' + formatShortINR(dailyTargetRate)
-                    }
-                }],
-                xaxis: [{
-                    x: today,
-                    borderColor: '#16A34A',
-                    strokeDashArray: 4,
-                    label: {
-                        style: { color: '#fff', background: '#16A34A', fontSize: '11px', fontWeight: 600 },
-                        text: 'Today',
-                        orientation: 'horizontal',
-                        offsetY: 0
-                    }
-                }]
-            },
+            // annotations: {
+            //     yaxis: [{
+            //         y: dailyTargetRate,
+            //         borderColor: '#3B82F6',
+            //         strokeDashArray: 5,
+            //         borderWidth: 2,
+            //         label: {
+            //             borderColor: '#3B82F6',
+            //             style: { color: '#fff', background: '#3B82F6', fontSize: '11px', fontWeight: 600 },
+            //             text: 'Daily Target: ' + formatShortINR(dailyTargetRate)
+            //         }
+            //     }],
+            //     xaxis: [{
+            //         x: today,
+            //         borderColor: '#16A34A',
+            //         strokeDashArray: 4,
+            //         label: {
+            //             style: { color: '#fff', background: '#16A34A', fontSize: '11px', fontWeight: 600 },
+            //             text: 'Today',
+            //             orientation: 'horizontal',
+            //             offsetY: 0
+            //         }
+            //     }]
+            // },
             tooltip: {
                 shared: false,
                 intersect: true,
@@ -11066,8 +11117,8 @@ if ($('#pipelineChart').length > 0) {
                     let value = series[0][dataPointIndex];
                     let dateStr = fullDates[dataPointIndex];
                     let dayStr = dayNames[dataPointIndex];
-                    let dayNum = dataPointIndex + 1;
-                    
+                    let dayNum = categories[dataPointIndex];
+
                     let status = "Completed";
                     let statusColor = "#16A34A";
 
@@ -11081,9 +11132,10 @@ if ($('#pipelineChart').length > 0) {
                         status = "No Sales";
                         statusColor = "#EA580C";
                     }
-                    
-                    // Monthly target percentage for this specific day
-                    let targetPct = target > 0 ? ((value / target) * 100).toFixed(2) : "0.00";
+
+                    // Display percentage based on the active target logic
+                    let targetPct = activeTarget > 0 ? ((value / activeTarget) * 100).toFixed(2) : "0.00";
+                    let targetText = mode === "weekly" ? "of weekly target" : "of monthly target";
 
                     return `
                     <div style="padding:14px; min-width:200px; font-family:Inter,sans-serif; background:#fff; border-radius:8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
@@ -11101,7 +11153,7 @@ if ($('#pipelineChart').length > 0) {
                             ${formatINR(value)}
                         </div>
                         <div style="font-size:11px; color:#9CA3AF; margin-top:4px;">
-                            ${targetPct}% of monthly target
+                            ${targetPct}% ${targetText}
                         </div>
                     </div>`;
                 }
@@ -11112,44 +11164,18 @@ if ($('#pipelineChart').length > 0) {
             },
             legend: { show: false },
             responsive: [
-                {
-                    breakpoint: 1024,
-                    options: {
-                        chart: { height: 350 },
-                        plotOptions: { bar: { columnWidth: "50%" } }
-                    }
-                },
-                {
-                    breakpoint: 768,
-                    options: {
-                        chart: { height: 300 },
-                        plotOptions: { bar: { columnWidth: "40%" } },
-                        dataLabels: { enabled: false } // Avoid overcrowding on tablets
-                    }
-                },
-                {
-                    breakpoint: 480,
-                    options: {
-                        chart: { height: 280, minWidth: 500 }, // Triggers internal horizontal scroll wrapper
-                        plotOptions: { bar: { columnWidth: "30%", borderRadius: 4 } },
-                        xaxis: {
-                            labels: {
-                                style: { fontSize: "10px" }
-                            }
-                        }
-                    }
-                }
+                { breakpoint: 1024, options: { chart: { height: 350 }, plotOptions: { bar: { columnWidth: "50%" } } } },
+                { breakpoint: 768, options: { chart: { height: 300 }, plotOptions: { bar: { columnWidth: "40%" } }, dataLabels: { enabled: false } } },
+                { breakpoint: 480, options: { chart: { height: 280, minWidth: 500 }, plotOptions: { bar: { columnWidth: "30%", borderRadius: 4 } }, xaxis: { labels: { style: { fontSize: "10px" } } } } }
             ]
         };
 
         // --- Render Chart ---
         const chartContainer = document.querySelector("#performance-stats");
 
-        // Destroy previous instance to prevent duplicates and memory leaks
         if (window.salesPerformanceChart) {
             window.salesPerformanceChart.destroy();
         } else {
-            // Failsafe clearing of container if instantiated outside our reference
             chartContainer.innerHTML = "";
         }
 
@@ -11158,20 +11184,40 @@ if ($('#pipelineChart').length > 0) {
     };
 
     // ==========================================
-    // 3. INITIALIZATION WITH DUMMY DATA
+    // 3. EVENT LISTENERS FOR TOGGLES
     // ==========================================
-    
-    // Fallback Initial Data Structure
-    const initialTarget = 1000000;
-    const initialSales = [
-        45000, 52000, 38000, 61000, 49000, 55000, 62000, 48000, 70000, 59000,
-        52000, 68000, 71000, 65000, 78000, 60000, 72000, 75000, 69000, 80000,
-        73000, 85000, 78000, 90000, 82000, 95000, 87000, 98000, 92000, 105000,
-        110000
-    ];
 
-    // Trigger initial render
-    window.updateSalesPerformance(initialSales, initialTarget);
+    // Ensure initial UI State for Toggle Buttons - Changed to Weekly as default
+    $("#Weekly_Analytics").addClass("active");
+    $("#Monthly_Analytics").removeClass("active");
+
+    $("#Weekly_Analytics").on("click", function () {
+        $(this).addClass("active");
+        $("#Monthly_Analytics").removeClass("active");
+        window.updateSalesPerformance(currentSalesData, currentMonthlyTarget, "weekly");
+    });
+
+    $("#Monthly_Analytics").on("click", function () {
+        $(this).addClass("active");
+        $("#Weekly_Analytics").removeClass("active");
+        window.updateSalesPerformance(currentSalesData, currentMonthlyTarget, "monthly");
+    });
+
+    // ==========================================
+    // 4. INITIALIZATION WITH DUMMY DATA
+    // ==========================================
+
+    // Load demo data from external file
+    // let initialTarget = 0;
+    // let initialSales = [];
+
+    // if (typeof window.dashboard_demo_data !== "undefined") {
+    //     initialTarget = dashboard_demo_data.monthlyTarget || 0;
+    //     initialSales = dashboard_demo_data.sales || [];
+    // }
+
+    // Initial render
+    // window.updateSalesPerformance(initialSales, initialTarget, "weekly");
 
 })();
 
@@ -11270,7 +11316,7 @@ if ($('#deal-chart').length > 0) {
         yaxis: {
             labels: {
                 offsetX: -10,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k";
                 }
             }
@@ -11282,11 +11328,11 @@ if ($('#deal-chart').length > 0) {
             },
             y: {
                 padding: 0,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k"; // Shows '1k' in tooltip
                 },
                 title: {
-                    formatter: function() {
+                    formatter: function () {
                         return ''; // Keeps the series name hidden as per your request
                     }
                 }
@@ -11352,7 +11398,7 @@ if ($('#deal-size').length > 0) {
             tickAmount: 5,
             labels: {
                 offsetX: -10,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k";
                 }
             }
@@ -11364,11 +11410,11 @@ if ($('#deal-size').length > 0) {
             },
             y: {
                 padding: 0,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k"; // Shows '1k' in tooltip
                 },
                 title: {
-                    formatter: function() {
+                    formatter: function () {
                         return ''; // Keeps the series name hidden as per your request
                     }
                 }
@@ -11431,15 +11477,15 @@ if ($('#mtd-revenue').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#D2CAF0", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#E7E3F7", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#D2CAF0", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#E7E3F7", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -11517,15 +11563,15 @@ if ($('#ytd-revenue').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#D2CAF0", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#E7E3F7", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#D2CAF0", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#E7E3F7", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -11619,7 +11665,7 @@ if ($('#forecast-chart').length > 0) {
             tickAmount: 5,
             labels: {
                 offsetX: -10,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k";
                 }
             }
@@ -11631,11 +11677,11 @@ if ($('#forecast-chart').length > 0) {
             },
             y: {
                 padding: 0,
-                formatter: function(value) {
+                formatter: function (value) {
                     return value + "k"; // Shows '1k' in tooltip
                 },
                 title: {
-                    formatter: function() {
+                    formatter: function () {
                         return ''; // Keeps the series name hidden as per your request
                     }
                 }
@@ -11652,26 +11698,26 @@ if ($('#forecast-chart').length > 0) {
                 stops: [0, 100],
                 colorStops: [
                     [{
-                            offset: 0,
-                            color: "#7F24E3",
-                            opacity: 1
-                        },
-                        {
-                            offset: 100,
-                            color: "#E8E8E8",
-                            opacity: 0.05
-                        }
+                        offset: 0,
+                        color: "#7F24E3",
+                        opacity: 1
+                    },
+                    {
+                        offset: 100,
+                        color: "#E8E8E8",
+                        opacity: 0.05
+                    }
                     ],
                     [{
-                            offset: 0,
-                            color: "#6FD195",
-                            opacity: 0.3
-                        },
-                        {
-                            offset: 100,
-                            color: "#6FD195",
-                            opacity: 0.05
-                        }
+                        offset: 0,
+                        color: "#6FD195",
+                        opacity: 0.3
+                    },
+                    {
+                        offset: 100,
+                        color: "#6FD195",
+                        opacity: 0.05
+                    }
                     ]
                 ]
             }
@@ -11737,15 +11783,15 @@ if ($('#top-deals').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#175FFF", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#A8C4FF", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#175FFF", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#A8C4FF", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -11798,7 +11844,7 @@ if ($('#usage-chart').length > 0) {
                             fontWeight: 700,
                             color: '#111827', // Updated: Dark color text
                             offsetY: 5,
-                            formatter: function(val) {
+                            formatter: function (val) {
                                 return val + "%";
                             }
                         },
@@ -11807,7 +11853,7 @@ if ($('#usage-chart').length > 0) {
                             label: 'Leads',
                             color: '#111827',
                             fontSize: '14px',
-                            formatter: function(w) {
+                            formatter: function (w) {
                                 // Returns the sum or a specific value
                                 return '50%';
                             }
@@ -11927,7 +11973,7 @@ if ($('#Usage-chart').length > 0) {
         tooltip: {
             enabled: true,
             theme: 'dark', // Matches the black tooltip in the screenshot
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex,
@@ -12006,7 +12052,7 @@ if ($('#leads-funnel-chart').length > 0) {
                 fontWeight: 600,
                 colors: ["#333"]
             },
-            formatter: function(val, opts) {
+            formatter: function (val, opts) {
                 const percents = ['33.7%', '25.28%', '16.85%', '11.24%', '8.43%', '4.49%'];
                 return percents[opts.dataPointIndex];
             }
@@ -12038,96 +12084,96 @@ if ($('#leads-funnel-chart').length > 0) {
         },
         annotations: {
             points: [{
-                    x: "New",
-                    y: 40,
-                    marker: {
-                        size: 0
-                    },
-                    label: {
-                        text: "800 Leads",
-                        borderWidth: 0,
-                        style: {
-                            background: "transparent",
-                            color: "#666"
-                        }
-                    }
+                x: "New",
+                y: 40,
+                marker: {
+                    size: 0
                 },
-                {
-                    x: "Contacted",
-                    y: 40,
-                    marker: {
-                        size: 0
-                    },
-                    label: {
-                        text: "600 Leads",
-                        borderWidth: 0,
-                        style: {
-                            background: "transparent",
-                            color: "#666"
-                        }
-                    }
-                },
-                {
-                    x: "Qualified",
-                    y: 40,
-                    marker: {
-                        size: 0
-                    },
-                    label: {
-                        text: "400 Leads",
-                        borderWidth: 0,
-                        style: {
-                            background: "transparent",
-                            color: "#fff",
-                            fontWeight: 700
-                        }
-                    }
-                },
-                {
-                    x: "Converted",
-                    y: 40,
-                    marker: {
-                        size: 0
-                    },
-                    label: {
-                        text: "300 Leads",
-                        borderWidth: 0,
-                        style: {
-                            background: "transparent",
-                            color: "#666"
-                        }
-                    }
-                },
-                {
-                    x: "Won",
-                    y: 40,
-                    marker: {
-                        size: 0
-                    },
-                    label: {
-                        text: "200 Leads",
-                        borderWidth: 0,
-                        style: {
-                            background: "transparent",
-                            color: "#666"
-                        }
-                    }
-                },
-                {
-                    x: "Lost",
-                    y: 40,
-                    marker: {
-                        size: 0
-                    },
-                    label: {
-                        text: "100 Leads",
-                        borderWidth: 0,
-                        style: {
-                            background: "transparent",
-                            color: "#666"
-                        }
+                label: {
+                    text: "800 Leads",
+                    borderWidth: 0,
+                    style: {
+                        background: "transparent",
+                        color: "#666"
                     }
                 }
+            },
+            {
+                x: "Contacted",
+                y: 40,
+                marker: {
+                    size: 0
+                },
+                label: {
+                    text: "600 Leads",
+                    borderWidth: 0,
+                    style: {
+                        background: "transparent",
+                        color: "#666"
+                    }
+                }
+            },
+            {
+                x: "Qualified",
+                y: 40,
+                marker: {
+                    size: 0
+                },
+                label: {
+                    text: "400 Leads",
+                    borderWidth: 0,
+                    style: {
+                        background: "transparent",
+                        color: "#fff",
+                        fontWeight: 700
+                    }
+                }
+            },
+            {
+                x: "Converted",
+                y: 40,
+                marker: {
+                    size: 0
+                },
+                label: {
+                    text: "300 Leads",
+                    borderWidth: 0,
+                    style: {
+                        background: "transparent",
+                        color: "#666"
+                    }
+                }
+            },
+            {
+                x: "Won",
+                y: 40,
+                marker: {
+                    size: 0
+                },
+                label: {
+                    text: "200 Leads",
+                    borderWidth: 0,
+                    style: {
+                        background: "transparent",
+                        color: "#666"
+                    }
+                }
+            },
+            {
+                x: "Lost",
+                y: 40,
+                marker: {
+                    size: 0
+                },
+                label: {
+                    text: "100 Leads",
+                    borderWidth: 0,
+                    style: {
+                        background: "transparent",
+                        color: "#666"
+                    }
+                }
+            }
             ]
         }
     };
@@ -12846,25 +12892,25 @@ if ($('#estimation-trend-chart').length > 0) {
 if ($('#lead-sources-chart').length > 0) {
     var options = {
         series: [{
-                name: 'Web Analytics',
-                data: [2, 3, 3, 1]
-            },
-            {
-                name: 'Phone Calls',
-                data: [1, 1, 1, 2]
-            },
-            {
-                name: 'Referrals',
-                data: [3, 1, 2, 1]
-            },
-            {
-                name: 'Campaigns',
-                data: [1, 1, 1, 3]
-            },
-            {
-                name: 'Google',
-                data: [2, 3, 2, 1]
-            }
+            name: 'Web Analytics',
+            data: [2, 3, 3, 1]
+        },
+        {
+            name: 'Phone Calls',
+            data: [1, 1, 1, 2]
+        },
+        {
+            name: 'Referrals',
+            data: [3, 1, 2, 1]
+        },
+        {
+            name: 'Campaigns',
+            data: [1, 1, 1, 3]
+        },
+        {
+            name: 'Google',
+            data: [2, 3, 2, 1]
+        }
         ],
         chart: {
             height: 280,
@@ -12883,20 +12929,20 @@ if ($('#lead-sources-chart').length > 0) {
                 enableShades: false,
                 colorScale: {
                     ranges: [{
-                            from: 1,
-                            to: 1,
-                            color: '#F3E9D5'
-                        },
-                        {
-                            from: 2,
-                            to: 2,
-                            color: '#F5C77E'
-                        },
-                        {
-                            from: 3,
-                            to: 3,
-                            color: '#FF9800'
-                        }
+                        from: 1,
+                        to: 1,
+                        color: '#F3E9D5'
+                    },
+                    {
+                        from: 2,
+                        to: 2,
+                        color: '#F5C77E'
+                    },
+                    {
+                        from: 3,
+                        to: 3,
+                        color: '#FF9800'
+                    }
                     ]
                 }
             }
@@ -12954,15 +13000,15 @@ if ($('#lead-sources-chart').length > 0) {
 if ($('#sales-rep-chart').length > 0) {
     var options = {
         series: [{
-                name: 'Deals Closed',
-                type: 'column',
-                data: [45, 38, 32, 28, 26, 22]
-            },
-            {
-                name: 'Revenue',
-                type: 'line',
-                data: [290, 240, 200, 175, 160, 145]
-            }
+            name: 'Deals Closed',
+            type: 'column',
+            data: [45, 38, 32, 28, 26, 22]
+        },
+        {
+            name: 'Revenue',
+            type: 'line',
+            data: [290, 240, 200, 175, 160, 145]
+        }
         ],
         chart: {
             height: 280,
@@ -12996,15 +13042,15 @@ if ($('#sales-rep-chart').length > 0) {
                 stops: [0, 100],
                 colorStops: [
                     [{
-                            offset: 0,
-                            color: '#667eea',
-                            opacity: 0.9
-                        },
-                        {
-                            offset: 100,
-                            color: '#667eea',
-                            opacity: 0.6
-                        }
+                        offset: 0,
+                        color: '#667eea',
+                        opacity: 0.9
+                    },
+                    {
+                        offset: 100,
+                        color: '#667eea',
+                        opacity: 0.6
+                    }
                     ],
                     [] // Empty for the second series (the line)
                 ]
@@ -13034,38 +13080,38 @@ if ($('#sales-rep-chart').length > 0) {
             }
         },
         yaxis: [{
-                min: 0,
-                max: 60,
-                tickAmount: 4,
-                axisBorder: {
-                    show: true,
-                    color: '#eef0f2'
-                },
-                labels: {
-                    style: {
-                        colors: '#888'
-                    },
-                    offsetX: -20
-                }
+            min: 0,
+            max: 60,
+            tickAmount: 4,
+            axisBorder: {
+                show: true,
+                color: '#eef0f2'
             },
-            {
-                opposite: true,
-                min: 0,
-                max: 300,
-                tickAmount: 4,
-                axisBorder: {
-                    show: true,
-                    color: '#eef0f2'
+            labels: {
+                style: {
+                    colors: '#888'
                 },
-                labels: {
-                    style: {
-                        colors: '#888'
-                    },
-                    formatter: function(val) {
-                        return "$" + val + "K";
-                    }
+                offsetX: -20
+            }
+        },
+        {
+            opposite: true,
+            min: 0,
+            max: 300,
+            tickAmount: 4,
+            axisBorder: {
+                show: true,
+                color: '#eef0f2'
+            },
+            labels: {
+                style: {
+                    colors: '#888'
+                },
+                formatter: function (val) {
+                    return "$" + val + "K";
                 }
             }
+        }
         ],
         grid: {
             show: true,
@@ -13122,7 +13168,7 @@ if ($('#sales-revenue').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(seriesName) {
+                    formatter: function (seriesName) {
                         return ''
                     }
                 }
@@ -13149,15 +13195,15 @@ if ($('#sales-revenue').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#3AB37E", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#D9D9D900", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#3AB37E", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#D9D9D900", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -13203,7 +13249,7 @@ if ($('#customer-revenue').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(seriesName) {
+                    formatter: function (seriesName) {
                         return ''
                     }
                 }
@@ -13230,15 +13276,15 @@ if ($('#customer-revenue').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#7F24E3", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#D9D9D900", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#7F24E3", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#D9D9D900", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -13284,7 +13330,7 @@ if ($('#target-revenue').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(seriesName) {
+                    formatter: function (seriesName) {
                         return ''
                     }
                 }
@@ -13311,15 +13357,15 @@ if ($('#target-revenue').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#F07019", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#D9D9D900", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#F07019", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#D9D9D900", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -13365,7 +13411,7 @@ if ($('#profit-revenue').length > 0) {
             },
             y: {
                 title: {
-                    formatter: function(seriesName) {
+                    formatter: function (seriesName) {
                         return ''
                     }
                 }
@@ -13392,15 +13438,15 @@ if ($('#profit-revenue').length > 0) {
                 opacityTo: 1,
                 stops: [0, 100],
                 colorStops: [{
-                        offset: 0,
-                        color: "#175FFF", // Top Color (100% in your CSS)
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#D9D9D900", // Bottom Color (0% in your CSS)
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#175FFF", // Top Color (100% in your CSS)
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#D9D9D900", // Bottom Color (0% in your CSS)
+                    opacity: 1
+                }
                 ]
             }
         },
@@ -13463,27 +13509,27 @@ if ($('#conversion-chart').length > 0) {
                 colorStops: [
                     // Color Stops for Series 1 (Green)
                     [{
-                            offset: 3,
-                            color: "#54B17B",
-                            opacity: 0.8
-                        },
-                        {
-                            offset: 100,
-                            color: "#27A55C",
-                            opacity: 0.8
-                        }
+                        offset: 3,
+                        color: "#54B17B",
+                        opacity: 0.8
+                    },
+                    {
+                        offset: 100,
+                        color: "#27A55C",
+                        opacity: 0.8
+                    }
                     ],
                     // Color Stops for Series 2 (Purple)
                     [{
-                            offset: 3,
-                            color: "#A673FD",
-                            opacity: 0.8
-                        },
-                        {
-                            offset: 100,
-                            color: "#7F24E3",
-                            opacity: 0.8
-                        }
+                        offset: 3,
+                        color: "#A673FD",
+                        opacity: 0.8
+                    },
+                    {
+                        offset: 100,
+                        color: "#7F24E3",
+                        opacity: 0.8
+                    }
                     ]
                 ]
             }
@@ -13500,7 +13546,7 @@ if ($('#conversion-chart').length > 0) {
         tooltip: {
             enabled: true,
             y: {
-                formatter: function(seriesName) {
+                formatter: function (seriesName) {
                     return ''
                 }
             },
@@ -13551,60 +13597,60 @@ if ($('#salesperson-chart').length > 0) {
         series: [{
             name: 'Revenue',
             data: [{
-                    x: 'Arlene',
-                    y: 0.8,
-                    goals: [{
-                        value: 0.8,
-                        name: 'Sales',
-                        strokeHeight: 3,
-                        strokeColor: '#F9934D',
-                        strokeLineCap: 'round',
-                    }]
-                },
-                {
-                    x: 'Robert',
-                    y: 3.2,
-                    goals: [{
-                        value: 3.2,
-                        name: 'Sales',
-                        strokeHeight: 3,
-                        strokeColor: '#F9934D',
-                        strokeLineCap: 'round',
-                    }]
-                },
-                {
-                    x: 'Henry',
-                    y: 2.0,
-                    goals: [{
-                        value: 2.0,
-                        name: 'Sales',
-                        strokeHeight: 3,
-                        strokeColor: '#F9934D',
-                        strokeLineCap: 'round',
-                    }]
-                },
-                {
-                    x: 'Fox',
-                    y: 2.8,
-                    goals: [{
-                        value: 2.8,
-                        name: 'Sales',
-                        strokeHeight: 3,
-                        strokeColor: '#F9934D',
-                        strokeLineCap: 'round',
-                    }]
-                },
-                {
-                    x: 'Devon',
-                    y: 4.0,
-                    goals: [{
-                        value: 4.0,
-                        name: 'Sales',
-                        strokeHeight: 3,
-                        strokeColor: '#F9934D',
-                        strokeLineCap: 'round',
-                    }]
-                }
+                x: 'Arlene',
+                y: 0.8,
+                goals: [{
+                    value: 0.8,
+                    name: 'Sales',
+                    strokeHeight: 3,
+                    strokeColor: '#F9934D',
+                    strokeLineCap: 'round',
+                }]
+            },
+            {
+                x: 'Robert',
+                y: 3.2,
+                goals: [{
+                    value: 3.2,
+                    name: 'Sales',
+                    strokeHeight: 3,
+                    strokeColor: '#F9934D',
+                    strokeLineCap: 'round',
+                }]
+            },
+            {
+                x: 'Henry',
+                y: 2.0,
+                goals: [{
+                    value: 2.0,
+                    name: 'Sales',
+                    strokeHeight: 3,
+                    strokeColor: '#F9934D',
+                    strokeLineCap: 'round',
+                }]
+            },
+            {
+                x: 'Fox',
+                y: 2.8,
+                goals: [{
+                    value: 2.8,
+                    name: 'Sales',
+                    strokeHeight: 3,
+                    strokeColor: '#F9934D',
+                    strokeLineCap: 'round',
+                }]
+            },
+            {
+                x: 'Devon',
+                y: 4.0,
+                goals: [{
+                    value: 4.0,
+                    name: 'Sales',
+                    strokeHeight: 3,
+                    strokeColor: '#F9934D',
+                    strokeLineCap: 'round',
+                }]
+            }
             ]
         }],
         chart: {
@@ -13688,15 +13734,15 @@ if ($('#salesperson-chart').length > 0) {
                 opacityTo: 1,
                 colorStops: [
                     [{
-                            offset: 0,
-                            color: "#F07019",
-                            opacity: 1
-                        },
-                        {
-                            offset: 100,
-                            color: "#F9934D",
-                            opacity: 1
-                        }
+                        offset: 0,
+                        color: "#F07019",
+                        opacity: 1
+                    },
+                    {
+                        offset: 100,
+                        color: "#F9934D",
+                        opacity: 1
+                    }
                     ]
                 ]
             },
@@ -13709,7 +13755,7 @@ if ($('#salesperson-chart').length > 0) {
             labels: {
                 offsetX: -10,
                 // Formatter to add the '$' and 'k' suffix
-                formatter: function(value) {
+                formatter: function (value) {
                     return "$" + value + "M";
                 }
             },
@@ -13719,7 +13765,7 @@ if ($('#salesperson-chart').length > 0) {
         },
         tooltip: {
             marker: false,
-            custom: function({
+            custom: function ({
                 series,
                 seriesIndex,
                 dataPointIndex,
@@ -13764,7 +13810,7 @@ if ($('#deals-status-chart').length > 0) {
         },
         dataLabels: {
             enabled: true,
-            formatter: function(val) {
+            formatter: function (val) {
                 return Math.round(val) + "%"; // Displays the percentage inside the slice
             },
             style: {
@@ -13788,7 +13834,7 @@ if ($('#deals-status-chart').length > 0) {
         tooltip: {
             enabled: true,
             y: {
-                formatter: function(val) {
+                formatter: function (val) {
                     return val + "%";
                 }
             }
@@ -13803,13 +13849,13 @@ if ($('#deals-status-chart').length > 0) {
 if ($('#proposal-conversion-rate-chart').length > 0) {
     var options = {
         series: [{
-                name: "High",
-                data: [28, 29, 33, 36, 32, 32, 33, 35, 38, 34, 31, 25]
-            },
-            {
-                name: "Low",
-                data: [12, 11, 14, 18, 17, 13, 13, 15, 18, 16, 14, 10]
-            }
+            name: "High",
+            data: [28, 29, 33, 36, 32, 32, 33, 35, 38, 34, 31, 25]
+        },
+        {
+            name: "Low",
+            data: [12, 11, 14, 18, 17, 13, 13, 15, 18, 16, 14, 10]
+        }
         ],
         chart: {
             height: 350,
@@ -14169,15 +14215,15 @@ if ($('#leave-balance-report-chart-1').length > 0) {
                 opacityTo: 1,
                 stops: [0, 50, 53, 91],
                 colorStops: [{
-                        offset: 0,
-                        color: "#1abe17", // Your pink color
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#1abe178c", // Lighter pink for the gradient end
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#1abe17", // Your pink color
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#1abe178c", // Lighter pink for the gradient end
+                    opacity: 1
+                }
                 ]
             },
         },
@@ -14236,15 +14282,15 @@ if ($('#leave-balance-report-chart-2').length > 0) {
                 opacityTo: 1,
                 stops: [0, 50, 53, 91],
                 colorStops: [{
-                        offset: 0,
-                        color: "#dd2590", // Your pink color
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#dd259054", // Lighter pink for the gradient end
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#dd2590", // Your pink color
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#dd259054", // Lighter pink for the gradient end
+                    opacity: 1
+                }
                 ]
             },
         },
@@ -14303,15 +14349,15 @@ if ($('#leave-balance-report-chart-3').length > 0) {
                 opacityTo: 1,
                 stops: [0, 50, 53, 91],
                 colorStops: [{
-                        offset: 0,
-                        color: "#800080", // Your pink color
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#8000806b", // Lighter pink for the gradient end
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#800080", // Your pink color
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#8000806b", // Lighter pink for the gradient end
+                    opacity: 1
+                }
                 ]
             },
         },
@@ -14370,15 +14416,15 @@ if ($('#leave-balance-report-chart-4').length > 0) {
                 opacityTo: 1,
                 stops: [0, 50, 53, 91],
                 colorStops: [{
-                        offset: 0,
-                        color: "#ef1e1e", // Your pink color
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "#ef1e1e5e", // Lighter pink for the gradient end
-                        opacity: 1
-                    }
+                    offset: 0,
+                    color: "#ef1e1e", // Your pink color
+                    opacity: 1
+                },
+                {
+                    offset: 100,
+                    color: "#ef1e1e5e", // Lighter pink for the gradient end
+                    opacity: 1
+                }
                 ]
             },
         },
