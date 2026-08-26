@@ -1,0 +1,15 @@
+package com.example.Chat.WebSocket;
+
+public enum ChatEventType {
+
+    MESSAGE_CREATED,
+    MESSAGE_UPDATED,
+    MESSAGE_DELETED,
+    ATTACHMENT_ADDED,
+
+    CONVERSATION_READ,
+    CONVERSATION_UNREAD,
+
+    PARTICIPANT_ADDED,
+    PARTICIPANT_REMOVED
+}

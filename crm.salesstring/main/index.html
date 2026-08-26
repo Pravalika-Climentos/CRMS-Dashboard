@@ -1309,7 +1309,7 @@
                         <div class="card flex-fill">
                             <div class="card-body position-relative">
                                 <p class="fw-medium mb-1">Revenue</p>
-                                <h4 class="mb-3">₹15,44,540</h4>
+                               <h4 class="mb-3" id="dashboard-revenue"></h4>
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <span
                                         class="d-inline-flex align-items-center badge rounded-pill badge-soft-success border-0">+2.5%</span>
@@ -1331,7 +1331,7 @@
                         <div class="card flex-fill">
                             <div class="card-body position-relative">
                                 <p class="fw-medium mb-1">Active Deals</p>
-                                <h4 class="mb-3">147</h4>
+                               <h4 class="mb-3" id="dashboard-active-deals"></h4>
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <span
                                         class="d-inline-flex align-items-center badge rounded-pill badge-soft-danger border-0">-21.15%</span>
@@ -1353,7 +1353,7 @@
                         <div class="card flex-fill">
                             <div class="card-body position-relative">
                                 <p class="fw-medium mb-1">Conversion Rate</p>
-                                <h4 class="mb-3">32.8%</h4>
+                                <h4 class="mb-3" id="dashboard-conversion-rate"></h4>
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <span
                                         class="d-inline-flex align-items-center badge rounded-pill badge-soft-success border-0">+15.5%</span>
@@ -1377,7 +1377,7 @@
                                 <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap mb-3">
                                     <div>
                                         <div class="d-flex align-items-center gap-1">
-                                            <h4 class="mb-0">4569</h4>
+                                            <h4 class="mb-0" id="dashboard-total-contacts"></h4>
                                             <span
                                                 class="d-inline-flex align-items-center badge rounded-pill badge-soft-success border-0">+2.5%</span>
                                         </div>
@@ -1421,7 +1421,7 @@
                     <div class="col-xxl-4 col-xl-12 d-flex">
                         <div class="card flex-fill">
                             <div class="card-body">
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                                <!-- <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
                                     <h5 class="mb-0 fs-16 fw-bold d-inline-flex items-center"><span
                                             class="line-title d-block me-2"></span>Top Deals</h5>
                                     <div class="dropdown">
@@ -1481,7 +1481,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Item-4 -->
+                                
                                 <div
                                     class="d-flex align-items-sm-center justify-content-between gap-2 flex-sm-row flex-column mb-3">
                                     <div class="d-flex align-items-center">
@@ -1501,7 +1501,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Item-2 -->
+                                
                                 <div
                                     class="d-flex align-items-sm-center justify-content-between gap-2 flex-sm-row flex-column mb-3">
                                     <div class="d-flex align-items-center">
@@ -1521,7 +1521,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Item-5 -->
+                                
                                 <div
                                     class="d-flex align-items-sm-center justify-content-between gap-2 flex-sm-row flex-column mb-3">
                                     <div class="d-flex align-items-center">
@@ -1543,13 +1543,61 @@
                                 <a class="btn btn-sm btn-light d-flex align-items-center" href="deals.html">
                                     View All<i class="ti ti-chevron-right ms-1"></i>
                                 </a>
-                            </div>
-                        </div>
+                            </div> -->
+
+
+                            <!-- Performance -->
+
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+
+            <h5 class="mb-0 fs-16 fw-bold d-inline-flex align-items-center">
+                <span class="line-title d-block me-2"></span>
+                Performance
+            </h5>
+
+            <a href="javascript:void(0);"
+                class="btn btn-sm btn-icon btn-outline-light">
+                <i class="ti ti-chart-bar"></i>
+            </a>
+
+        </div>
+
+        <!-- Logged-in Executive -->
+        <div id="current-executive-performance"
+            class="p-2 border rounded bg-light mb-2">
+        </div>
+
+        <!-- Other Executives -->
+        <div id="executive-performance-list"
+            class="flex-grow-1">
+        </div>
+
+        <!-- View All -->
+        <!-- <a class="btn btn-sm btn-light d-flex align-items-center mt-3"
+            href="users.html">
+            View All
+            <i class="ti ti-chevron-right ms-1"></i>
+        </a> -->
+
+       <a href="javascript:void(0);"
+            class="btn btn-sm btn-light d-flex align-items-center mt-3"
+            onclick="showComingSoonAlert('Complete Sales Executive Performance details will be available soon.')">
+
+            View All
+
+           <i class="ti ti-chevron-right ms-1"></i>
+
+        </a>
+
+    </div>
+</div>
+                       
                         <!-- end card -->
                     </div>
                     <!-- end col -->
 
-                    <div class="col-xxl-4 col-xl-6 d-flex flex-column">
+           <div class="col-xxl-4 col-xl-6 d-flex flex-column">
                         <div class="card flex-fill">
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
@@ -1573,166 +1621,198 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row g-3 mb-3">
-                                    <div class="col-6 col-sm-3">
-                                        <div>
-                                            <p class="mb-1">Lead</p>
-                                            <p class="text-dark fw-medium mb-1">₹20010</p>
-                                            <p class="mb-0">80 Deals</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <div>
-                                            <p class="mb-1">Proposal</p>
-                                            <p class="text-dark fw-medium mb-1">₹17210</p>
-                                            <p class="mb-0">23 Deals</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <div>
-                                            <p class="mb-1">Sales</p>
-                                            <p class="text-dark fw-medium mb-1">₹9210</p>
-                                            <p class="mb-0">12 Deals</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <div>
-                                            <p class="mb-1">Won</p>
-                                            <p class="text-dark fw-medium mb-1">₹8210</p>
-                                            <p class="mb-0">21 Deals</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="pipelineChart"></div>
+                               <div class="row g-3 mb-3">
+
+    <div class="col-6 col-sm-3">
+        <div>
+            <p class="mb-1" id="pipeline-stage-0-name"></p>
+            <p class="text-dark fw-medium mb-1" id="pipeline-stage-0-amount"></p>
+            <p class="mb-0" id="pipeline-stage-0-deals"></p>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-3">
+        <div>
+            <p class="mb-1" id="pipeline-stage-1-name"></p>
+            <p class="text-dark fw-medium mb-1" id="pipeline-stage-1-amount"></p>
+            <p class="mb-0" id="pipeline-stage-1-deals"></p>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-3">
+        <div>
+            <p class="mb-1" id="pipeline-stage-2-name"></p>
+            <p class="text-dark fw-medium mb-1" id="pipeline-stage-2-amount"></p>
+            <p class="mb-0" id="pipeline-stage-2-deals"></p>
+        </div>
+    </div>
+
+    <div class="col-6 col-sm-3">
+        <div>
+            <p class="mb-1" id="pipeline-stage-3-name"></p>
+            <p class="text-dark fw-medium mb-1" id="pipeline-stage-3-amount"></p>
+            <p class="mb-0" id="pipeline-stage-3-deals"></p>
+        </div>
+    </div>
+
+</div>
+
+<div id="pipelineChart"></div>
                             </div>
                         </div>
                         <div class="card flex-fill">
                             <div class="card-body">
                                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-                                    <h5 class="mb-0 fw-bold d-inline-flex align-items-center gap-1"><span
-                                            class="fw-normal fs-14 text-body">Profit Earned</span> ₹85K </h5>
-                                    <div class="dropdown">
-                                        <a class="dropdown-toggle btn btn-outline-light shadow"
-                                            data-bs-toggle="dropdown" href="javascript:void(0);">
-                                            2025
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end">
-                                            <a href="javascript:void(0);" class="dropdown-item">
-                                                2025
-                                            </a>
-                                            <a href="javascript:void(0);" class="dropdown-item">
-                                                2024
-                                            </a>
-                                            <a href="javascript:void(0);" class="dropdown-item">
-                                                2023
-                                            </a>
-                                        </div>
+                                   <h5 class="mb-0 fw-bold d-inline-flex align-items-center gap-1">
+                                      <span class="fw-normal fs-14 text-body">Profit Earned</span>
+                                      <span id="profit-earned-total"></span>
+                                  </h5>
+                                   <div class="dropdown">
+                                      <a id="profit-year-selector"
+                                          class="dropdown-toggle btn btn-outline-light shadow"
+                                          data-bs-toggle="dropdown"
+                                          href="javascript:void(0);">
+                                      </a>
+
+                                   <div class="dropdown-menu dropdown-menu-end"
+                                         id="profit-year-menu">
+                                     </div>
+                                </div>
                                     </div>
                                 </div>
                                 <div id="profit-chart"></div>
                             </div>
-                        </div>
+                        
                         <!-- end card -->
                     </div>
                     <!-- end col -->
 
                     <div class="col-xxl-4 col-xl-6 d-flex">
-                        <div class="card flex-fill">
-                            <div class="card-body">
+                       <div class="card flex-fill">
+    <div class="card-body">
 
-                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-                                    <h5 class="mb-0 fs-16 fw-bold d-inline-flex items-center"><span
-                                            class="line-title d-block me-2"></span>Deals Overview</h5>
-                                    <a href="deals.html" class="btn btn-sm btn-icon btn-outline-light"><i
-                                            class="ti ti-arrow-right"></i></a>
-                                </div>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h5 class="mb-0 fs-16 fw-bold d-inline-flex items-center">
+                <span class="line-title d-block me-2"></span>
+                Deals Overview
+            </h5>
 
-                                <div class="progress-stacked progress-md bg-white gap-1 mb-3">
-                                    <div class="progress-bar bg-success rounded overflow-hidden" role="progressbar"
-                                        style="width: 30%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                    <div class="progress-bar bg-secondary rounded overflow-hidden" role="progressbar"
-                                        style="width: 35%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                    <div class="progress-bar bg-purple rounded overflow-hidden" role="progressbar"
-                                        style="width: 25%" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                    <div class="progress-bar bg-danger rounded overflow-hidden" role="progressbar"
-                                        style="width: 10%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                    </div>
-                                </div>
+            <!-- <a href="deals.html" class="btn btn-sm btn-icon btn-outline-light">
+                <i class="ti ti-arrow-right"></i>
+            </a> -->
+           <a href="javascript:void(0);"
+              class="btn btn-sm btn-icon btn-outline-light"
+              onclick="showComingSoonAlert('Complete Deals Overview details will be available soon.')">
 
-                                <div class="mb-4">
-                                    <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
-                                        <h4 class="mb-0">2656</h4>
-                                        <span
-                                            class="d-inline-flex align-items-center badge rounded-pill badge-soft-success border-0">+12.5%</span>
-                                        <p class="mb-0">compared to last week</p>
-                                    </div>
+              <i class="ti ti-arrow-right"></i>
 
-                                    <div class="p-2 d-flex align-items-center justify-content-between border-bottom">
-                                        <p class="text-dark d-flex align-items-center mb-0"><i
-                                                class="ti ti-circle-filled text-teal fs-8 me-1"></i>Successful Deals</p>
-                                        <p class="text-dark mb-0">1000 Deals</p>
-                                    </div>
+           </a>
+        </div>
 
-                                    <div class="p-2 d-flex align-items-center justify-content-between border-bottom">
-                                        <p class="text-dark d-flex align-items-center mb-0"><i
-                                                class="ti ti-circle-filled text-secondary fs-8 me-1"></i>Pending Deals
-                                        </p>
-                                        <p class="text-dark mb-0">1056 Deals</p>
-                                    </div>
+        <div class="progress-stacked progress-md bg-white gap-1 mb-3">
 
-                                    <div class="p-2 d-flex align-items-center justify-content-between border-bottom">
-                                        <p class="text-dark d-flex align-items-center mb-0"><i
-                                                class="ti ti-circle-filled text-purple fs-8 me-1"></i>Rejected Deals</p>
-                                        <p class="text-dark mb-0">500 Deals</p>
-                                    </div>
+            <div id="deal-progress-0"
+                class="progress-bar bg-success rounded overflow-hidden"
+                role="progressbar">
+            </div>
 
-                                    <div class="p-2 d-flex align-items-center justify-content-between">
-                                        <p class="text-dark d-flex align-items-center mb-0"><i
-                                                class="ti ti-circle-filled text-danger fs-8 me-1"></i>Upcoming Deals</p>
-                                        <p class="text-dark mb-0">100 Deals</p>
-                                    </div>
-                                </div>
+            <div id="deal-progress-1"
+                class="progress-bar bg-secondary rounded overflow-hidden"
+                role="progressbar">
+            </div>
 
-                                <div
-                                    class="p-3 border rounded bg-light d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <p class="mb-1">Deals Won</p>
-                                        <h4 class="mb-0">689</h4>
-                                    </div>
-                                    <div class="avatar-group avatar-group-sm">
-                                        <a href="#"
-                                            class="avatar avatar-rounded border bg-white p-1 d-inline-flex align-items-center justify-content-center">
-                                            <img class="w-auto h-auto img-fluid" src="assets/img/company/company-09.svg"
-                                                alt="img">
-                                        </a>
-                                        <a href="#"
-                                            class="avatar avatar-rounded border bg-white p-1 d-inline-flex align-items-center justify-content-center">
-                                            <img class="w-auto h-auto img-fluid" src="assets/img/company/company-10.svg"
-                                                alt="img">
-                                        </a>
-                                        <a href="#"
-                                            class="avatar avatar-rounded border bg-white p-1 d-inline-flex align-items-center justify-content-center">
-                                            <img class="w-auto h-auto img-fluid" src="assets/img/company/company-01.svg"
-                                                alt="img">
-                                        </a>
-                                        <a href="#"
-                                            class="avatar avatar-rounded border bg-white p-1 d-inline-flex align-items-center justify-content-center">
-                                            <img class="w-auto h-auto img-fluid" src="assets/img/company/company-02.svg"
-                                                alt="img">
-                                        </a>
-                                        <a href="#"
-                                            class="avatar avatar-rounded border bg-white p-1 d-inline-flex align-items-center justify-content-center">
-                                            <img class="w-auto h-auto img-fluid" src="assets/img/company/company-11.svg"
-                                                alt="img">
-                                        </a>
-                                    </div>
-                                </div>
+            <div id="deal-progress-2"
+                class="progress-bar bg-purple rounded overflow-hidden"
+                role="progressbar">
+            </div>
 
-                            </div>
-                        </div>
+            <div id="deal-progress-3"
+                class="progress-bar bg-danger rounded overflow-hidden"
+                role="progressbar">
+            </div>
+
+        </div>
+
+        <div class="mb-4">
+
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-3">
+
+                <h4 class="mb-0" id="deals-overview-total"></h4>
+
+                <span
+                    id="deals-overview-change"
+                    class="d-inline-flex align-items-center badge rounded-pill badge-soft-success border-0">
+                </span>
+
+                <p class="mb-0">
+                    compared to last week
+                </p>
+
+            </div>
+
+            <div class="p-2 d-flex align-items-center justify-content-between border-bottom">
+
+                <p class="text-dark d-flex align-items-center mb-0">
+                    <i class="ti ti-circle-filled text-teal fs-8 me-1"></i>
+                    <span id="deal-status-0-name"></span>
+                </p>
+
+                <p class="text-dark mb-0" id="deal-status-0-count"></p>
+
+            </div>
+
+            <div class="p-2 d-flex align-items-center justify-content-between border-bottom">
+
+                <p class="text-dark d-flex align-items-center mb-0">
+                    <i class="ti ti-circle-filled text-secondary fs-8 me-1"></i>
+                    <span id="deal-status-1-name"></span>
+                </p>
+
+                <p class="text-dark mb-0" id="deal-status-1-count"></p>
+
+            </div>
+
+            <div class="p-2 d-flex align-items-center justify-content-between border-bottom">
+
+                <p class="text-dark d-flex align-items-center mb-0">
+                    <i class="ti ti-circle-filled text-purple fs-8 me-1"></i>
+                    <span id="deal-status-2-name"></span>
+                </p>
+
+                <p class="text-dark mb-0" id="deal-status-2-count"></p>
+
+            </div>
+
+            <div class="p-2 d-flex align-items-center justify-content-between">
+
+                <p class="text-dark d-flex align-items-center mb-0">
+                    <i class="ti ti-circle-filled text-danger fs-8 me-1"></i>
+                    <span id="deal-status-3-name"></span>
+                </p>
+
+                <p class="text-dark mb-0" id="deal-status-3-count"></p>
+
+            </div>
+
+        </div>
+
+        <div
+            class="p-3 border rounded bg-light d-flex align-items-center justify-content-between">
+
+            <div>
+                <p class="mb-1">Deals Won</p>
+                <h4 class="mb-0" id="deals-won-count"></h4>
+            </div>
+
+            <div
+                class="avatar-group avatar-group-sm"
+                id="deals-company-avatars">
+            </div>
+
+        </div>
+
+    </div>
+</div>
                         <!-- end card -->
                     </div>
                     <!-- end col -->
@@ -1749,9 +1829,17 @@
                                 <div class="d-flex align-items-center justify-content-between flex-wrap row-gap-3 mb-3">
                                     <h5 class="mb-0 fs-16 fw-bold d-inline-flex items-center"><span
                                             class="line-title d-block me-2"></span>Recent Deals</h5>
-                                    <a class="btn btn-sm btn-light d-inline-flex align-items-center" href="deals.html">
+                                    <!-- <a class="btn btn-sm btn-light d-inline-flex align-items-center" href="deals.html">
                                         View All<i class="ti ti-chevron-right ms-1"></i>
-                                    </a>
+                                    </a> -->
+
+                                  <a href="javascript:void(0);"
+                                    class="btn btn-sm btn-light d-inline-flex align-items-center"
+                                    onclick="showComingSoonAlert('Complete Deals Overview details will be available soon.')">
+                                   View All
+                                 <i class="ti ti-chevron-right ms-1"></i>
+
+                                 </a>
                                 </div>
                                 <div class="table-responsive custom-table">
                                     <table class="table table-bordered dataTable table-nowrap" id="deal-project">
@@ -1807,7 +1895,7 @@
     </div>
     <!-- End Wrapper -->
 
-
+ 
     <!-- jQuery -->
     <script src="assets/js/jquery-3.7.1.min.js"></script>
 
@@ -1821,7 +1909,7 @@
     <script src="assets/plugins/datatables/js/jquery.dataTables.min.js"></script>
     <script src="assets/plugins/datatables/js/dataTables.bootstrap5.min.js"></script>
     <script src="assets/plugins/apexchart/dashboard.js"></script>
-    <script src="assets/plugins/testing-dashboard-data/dashboard_demo_data.js"></script>
+    <!-- <script src="assets/plugins/testing-dashboard-data/dashboard_demo_data.js"></script> -->
 
     <!-- Daterangepicker JS -->
     <script src="assets/js/moment.min.js"></script>
@@ -1832,7 +1920,8 @@
     <script src="assets/plugins/apexchart/chart-data.js"></script>
 
     <!-- Custom Json Js -->
-    <script src="assets/json/dashboard.js"></script>
+    <script src="assets/js/api.js"></script>
+     <script src="assets/json/dashboard.js"></script> 
 
     <!-- Main JS -->
     <script src="assets/js/script.js"></script>
