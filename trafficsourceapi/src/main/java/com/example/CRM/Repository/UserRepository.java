@@ -1,5 +1,6 @@
 package com.example.CRM.Repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -51,4 +52,46 @@ long countActiveUsersByIds(
         @Param("userIds") Collection<Long> userIds
 );
 
+List<User> findAllByUserIdInAndActiveTrue(
+        Collection<Long> userIds
+);
+
+@Query(
+    value = """
+            SELECT user
+            FROM User user
+            WHERE user.active = true
+              AND user.userId <> :currentUserId
+              AND (
+                    :search = ''
+                    OR LOWER(user.fullName) LIKE
+                        LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(user.email) LIKE
+                        LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(COALESCE(user.designation, '')) LIKE
+                        LOWER(CONCAT('%', :search, '%'))
+              )
+            ORDER BY user.fullName ASC
+            """,
+    countQuery = """
+            SELECT COUNT(user)
+            FROM User user
+            WHERE user.active = true
+              AND user.userId <> :currentUserId
+              AND (
+                    :search = ''
+                    OR LOWER(user.fullName) LIKE
+                        LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(user.email) LIKE
+                        LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(COALESCE(user.designation, '')) LIKE
+                        LOWER(CONCAT('%', :search, '%'))
+              )
+            """
+)
+Page<User> searchActiveCalendarUsers(
+        @Param("search") String search,
+        @Param("currentUserId") Long currentUserId,
+        Pageable pageable
+);
 }

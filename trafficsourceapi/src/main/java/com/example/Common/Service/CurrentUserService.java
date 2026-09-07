@@ -19,15 +19,9 @@ public class CurrentUserService {
     @Value("${chat.default-dev-user-id:1}")
     private Long defaultDevUserId;
 
-    /*
-     * Explicit constructor.
-     *
-     * This avoids relying on Lombok to initialize the
-     * final HttpServletRequest field.
-     */
-    public CurrentUserService(
-            HttpServletRequest request
-    ) {
+    
+    public CurrentUserService(HttpServletRequest request)
+    {
         this.request = request;
     }
 

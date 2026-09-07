@@ -21,4 +21,6 @@ public class ApiErrorResponse {
     private String path;
 
     private Map<String, String> validationErrors;
+
+    private String code;
 }

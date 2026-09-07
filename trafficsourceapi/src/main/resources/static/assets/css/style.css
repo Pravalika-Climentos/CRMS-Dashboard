@@ -17149,4 +17149,144 @@ th.fc-day-header {
     background: transparent !important;
 }
 
+#team_event .modal-dialog {
+    max-width: 900px;
+}
+
+#team_event .modal-content {
+    max-height: 90vh;
+}
+
+#team_event .modal-body {
+    overflow-y: auto;
+    max-height: calc(90vh - 130px);
+}
+
+#team_event #teAvailability {
+    max-height: none;
+}
+
+/* =========================================================
+   CALENDAR COLORS
+   ========================================================= */
+
+/* Category color dot */
+.category-color-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+
+/* Status badges */
+.status-badge {
+    display: inline-block !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+
+/* Make Bootstrap status colors always visible */
+#eventMyStatus.bg-success,
+#eventMyStatus.bg-danger,
+#eventMyStatus.bg-warning,
+#eventMyStatus.bg-primary,
+#eventMyStatus.bg-secondary,
+#eventMyStatus.bg-dark {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+
+/* Selected availability slot */
+.choose-slot.active {
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+    color: #ffffff !important;
+}
+
+
+/* Normal availability slot */
+.choose-slot:not(.active) {
+    background-color: transparent;
+}
+
+
+/* Calendar event text */
+.fc-event {
+    cursor: pointer;
+}
+
+
+/* Make event title readable */
+.fc-event-title,
+.fc-event-time {
+    font-weight: 500;
+}
+
+
+/* Participant status badge */
+#eventParticipantsList .badge {
+    display: inline-block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+
+/* Status spacing */
+#eventParticipantsList .badge {
+    margin-left: 5px;
+}
+
+
+/* My response spacing */
+#eventMyStatus {
+    margin-left: 4px;
+}
+
+/* Calendar category items */
+.calendar-category-item {
+    display: flex;
+    align-items: center;
+    padding: 7px 9px;
+    border-radius: 6px;
+    color: #212529;
+    user-select: none;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+/* Hover */
+.calendar-category-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* While dragging */
+.calendar-category-item:active {
+    cursor: grabbing !important;
+    transform: scale(0.98);
+}
+
+/* Selected category */
+.calendar-category-item.active {
+    background-color: #eef2ff;
+    font-weight: 600;
+}
+/* Calendar category events */
+#calendar .fc-daygrid-event {
+    border-radius: 4px;
+    padding: 2px 5px;
+}
+
+#calendar .fc-daygrid-event .fc-event-title,
+#calendar .fc-daygrid-event .fc-event-time {
+    font-weight: 600;
+}
 /*# sourceMappingURL=style.css.map */

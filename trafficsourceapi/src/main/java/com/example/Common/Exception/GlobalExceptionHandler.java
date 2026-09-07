@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import jakarta.validation.ConstraintViolationException;
 
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
@@ -129,6 +130,90 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    // =========================================================
+// 403 - PERMISSION DENIED
+// =========================================================
+
+@ExceptionHandler(ForbiddenOperationException.class)
+public ResponseEntity<ApiErrorResponse> handleForbidden(
+        ForbiddenOperationException ex,
+        HttpServletRequest request
+) {
+    ApiErrorResponse response =
+            buildError(
+                    HttpStatus.FORBIDDEN,
+                    "FORBIDDEN",
+                    ex.getMessage(),
+                    request.getRequestURI(),
+                    null
+            );
+
+    return ResponseEntity
+            .status(HttpStatus.FORBIDDEN)
+            .body(response);
+}
+
+
+// =========================================================
+// 409 - BUSINESS / VERSION CONFLICT
+// =========================================================
+
+@ExceptionHandler(ConflictException.class)
+public ResponseEntity<ApiErrorResponse> handleConflict(
+        ConflictException ex,
+        HttpServletRequest request
+) {
+    ApiErrorResponse response =
+            buildError(
+                    HttpStatus.CONFLICT,
+                    ex.getCode(),
+                    ex.getMessage(),
+                    request.getRequestURI(),
+                    null
+            );
+
+    return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(response);
+}
+
+
+// =========================================================
+// 400 - PATH AND QUERY PARAMETER VALIDATION
+// =========================================================
+
+@ExceptionHandler(ConstraintViolationException.class)
+public ResponseEntity<ApiErrorResponse> handleConstraintViolation(
+        ConstraintViolationException ex,
+        HttpServletRequest request
+) {
+    Map<String, String> validationErrors =
+            new LinkedHashMap<>();
+
+    ex.getConstraintViolations()
+            .forEach(violation ->
+                    validationErrors.put(
+                            violation
+                                    .getPropertyPath()
+                                    .toString(),
+                            violation.getMessage()
+                    )
+            );
+
+    ApiErrorResponse response =
+            buildError(
+                    HttpStatus.BAD_REQUEST,
+                    "VALIDATION_FAILED",
+                    "Request parameter validation failed.",
+                    request.getRequestURI(),
+                    validationErrors
+            );
+
+    return ResponseEntity
+            .badRequest()
+            .body(response);
+}
+
 
     // =========================================================
     // 500 - INTERNAL SERVER ERROR
@@ -184,4 +269,44 @@ public class GlobalExceptionHandler {
                 .validationErrors(validationErrors)
                 .build();
     }
+
+    private ApiErrorResponse buildError(
+        HttpStatus status,
+        String code,
+        String message,
+        String path,
+        Map<String, String> validationErrors
+) {
+    return ApiErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(status.value())
+            .error(status.getReasonPhrase())
+            .code(code)
+            .message(message)
+            .path(path)
+            .validationErrors(validationErrors)
+            .build();
+}
+
+private String defaultErrorCode(
+        HttpStatus status
+) {
+    return switch (status) {
+        case BAD_REQUEST ->
+                "INVALID_REQUEST";
+
+        case NOT_FOUND ->
+                "RESOURCE_NOT_FOUND";
+
+        case PAYLOAD_TOO_LARGE ->
+                "FILE_TOO_LARGE";
+
+        case INTERNAL_SERVER_ERROR ->
+                "INTERNAL_ERROR";
+
+        default ->
+                status.name();
+    };
+}
+
 }
