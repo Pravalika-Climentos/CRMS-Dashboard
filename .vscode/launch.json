@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "TrafficsourceapiApplication",
+            "request": "launch",
+            "mainClass": "com.example.TrafficsourceapiApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-TrafficsourceapiApplication<trafficsourceapi>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.TrafficsourceapiApplication",
+            "projectName": "trafficsourceapi",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
