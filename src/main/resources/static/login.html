@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sign In | CRMS</title>
+  <link rel="icon" href="assets/img/favicon.png">
+  <link rel="stylesheet" href="assets/plugins/tabler-icons/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/auth.css">
+</head>
+<body class="auth-page">
+<main class="auth-shell">
+  <section class="auth-brand">
+    <div class="auth-brand-content">
+      <img class="auth-logo" src="assets/img/logo-white.svg" alt="CRMS">
+      <h1>Welcome back to your CRM.</h1>
+      <p>Manage customer relationships, conversations, calendars and calls from one secure workspace.</p>
+      <div class="auth-point"><i class="ti ti-shield-check"></i><span>Secure account authentication</span></div>
+      <div class="auth-point"><i class="ti ti-message-circle"></i><span>Communication in one place</span></div>
+      <div class="auth-point"><i class="ti ti-chart-line"></i><span>Clear visibility across your business</span></div>
+    </div>
+  </section>
+  <section class="auth-panel">
+    <div class="auth-card">
+      <h2 id="authTitle">Sign in</h2><p id="authSubtitle">Enter your account details to continue.</p>
+      <div id="authMessage" class="auth-message" role="alert"></div>
+      <form id="loginForm">
+        <div id="nameGroup" hidden>
+          <label for="fullName">Full name</label>
+          <input id="fullName" type="text" autocomplete="name" maxlength="150">
+        </div>
+        <label for="email">Email address</label>
+        <input id="email" type="email" autocomplete="email" required>
+        <label for="password">Password</label>
+        <div class="password-field"><input id="password" type="password" autocomplete="current-password" required>
+          <button type="button" id="togglePassword" aria-label="Show password"><i class="ti ti-eye"></i></button></div>
+        <button class="auth-btn" id="loginBtn" type="submit">Sign in</button>
+      </form>
+      <div class="auth-switch">
+        <span id="authSwitchText">Don't have an account?</span>
+        <button type="button" id="authModeBtn">Create account</button>
+      </div>
+      <div class="auth-footer">© <span id="year"></span> CRMS. All rights reserved.</div>
+    </div>
+  </section>
+</main>
+<script src="assets/js/auth-client.js"></script>
+<script src="assets/js/login.js"></script>
+</body>
+</html>

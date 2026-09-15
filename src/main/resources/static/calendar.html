@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Calendar | CRMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/plugins/tabler-icons/tabler-icons.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="assets/plugins/simplebar/simplebar.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/plugins/flatpickr/flatpickr.min.css">
+    <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
+    <link rel="stylesheet" href="assets/css/style.css" id="app-style">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="assets/img/favicon.png">
+
+    <!-- Apple Icon -->
+    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
+
+    <!-- Theme Config Js -->
+    <script src="assets/js/theme-script.js"></script>
+    <script src="assets/js/auth-guard.js"></script>
+
+</head>
+
+<body>
+
+    <div class="main-wrapper">
+
+        <!-- Topbar -->
+        <header class="navbar-header">
+            <div class="page-container topbar-menu">
+                <div class="d-flex align-items-center gap-2">
+                    <a href="index.html" class="logo">
+                        <span class="logo-light">
+                            <span class="logo-lg"><img src="assets/img/logo.svg" alt="logo"></span>
+                            <span class="logo-sm"><img src="assets/img/logo-small.svg" alt="small logo"></span>
+                        </span>
+                        <span class="logo-dark"><span class="logo-lg"><img src="assets/img/logo-white.svg"
+                                    alt="dark logo"></span></span>
+                    </a>
+                    <a id="mobile_btn" class="mobile-btn" href="#sidebar"><i class="ti ti-menu-deep fs-24"></i></a>
+                    <button class="sidenav-toggle-btn btn border-0 p-0" id="toggle_btn2"><i
+                            class="ti ti-arrow-bar-to-right"></i></button>
+                </div>
+
+                <div class="d-flex align-items-center">
+
+                    <!-- Invitations bell: GET /invitations/summary for the count, GET /invitations?status=PENDING for the list -->
+                   <div class="header-item">
+                        <button type="button"
+                                class="btn topbar-link position-relative
+                                    d-flex align-items-center justify-content-center me-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#invitations_modal"
+                                title="Pending Invitations"
+                                aria-label="Open pending invitations"
+                                style="width:44px; height:44px;">
+
+                            <i class="ti ti-calendar-event"
+                            style="font-size:26px;"></i>
+
+                            <span id="invitationBadge"
+                                class="position-absolute badge rounded-pill
+                                        bg-danger border border-2 border-white"
+                                style="
+                                    display:none;
+                                    top:-5px;
+                                    right:-7px;
+                                    min-width:23px;
+                                    height:23px;
+                                    padding:3px 6px;
+                                    font-size:12px;
+                                    font-weight:700;
+                                    line-height:15px;
+                                    box-shadow:0 2px 6px rgba(220,53,69,.45);
+                                    z-index:2;
+                                ">
+                                0
+                            </span>
+                        </button>
+                    </div>
+                    <!-- Time-change requests: GET /time-change-requests?scope=received|sent -->
+                  <div class="header-item">
+                        <button type="button"
+                                class="btn topbar-link position-relative
+                                    d-flex align-items-center justify-content-center me-2"
+                                data-bs-toggle="modal"
+                                data-bs-target="#tcr_modal"
+                                title="Time Change Requests"
+                                aria-label="Open time change requests"
+                                style="width:44px; height:44px;">
+
+                            <i class="ti ti-clock-edit"
+                            style="font-size:26px;"></i>
+
+                            <span id="tcrBadge"
+                                class="position-absolute badge rounded-pill
+                                        bg-danger border border-2 border-white"
+                                style="
+                                    display:none;
+                                    top:-5px;
+                                    right:-7px;
+                                    min-width:23px;
+                                    height:23px;
+                                    padding:3px 6px;
+                                    font-size:12px;
+                                    font-weight:700;
+                                    line-height:15px;
+                                    box-shadow:0 2px 6px rgba(220,53,69,.45);
+                                    z-index:2;
+                                ">
+                                0
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="dropdown profile-dropdown d-flex align-items-center justify-content-center">
+                        <a href="javascript:void(0);"
+                            class="topbar-link dropdown-toggle drop-arrow-none position-relative"
+                            data-bs-toggle="dropdown">
+                            <img src="assets/img/users/user-40.jpg" width="38" class="rounded-1 d-flex"
+                                alt="user-image">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-md p-2">
+                            <a href="profile-settings.html" class="dropdown-item"><i
+                                    class="ti ti-user-circle me-1"></i>Profile Settings</a>
+                            <a href="login.html" class="dropdown-item text-danger"><i class="ti ti-logout me-1"></i>Sign
+                                Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- /Topbar -->
+
+        <!-- Sidenav (trimmed to the live part of the template; the rest of the theme's menu is commented out in the source) -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div>
+                    <a href="index.html" class="logo logo-normal"><img src="assets/img/logo.svg" alt="Logo"></a>
+                    <a href="index.html" class="logo-small"><img src="assets/img/logo-small.svg" alt="Logo"></a>
+                    <a href="index.html" class="dark-logo"><img src="assets/img/logo-white.svg" alt="Logo"></a>
+                </div>
+                <button class="sidenav-toggle-btn btn border-0 p-0 active" id="toggle_btn"><i
+                        class="ti ti-arrow-bar-to-left"></i></button>
+                <button class="sidebar-close"><i class="ti ti-x align-middle"></i></button>
+            </div>
+            <div class="sidebar-inner" data-simplebar>
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title"><span>Main Menu</span></li>
+                        <li>
+                            <ul>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);"><i
+                                            class="ti ti-dashboard"></i><span>Dashboard</span><span
+                                            class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="index.html">Dashboard</a></li>
+                                    </ul>
+                                </li>
+                                <li class="submenu">
+                                    <a href="javascript:void(0);" class="active subdrop"><i
+                                            class="ti ti-brand-airtable"></i><span>Applications</span><span
+                                            class="menu-arrow"></span></a>
+                                    <ul>
+                                        <li><a href="chat.html">Chat</a></li>
+                                        <li><a href="calls.html">Calls</a></li>
+                                        <li><a href="calendar.html" class="active">Calendar</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Sidenav -->
+
+        <div class="page-wrapper">
+            <div class="content content-two">
+
+                <div class="d-flex align-items-center justify-content-between gap-2 mb-4 flex-wrap">
+                    <div>
+                        <h4 class="mb-1">Calendar</h4>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0 p-0">
+                                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                                <li class="breadcrumb-item"><a href="javascript:void(0);">Applications</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">Calendar</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="gap-2 d-flex align-items-center flex-wrap">
+                        <a href="javascript:void(0);" class="btn btn-outline-light shadow" data-bs-toggle="modal"
+                            data-bs-target="#teams_modal">
+                            <i class="ti ti-users-group me-1"></i>Teams
+                        </a>
+                        <a href="javascript:void(0);" class="btn btn-icon btn-outline-light shadow"
+                            id="refreshCalendarBtn" data-bs-toggle="tooltip" title="Refresh"><i
+                                class="ti ti-refresh"></i></a>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#team_event" class="btn btn-primary">
+                            <i class="ti ti-circle-plus me-1"></i>Create Event
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xxl-3 col-xl-4">
+                        <div class="card">
+                            <div class="card-body p-3">
+
+                                <!-- Categories: GET /categories to list, POST /categories to add, PATCH /categories/{id} to rename/deactivate -->
+                                <div class="border-bottom pb-4 mb-4">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                        <h5>Categories</h5>
+                                        <a href="#" class="link-primary" data-bs-toggle="modal"
+                                            data-bs-target="#add_category"><i
+                                                class="ti ti-square-rounded-plus-filled fs-16"></i></a>
+                                    </div>
+                                    <p class="fs-12 mb-2"> Click a category to create an event, or drag it onto the
+                                        calendar to schedule.</p>
+                                    <div id="categoryList">
+                                        <p class="text-muted fs-12">Loading categories...</p>
+                                    </div>
+                                </div>
+
+                                <!-- Upcoming events: GET /events/upcoming?limit=5 -->
+                                <div class="border-bottom pb-2 mb-4">
+                                    <h5 class="mb-2">
+                                        Upcoming Event
+                                        <span class="badge badge-success rounded-pill ms-2"
+                                            id="upcomingEventCount">0</span>
+                                    </h5>
+                                    <div id="upcomingEventsList">
+                                        <p class="text-muted fs-12">Loading upcoming events...</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xxl-9 col-xl-8">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Add / Edit Event: POST /events on create, PATCH /events/{id} on edit -->
+        <div class="modal fade" id="add_event">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="mb-0" id="eventModalHeading">Add New Event</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Event Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="ev_title">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="ev_category">
+                                        <option value="">No category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Event Date <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="ev_date" data-provider="flatpickr"
+                                        data-date-format="Y-m-d" placeholder="yyyy-mm-dd">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Start Time <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="ev_start_time" step="900">
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label">End Time <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="ev_end_time" step="900">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" id="ev_location">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Meeting link</label>
+                                    <input type="url" class="form-control" id="ev_link"
+                                        placeholder="https://meet.google.com/...">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold" for="ev_invitees">
+                                        <i class="ti ti-user-plus me-1"></i>
+                                        Add participants
+                                    </label>
+
+                                    <select class="select2" id="ev_invitees" multiple style="width:100%;"
+                                        data-placeholder="Search and add people or teams...">
+                                    </select>
+
+                                    <small class="text-muted">
+                                        Search and select people or teams to invite.
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div id="evValidationErrors" class="alert alert-danger" style="display:none;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-md btn-light me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" id="save_event_btn" class="btn btn-md btn-primary">Add Event</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Event wizard: GET /team-calendar for availability, POST /availability/check, POST /events -->
+        <!-- Create Event: 4-step scheduling wizard -->
+        <div class="modal fade" id="team_event" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+
+                    <!-- HEADER -->
+                    <div class="modal-header">
+                        <div>
+                            <h6 class="mb-1" id="teamEventTitle">
+                                Step 1: Select people or teams
+                            </h6>
+
+                            <div class="d-flex gap-2 small text-muted">
+                                <span id="teProgress1" class="fw-semibold">1 Participants</span>
+                                <span>›</span>
+                                <span id="teProgress2">2 Details</span>
+                                <span>›</span>
+                                <span id="teProgress3">3 Time</span>
+                                <span>›</span>
+                                <span id="teProgress4">4 Review</span>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- BODY -->
+                    <div class="modal-body">
+
+                        <!-- ========================================= -->
+                        <!-- STEP 1 : PARTICIPANTS -->
+                        <!-- ========================================= -->
+
+                        <div id="teStep1">
+
+                            <h6 class="mb-1">Select participants</h6>
+
+                            <p class="text-muted fs-13 mb-3">
+                                Select the people or teams you want to invite.
+                            </p>
+
+                            <label class="form-label fw-semibold" for="te_invitees">
+                                <i class="ti ti-user-plus me-1"></i>
+                                Add participants
+                            </label>
+
+                            <select class="select2" id="te_invitees" multiple style="width:100%;"
+                                data-placeholder="Search and add people or teams...">
+                            </select>
+
+                            <small class="text-muted d-block mt-2">
+                                Selecting a team will include its members.
+                            </small>
+
+                            <div id="teParticipantError" class="alert alert-danger mt-3" style="display:none;">
+                            </div>
+
+                        </div>
+
+
+                        <!-- ========================================= -->
+                        <!-- STEP 2 : EVENT DETAILS + DURATION -->
+                        <!-- ========================================= -->
+
+                        <div id="teStep2" style="display:none;">
+
+                            <h6 class="mb-1">Event details</h6>
+
+                            <p class="text-muted fs-13 mb-3">
+                                Enter the event details and choose how long it should last.
+                            </p>
+
+                            <!-- Event name -->
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Event Name <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text" class="form-control" id="te_title" placeholder="Enter event name">
+                            </div>
+
+
+                            <!-- Category -->
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Category
+                                </label>
+
+                                <select class="form-select" id="te_category">
+
+                                    <option value="">
+                                        No category
+                                    </option>
+
+                                </select>
+                            </div>
+
+
+                            <!-- Duration -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Duration
+                                </label>
+
+                                <select class="form-select" id="te_duration">
+
+                                    <option value="15">
+                                        15 minutes
+                                    </option>
+
+                                    <option value="30" selected>
+                                        30 minutes
+                                    </option>
+
+                                    <option value="45">
+                                        45 minutes
+                                    </option>
+
+                                    <option value="60">
+                                        1 hour
+                                    </option>
+
+                                    <option value="90">
+                                        1 hour 30 minutes
+                                    </option>
+
+                                    <option value="120">
+                                        2 hours
+                                    </option>
+
+                                    <option value="custom">
+                                        Custom
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- Custom duration -->
+
+                            <div id="teCustomDuration" class="border rounded p-3 mb-3" style="display:none;">
+
+                                <label class="form-label fw-semibold">
+                                    Custom duration
+                                </label>
+
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <label class="form-label fs-13">
+                                            Hours
+                                        </label>
+
+                                        <input type="number" class="form-control" id="te_duration_hours" min="0" max="8"
+                                            step="1" value="0">
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label fs-13">
+                                            Minutes
+                                        </label>
+
+                                        <select class="form-select" id="te_duration_minutes">
+
+                                            <option value="0">00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <small class="text-muted d-block mt-2">
+                                    Minimum 15 minutes, maximum 8 hours.
+                                    Duration must use 15-minute increments.
+                                </small>
+
+                            </div>
+
+
+                            <!-- Timezone -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Timezone
+                                </label>
+
+                                <select class="form-select" id="te_timezone">
+
+                                    <option value="Asia/Kolkata" selected>
+                                        India Standard Time (Asia/Kolkata)
+                                    </option>
+
+                                    <option value="UTC">
+                                        UTC
+                                    </option>
+
+                                    <option value="America/New_York">
+                                        Eastern Time
+                                    </option>
+
+                                    <option value="America/Chicago">
+                                        Central Time
+                                    </option>
+
+                                    <option value="America/Denver">
+                                        Mountain Time
+                                    </option>
+
+                                    <option value="America/Los_Angeles">
+                                        Pacific Time
+                                    </option>
+
+                                    <option value="Europe/London">
+                                        London
+                                    </option>
+
+                                    <option value="Europe/Paris">
+                                        Central European Time
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <!-- Starting date -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Starting date
+                                </label>
+
+                                <input type="text" class="form-control" id="te_start_date" data-provider="flatpickr"
+                                    data-date-format="Y-m-d" placeholder="Select starting date">
+
+                            </div>
+
+
+                            <!-- Working hours -->
+
+                            <div class="mb-3">
+
+                                <label class="form-label fw-semibold">
+                                    Working hours
+                                </label>
+
+                                <div class="row">
+
+                                    <div class="col-6">
+                                        <label class="form-label fs-13">
+                                            From
+                                        </label>
+
+                                        <input type="time" class="form-control" id="te_work_start" step="900"
+                                            value="09:00">
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label class="form-label fs-13">
+                                            To
+                                        </label>
+
+                                        <input type="time" class="form-control" id="te_work_end" step="900"
+                                            value="18:00">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div id="teDetailsError" class="alert alert-danger" style="display:none;">
+                            </div>
+
+                        </div>
+
+
+                        <!-- ========================================= -->
+                        <!-- STEP 3 : RECOMMENDED / CUSTOM TIME -->
+                        <!-- ========================================= -->
+
+                        <div id="teStep3" style="display:none;">
+
+                            <h6 class="mb-1">
+                                Choose a time
+                            </h6>
+
+                            <p class="text-muted fs-13 mb-3">
+                                Select a recommended time or choose your own time.
+                            </p>
+
+
+                            <!-- Availability state -->
+
+                            <div id="teAvailabilityLoading" class="text-center py-4" style="display:none;">
+
+                                <div class="spinner-border spinner-border-sm me-2" role="status">
+                                </div>
+
+                                Finding available times...
+                            </div>
+
+
+                            <div id="teAvailabilityError" class="alert alert-danger" style="display:none;">
+                            </div>
+
+
+                            <div id="teNoAvailability" class="alert alert-warning" style="display:none;">
+
+                                <i class="ti ti-calendar-off me-1"></i>
+
+                                No common availability was found.
+                                Try another starting date, duration, or choose a custom time.
+
+                            </div>
+
+
+                            <!-- Recommended slots -->
+
+                            <div id="teSuggestions">
+
+                                <!-- JS will insert daily recommendations here -->
+
+                            </div>
+
+
+                            <!-- Selected slot -->
+
+                            <div id="teSelectedSlot" class="alert alert-primary mt-3" style="display:none;">
+
+                                <strong>
+                                    Selected:
+                                </strong>
+
+                                <span id="teSelectedSlotText"></span>
+
+                            </div>
+
+
+                            <!-- Show more -->
+
+                            <div class="text-center mt-3" id="teShowMoreContainer" style="display:none;">
+
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="teShowMoreBtn">
+
+                                    Show more
+
+                                </button>
+
+                            </div>
+
+
+                            <hr class="my-4">
+
+
+                            <!-- Custom time -->
+
+                            <div>
+
+                                <button type="button" class="btn btn-outline-primary w-100" id="teCustomTimeBtn">
+
+                                    <i class="ti ti-clock-plus me-1"></i>
+
+                                    Choose a custom time
+
+                                </button>
+
+                            </div>
+
+
+                            <!-- Custom time form -->
+
+                            <div id="teCustomTimePanel" class="border rounded p-3 mt-3" style="display:none;">
+
+                                <h6 class="mb-3">
+                                    Choose a custom time
+                                </h6>
+
+                                <div class="row">
+
+                                    <div class="col-12 mb-3">
+
+                                        <label class="form-label">
+                                            Date
+                                        </label>
+
+                                        <input type="text" class="form-control" id="te_custom_date"
+                                            data-provider="flatpickr" data-date-format="Y-m-d">
+
+                                    </div>
+
+
+                                    <div class="col-6">
+
+                                        <label class="form-label">
+                                            Start time
+                                        </label>
+
+                                        <input type="time" class="form-control" id="te_custom_start" step="900">
+
+                                    </div>
+
+
+                                    <div class="col-6">
+
+                                        <label class="form-label">
+                                            End time
+                                        </label>
+
+                                        <input type="time" class="form-control" id="te_custom_end" step="900">
+
+                                    </div>
+
+                                </div>
+
+
+                                <button type="button" class="btn btn-primary w-100 mt-3" id="teCheckCustomBtn">
+
+                                    Check availability
+
+                                </button>
+
+
+                                <div id="teCustomAvailability" class="mt-3" style="display:none;">
+                                </div>
+
+                            </div>
+
+
+                            <!-- Participant availability -->
+
+                            <div id="teParticipantAvailability" class="mt-4">
+
+                            </div>
+
+
+                            <!-- Conflict warning -->
+
+                            <div id="teConflictWarning" class="alert alert-warning mt-3" style="display:none;">
+
+                                <strong>
+                                    Some participants have scheduling conflicts.
+                                </strong>
+
+                                <br>
+
+                                Invitations can still be sent.
+
+                                <div class="form-check mt-2">
+
+                                    <input class="form-check-input" type="checkbox" id="teConflictAcknowledged">
+
+                                    <label class="form-check-label" for="teConflictAcknowledged">
+
+                                        I understand that some participants may decline.
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ========================================= -->
+                        <!-- STEP 4 : REVIEW -->
+                        <!-- ========================================= -->
+
+                        <div id="teStep4" style="display:none;">
+
+                            <h6 class="mb-1">
+                                Review and create
+                            </h6>
+
+                            <p class="text-muted fs-13 mb-3">
+                                Review the event details before creating it.
+                            </p>
+
+
+                            <div class="border rounded">
+
+                                <div class="p-3 border-bottom">
+
+                                    <div class="text-muted fs-12">
+                                        Event
+                                    </div>
+
+                                    <strong id="teReviewTitle">
+                                        -
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="p-3 border-bottom">
+
+                                    <div class="text-muted fs-12">
+                                        Category
+                                    </div>
+
+                                    <strong id="teReviewCategory">
+                                        No category
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="p-3 border-bottom">
+
+                                    <div class="text-muted fs-12">
+                                        Participants
+                                    </div>
+
+                                    <div id="teReviewParticipants">
+                                        -
+                                    </div>
+
+                                </div>
+
+
+                                <div class="p-3 border-bottom">
+
+                                    <div class="text-muted fs-12">
+                                        Date and time
+                                    </div>
+
+                                    <strong id="teReviewDateTime">
+                                        -
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="p-3 border-bottom">
+
+                                    <div class="text-muted fs-12">
+                                        Duration
+                                    </div>
+
+                                    <strong id="teReviewDuration">
+                                        -
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="p-3">
+
+                                    <div class="text-muted fs-12">
+                                        Timezone
+                                    </div>
+
+                                    <strong id="teReviewTimezone">
+                                        -
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Location -->
+
+                            <div class="mt-3">
+
+                                <label class="form-label">
+                                    Location
+                                </label>
+
+                                <input type="text" class="form-control" id="te_location" placeholder="Optional">
+
+                            </div>
+
+
+                            <!-- Meeting link -->
+
+                            <div class="mt-3">
+
+                                <label class="form-label">
+                                    Meeting link
+                                </label>
+
+                                <input type="url" class="form-control" id="te_link"
+                                    placeholder="https://meet.google.com/...">
+
+                            </div>
+
+
+                            <div id="teReviewError" class="alert alert-danger mt-3" style="display:none;">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FOOTER -->
+
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-light" id="teBack" style="display:none;">
+
+                            Back
+
+                        </button>
+
+
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">
+
+                            Cancel
+
+                        </button>
+
+
+                        <button type="button" class="btn btn-primary" id="teNext">
+
+                            Next
+
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Add / Manage Category: POST /categories, PATCH /categories/{id} -->
+        <div class="modal fade" id="add_category">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="mb-0">Categories</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="categoryManageList" class="mb-3"></div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label class="form-label">Category Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="cat_name">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div>
+                                    <label class="form-label">Category Color <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="cat_color">
+                                        <option value="">Select</option>
+                                        <option value="#2E7D32">Green</option>
+                                        <option value="#F9A825">Yellow</option>
+                                        <option value="#C62828">Red</option>
+                                        <option value="#1565C0">Blue</option>
+                                        <option value="#7B1FA2">Purple</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-md btn-light me-2" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-md btn-primary" id="save_category_btn">Add
+                            Category</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Teams: GET/POST/PATCH/DELETE /teams, POST/DELETE /teams/{id}/members -->
+        <div class="modal fade" id="teams_modal">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="mb-0">Teams</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-5 border-end">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <strong class="fs-13">All teams</strong>
+                                </div>
+                                <input type="text" class="form-control form-control-sm mb-2" id="teamSearchInput"
+                                    placeholder="Search teams...">
+                                <div id="teamList" style="max-height:340px; overflow:auto;"></div>
+                                <hr>
+                                <strong class="fs-13">Create a team</strong>
+                                <input type="text" class="form-control form-control-sm my-2" id="newTeamName"
+                                    placeholder="Team name">
+                                <select class="select2" id="newTeamMembers" multiple style="width:100%;"></select>
+                                <button type="button" class="btn btn-sm btn-primary mt-2 w-100"
+                                    id="createTeamBtn">Create Team</button>
+                            </div>
+                            <div class="col-7">
+                                <div id="teamDetail">
+                                    <p class="text-muted fs-13">Select a team to view details.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invitations: GET /invitations, GET /invitations/{id}, PATCH /invitations/{id}/response -->
+        <div class="modal fade" id="invitations_modal">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="mb-0">Pending Invitations</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="invitationsList">
+                            <p class="text-muted fs-13">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time-change requests: GET /time-change-requests?scope=, PATCH .../decision, DELETE ... -->
+        <div class="modal fade" id="tcr_modal">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="mb-0">Time Change Requests</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs mb-3">
+                            <li class="nav-item"><a class="nav-link active" data-tcr-scope="received"
+                                    href="javascript:void(0)">Received (as organizer)</a></li>
+                            <li class="nav-item"><a class="nav-link" data-tcr-scope="sent"
+                                    href="javascript:void(0)">Sent by me</a></li>
+                        </ul>
+                        <div id="tcrList">
+                            <p class="text-muted fs-13">Loading...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Propose new time: POST /events/{eventId}/time-change-requests -->
+        <div class="modal fade" id="propose_time_modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="mb-0">Request a different time</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3"><label class="form-label">Proposed date</label><input type="text"
+                                class="form-control" id="pt_date" data-provider="flatpickr" data-date-format="Y-m-d">
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3"><label class="form-label">Start</label><input type="time"
+                                        class="form-control" id="pt_start" step="900"></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3"><label class="form-label">End</label><input type="time"
+                                        class="form-control" id="pt_end" step="900"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3"><label class="form-label">Reason</label><textarea class="form-control"
+                                id="pt_reason" rows="2"></textarea></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="pt_submit">Send Request</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event details: GET /events/{eventId}, plus participant management and time-change entry point -->
+        <div class="modal fade" id="event_modal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark modal-bg">
+                        <div class="modal-title text-white"><span id="eventTitle"></span></div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="d-flex align-items-center fw-medium text-black mb-3"><i
+                                class="ti ti-calendar-check text-default me-2"></i><span id="eventDateRange"></span></p>
+                        <p class="d-flex align-items-center fw-medium text-black mb-3"><i
+                                class="ti ti-clock text-default me-2"></i><span id="eventTimeRange"></span></p>
+                        <p class="d-flex align-items-center fw-medium text-black mb-3"><i
+                                class="ti ti-map-pin-bolt text-default me-2"></i><span id="eventLocation"></span></p>
+                        <p class="d-flex align-items-center fw-medium text-black mb-3" id="eventLinkRow">
+                            <i class="ti ti-link text-default me-2"></i>
+                            <a href="#" id="eventLink" target="_blank" rel="noopener"
+                                class="text-decoration-underline"></a>
+                        </p>
+                        <p class="fw-medium text-black mb-2" id="eventMyStatusRow" style="display:none;">
+                            My response: <span id="eventMyStatus" class="badge status-badge"></span>
+                        </p>
+
+                        <div id="eventParticipantsSection" style="display:none;">
+                            <hr>
+
+                            <strong class="fs-13">Participants</strong>
+
+                            <div id="eventParticipantsList" class="mt-2"></div>
+
+                            <div id="addParticipantRow" style="display:none;" class="mt-3">
+
+                                <label for="ev_add_invitees" class="form-label fw-semibold mb-2">
+                                    <i class="ti ti-user-plus me-1"></i>
+                                    Add participants
+                                </label>
+
+                                <select class="select2" id="ev_add_invitees" multiple style="width:100%;"></select>
+
+                                <small class="text-muted d-block mt-1">
+                                    Search and add people or teams to this event.
+                                </small>
+
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-2 w-100"
+                                    id="addParticipantsBtn">
+                                    <i class="ti ti-user-plus me-1"></i>
+                                    Invite participants
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer flex-wrap" id="eventModalFooter">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="acceptInviteBtn"
+                            style="display:none;">Accept</button>
+                        <button type="button" class="btn btn-outline-danger btn-sm" id="declineInviteBtn"
+                            style="display:none;">Decline</button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" id="requestTimeChangeBtn"
+                            style="display:none;">Request different time</button>
+                        <button type="button" class="btn btn-light btn-sm" id="editEventBtn"
+                            style="display:none;">Edit</button>
+                        <button type="button" class="btn btn-danger btn-sm" id="deleteEventBtn"
+                            style="display:none;">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="assets/js/jquery-3.7.1.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/plugins/simplebar/simplebar.min.js"></script>
+    <script src="assets/plugins/select2/js/select2.min.js"></script>
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/plugins/flatpickr/flatpickr.min.js"></script>
+    <script src="assets/plugins/fullcalendar/index.global.min.js"></script>
+    
+    <script src="assets/js/auth-client.js"></script>
+
+    <script src="assets/plugins/fullcalendar/calendar-data.js"></script>
+    <script src="assets/js/script.js"></script>
+    <script src="assets/js/app-navigation.js?v=6"></script>
+</body>
+
+</html>
