@@ -117,3 +117,18 @@ body{background:var(--comm-bg)}
 @media(max-width:1250px){.calls-page .comm-hero{grid-template-columns:1fr;padding:18px 20px;gap:15px}.calls-page .comm-title{white-space:normal}.calls-page .comm-actions{grid-template-columns:minmax(220px,1fr) repeat(4,max-content)}}
 @media(max-width:900px){.calls-page .comm-actions{grid-template-columns:1fr 1fr}.calls-page .comm-actions .comm-search{grid-column:1/-1}.calls-page .comm-actions .btn{width:100%}}
 @media(max-width:520px){.calls-page .comm-hero{padding:16px}.calls-page .comm-actions{grid-template-columns:1fr}.calls-page .comm-actions .comm-search{grid-column:auto}.calls-page .comm-subtitle{display:none}}
+
+/* Calls header refinements and explicit conversation scrolling. */
+.calls-page .comm-subtitle{display:none}
+.calls-page .comm-hero{grid-template-columns:max-content minmax(0,1fr);align-items:center}
+.calls-page .comm-hero>div:first-child{padding-right:12px}
+.calls-page .comm-title{margin:0;font-size:22px}
+.calls-page .mobile-contacts-button{display:none!important}
+.calls-page .comm-actions{grid-template-columns:minmax(220px,1fr) repeat(4,max-content)}
+.calls-page .chat-area{overflow-y:scroll!important;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#aeb6c5 #eef1f5}
+.calls-page .chat-area::-webkit-scrollbar{width:10px}
+.calls-page .chat-area::-webkit-scrollbar-track{background:#eef1f5;border-radius:10px}
+.calls-page .chat-area::-webkit-scrollbar-thumb{background:#aeb6c5;border:2px solid #eef1f5;border-radius:10px}
+.calls-page .chat-area::-webkit-scrollbar-thumb:hover{background:#8791a3}
+@media(max-width:1250px){.calls-page .comm-hero{grid-template-columns:1fr}.calls-page .comm-hero>div:first-child{padding-right:0}}
+@media(max-width:767px){.calls-page .mobile-contacts-button{display:inline-flex!important}}

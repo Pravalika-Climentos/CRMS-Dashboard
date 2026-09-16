@@ -1311,7 +1311,7 @@
   }
 
   async function newConversation() {
-    const raw = prompt('Enter the customer email address, for example customer2@example.com');
+    const raw = prompt('Enter email address');
     const email = normalizeEmail(raw);
     if (!email) return;
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Enter a valid email address.', 'warning');
