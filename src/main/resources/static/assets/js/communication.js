@@ -1,5 +1,6 @@
 (() => {
   const $ = id => document.getElementById(id);
+  document.body.classList.add('calls-page');
   const normalizeEmail = value => String(value || '').trim().toLowerCase();
   // Most platforms (desktop, iOS Safari) deliver the true, unflipped camera
   // image via getUserMedia, so we CSS-mirror the self-preview for a natural
@@ -522,6 +523,10 @@
     ensureTeamStatusStyles();
     if (!window.LivekitClient) return toast('Group calling library failed to load.', 'warning');
     try {
+      // Keep LiveKit's connection diagnostics (including signed RTC URLs) out
+      // of the production console. Application errors are still surfaced by
+      // the existing toast/error handling below.
+      window.LivekitClient.setLogLevel?.('error');
       const { Room, RoomEvent, Track } = window.LivekitClient;
       // Screen sharing must not be allowed to downshift/pause because the
       // spotlight element changes size/visibility. Keep the room's video
@@ -697,6 +702,7 @@
     $('teamMuteBtn')?.replaceChildren(Object.assign(document.createElement('i'), { className: 'ti ti-microphone' }));
     $('teamCameraBtn')?.classList.remove('active');
     $('teamScreenBtn')?.classList.remove('active');
+    setTeamPanelOpen(false);
     if (activeTeamRoomName) socket?.emit('team:leave', { room:activeTeamRoomName });
     activeTeamRoomName = null;
     if (!silent) toast('Left the team room.');
@@ -737,7 +743,31 @@
   }
 
   let teamChatUnread = 0;
-  function updateTeamUnread() { const badge = $('teamChatUnread'); if (badge) { badge.hidden = teamChatUnread === 0; badge.textContent = teamChatUnread; } }
+  function updateTeamUnread() {
+    [$('teamChatUnread'), $('teamChatControlUnread')].filter(Boolean).forEach(badge => {
+      badge.hidden = teamChatUnread === 0;
+      badge.textContent = teamChatUnread;
+    });
+  }
+  function setTeamPanelOpen(open, panelName = 'chat') {
+    const panel = $('teamSidepanel');
+    const toggle = $('teamChatToggle');
+    if (!panel || !toggle) return;
+    panel.classList.toggle('is-open', open);
+    toggle.classList.toggle('active', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.title = open ? 'Close meeting panel' : 'Open meeting chat';
+    if (open) {
+      panel.querySelectorAll('[data-team-panel]').forEach(button => button.classList.toggle('active', button.dataset.teamPanel === panelName));
+      $('teamChatPanel').hidden = panelName !== 'chat';
+      $('teamNotesPanel').hidden = panelName !== 'notes';
+      if (panelName === 'chat') {
+        teamChatUnread = 0;
+        updateTeamUnread();
+        requestAnimationFrame(() => $('teamChatInput')?.focus());
+      }
+    }
+  }
   function drawTeamRecordingFrame() {
     if (!teamRecordingCanvas) return;
     const ctx = teamRecordingCanvas.getContext('2d'); const videos = [...$('teamGrid').querySelectorAll('video')].filter(v => v.readyState >= 2);
@@ -766,14 +796,16 @@
     const panel = document.createElement('aside'); panel.id = 'teamSidepanel'; panel.className = 'team-sidepanel';
     panel.innerHTML = `<div class="team-panel-tabs"><button type="button" class="team-panel-tab active" data-team-panel="chat"><i class="ti ti-message-circle"></i> Chat <span id="teamChatUnread" class="team-unread" hidden>0</span></button><button type="button" class="team-panel-tab" data-team-panel="notes"><i class="ti ti-notes"></i> Notes</button></div><section id="teamChatPanel" class="team-panel-content"><div id="teamChatMessages" class="team-chat-messages" aria-live="polite"></div><div class="team-composer"><input id="teamChatInput" maxlength="1000" autocomplete="off" placeholder="Message everyone"><button type="button" id="teamChatSend" aria-label="Send message"><i class="ti ti-send"></i></button></div></section><section id="teamNotesPanel" class="team-panel-content" hidden><p class="team-panel-help">Shared minutes update live for everyone in this room.</p><textarea id="teamNotesInput" maxlength="10000" placeholder="Agenda, decisions, action items…"></textarea><button type="button" id="teamNotesSave" class="btn btn-sm btn-primary w-100 mt-2">Save shared notes</button><button type="button" id="teamNotesSummary" class="btn btn-sm btn-outline-light w-100 mt-2">Format minutes summary</button></section>`;
     grid.parentNode.insertBefore(layout, grid); layout.append(grid, panel);
-    panel.querySelectorAll('[data-team-panel]').forEach(button => button.onclick = () => { panel.querySelectorAll('[data-team-panel]').forEach(x => x.classList.toggle('active', x === button)); $('teamChatPanel').hidden = button.dataset.teamPanel !== 'chat'; $('teamNotesPanel').hidden = button.dataset.teamPanel !== 'notes'; if (button.dataset.teamPanel === 'chat') { teamChatUnread = 0; updateTeamUnread(); } });
+    panel.querySelectorAll('[data-team-panel]').forEach(button => button.onclick = () => setTeamPanelOpen(true, button.dataset.teamPanel));
     const send = () => { const input = $('teamChatInput'); const text = input.value.trim(); if (!text) return; if (!socket?.connected || !teamRoom || !activeTeamRoomName) return toast('Join the Team Room before sending a message.', 'warning'); socket.timeout(5000).emit('team:chat', { room:activeTeamRoomName, text }, (error, result) => { if (error || !result?.ok) return toast('Could not send the Team Room message.', 'warning'); input.value = ''; }); };
     $('teamChatSend').onclick = send; $('teamChatInput').onkeydown = e => { if (e.key === 'Enter') send(); };
     $('teamNotesSave').onclick = async () => { if (!teamRoom || !activeTeamRoomName) return toast('Join a Team Room before saving notes.', 'warning'); try { const notes=$('teamNotesInput').value; await api(`/api/team-rooms/${encodeURIComponent(activeTeamRoomName)}/notes`, { method:'PUT', body:JSON.stringify({notes}) }); socket?.emit('team:notes', { room:activeTeamRoomName, notes }); toast('Shared meeting notes saved.'); } catch (error) { console.error('Could not save meeting notes', error); toast('Could not save meeting notes.', 'warning'); } };
     $('teamNotesSummary').onclick = () => { const field = $('teamNotesInput'); const lines = field.value.split('\n').map(x => x.trim()).filter(Boolean); field.value = lines.length ? `Meeting minutes\n\nDecisions / updates\n${lines.map(x => `• ${x}`).join('\n')}\n\nAction items\n• Owner: ______  Due: ______` : 'Meeting minutes\n\nDecisions / updates\n• \n\nAction items\n• Owner: ______  Due: ______'; };
-    const record = document.createElement('button'); record.id = 'teamRecordBtn'; record.type = 'button'; record.className = 'call-control'; record.title = 'Record meeting to this device'; record.innerHTML = '<i class="ti ti-player-record"></i>'; record.onclick = () => teamRecorder ? stopTeamRecording() : startTeamRecording(); $('teamStage').querySelector('.call-controls').insertBefore(record, $('teamLeaveBtn'));
+    const controls = $('teamStage').querySelector('.call-controls');
+    const chat = document.createElement('button'); chat.id = 'teamChatToggle'; chat.type = 'button'; chat.className = 'call-control team-chat-toggle'; chat.title = 'Open meeting chat'; chat.setAttribute('aria-label', 'Open meeting chat'); chat.setAttribute('aria-expanded', 'false'); chat.innerHTML = '<i class="ti ti-message-circle"></i><span id="teamChatControlUnread" class="team-control-unread" hidden>0</span>'; chat.onclick = () => setTeamPanelOpen(!panel.classList.contains('is-open'), 'chat'); controls.insertBefore(chat, $('teamLeaveBtn'));
+    const record = document.createElement('button'); record.id = 'teamRecordBtn'; record.type = 'button'; record.className = 'call-control'; record.title = 'Record meeting to this device'; record.innerHTML = '<i class="ti ti-player-record"></i>'; record.onclick = () => teamRecorder ? stopTeamRecording() : startTeamRecording(); controls.insertBefore(record, $('teamLeaveBtn'));
   }
-  function appendTeamMessage(message) { const area = $('teamChatMessages'); if (!area) return; const line = document.createElement('div'); line.className = 'team-message'; line.innerHTML = `<strong>${escapeHtml(message.name || 'Participant')} <time>${escapeHtml(new Date(message.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}))}</time></strong>${escapeHtml(message.text)}`; area.appendChild(line); area.scrollTop = area.scrollHeight; if ($('teamChatPanel').hidden) { teamChatUnread++; updateTeamUnread(); } }
+  function appendTeamMessage(message) { const area = $('teamChatMessages'); if (!area) return; const line = document.createElement('div'); line.className = 'team-message'; line.innerHTML = `<strong>${escapeHtml(message.name || 'Participant')} <time>${escapeHtml(new Date(message.createdAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}))}</time></strong><span>${escapeHtml(message.text)}</span>`; area.appendChild(line); requestAnimationFrame(() => area.scrollTo({ top:area.scrollHeight, behavior:'smooth' })); if (!$('teamSidepanel')?.classList.contains('is-open') || $('teamChatPanel').hidden) { teamChatUnread++; updateTeamUnread(); } }
   $('teamRoomBtn').onclick = joinTeamRoom;
 
   // Recordings panel is optional — only wire it up if calls.html actually

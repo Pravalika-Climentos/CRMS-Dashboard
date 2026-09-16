@@ -49,3 +49,53 @@ body{background:var(--comm-bg)}
 .bubble-author{font-size:10px;font-weight:700;letter-spacing:.01em;margin-bottom:4px;color:#596174}.mine .bubble-author{color:rgba(255,255,255,.82)}
 .comm-view-switcher{display:flex;align-items:center;gap:8px;margin:-8px 0 20px;overflow-x:auto;padding:2px}.comm-view-switcher a{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:1px solid var(--comm-border);border-radius:999px;background:#fff;color:#4b5565;font-size:12px;font-weight:600;white-space:nowrap}.comm-view-switcher a:hover{border-color:#b9bfff;background:#f5f6ff;color:var(--comm-primary)}.mobile-contacts-button,.mobile-contacts-close{display:none}.calls-page .page-wrapper{min-height:100vh}.calls-page .comm-shell{height:min(720px,calc(100vh - 275px));min-height:560px}.calls-page .contact-list{max-height:none;height:calc(100% - 104px)}
 @media(max-width:767px){.mobile-contacts-button,.mobile-contacts-close{display:inline-grid}.calls-page .comm-shell{height:calc(100vh - 250px);min-height:520px;position:relative}.calls-page .comm-sidebar.mobile-show{background:#fff;overflow:hidden}.calls-page .comm-actions{display:grid;grid-template-columns:1fr 1fr}.calls-page .comm-actions .comm-search{grid-column:1/-1}.calls-page .comm-actions .btn{width:100%}.calls-page .comm-view-switcher{margin-top:4px}.calls-page .mode-card span{display:none}.calls-page .comm-title{font-size:23px}}
+
+/* Professional Calls workspace and Google Meet-style Team Room. */
+.calls-page .comm-page{padding-top:18px}
+.calls-page .comm-page>.alert,.calls-page .comm-page>.row{display:none}
+.calls-page .comm-hero{align-items:center;margin-bottom:16px;padding:0 2px}
+.calls-page .comm-title{font-size:24px;letter-spacing:-.02em}
+.calls-page .comm-subtitle{font-size:13px}
+.calls-page .comm-actions{flex-wrap:wrap;justify-content:flex-end}
+.calls-page .comm-actions .btn{border-radius:10px;min-height:40px}
+.calls-page .comm-shell{grid-template-columns:300px minmax(420px,1fr) 280px;height:calc(100vh - 230px);min-height:580px;border-radius:16px;box-shadow:0 8px 30px rgba(20,30,55,.07)}
+.calls-page .comm-center,.calls-page #conversation{min-height:0;overflow:hidden}
+.calls-page #conversation{height:100%!important}
+.calls-page .chat-area{min-height:0;overscroll-behavior:contain;scrollbar-gutter:stable;padding:20px 26px}
+.calls-page .mode-picker{padding:12px 16px;gap:8px}
+.calls-page .mode-card{padding:10px 12px;display:grid;grid-template-columns:28px 1fr;grid-template-rows:auto auto;text-align:left;align-items:center}
+.calls-page .mode-card i{grid-row:1/3}.calls-page .mode-card strong,.calls-page .mode-card span{margin:0}
+.calls-page .comm-details{padding:20px}.calls-page .profile-avatar{width:74px;height:74px}
+
+#teamStage{background:#202124}
+#teamStage .call-top{height:64px;padding:12px 20px;background:#202124;border-bottom:1px solid rgba(255,255,255,.08)}
+#teamStage .team-layout{position:relative;overflow:hidden;background:#202124}
+#teamStage .team-grid{padding:16px 20px 10px}
+#teamStage .team-tile{background:#3c4043;border-radius:12px;border:0;box-shadow:none}
+#teamStage .team-tile.speaking{border:2px solid #34a853!important;box-shadow:0 0 0 2px rgba(52,168,83,.25)!important;transform:none}
+#teamStage .team-tile.speaking:after{display:none}
+#teamStage .call-controls{padding:12px 20px 18px;background:#202124;position:relative;z-index:4}
+#teamStage .call-control{position:relative;width:48px;height:48px;background:#3c4043;border:0;transition:background .18s,transform .18s}
+#teamStage .call-control:hover{background:#4b4f52;transform:translateY(-1px)}
+#teamStage .call-control.active{background:#e8eaed;color:#202124}
+#teamStage .call-control.end{width:60px;border-radius:24px;background:#ea4335;color:#fff}
+.team-sidepanel{width:0;flex:0 0 0;opacity:0;visibility:hidden;overflow:hidden;border-left:0;background:#fff;color:#202124;transition:flex-basis .22s ease,width .22s ease,opacity .16s ease;box-shadow:-8px 0 24px rgba(0,0,0,.18)}
+.team-sidepanel.is-open{width:360px;flex-basis:360px;opacity:1;visibility:visible;border-left:1px solid #dadce0}
+.team-panel-tabs{flex:0 0 auto;border-bottom:1px solid #e4e7eb;padding:5px 8px;background:#fff}
+.team-panel-tab{color:#5f6368;padding:12px 8px;border-radius:8px;border-bottom:0;font-weight:600}
+.team-panel-tab.active{color:#1a73e8;background:#e8f0fe;border-color:transparent}
+.team-panel-content{overflow:hidden;padding:14px;background:#fff}
+.team-chat-messages{min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:2px 5px 12px}
+.team-message{max-width:88%;margin:0 0 14px;padding:10px 12px;border-radius:4px 14px 14px;background:#f1f3f4;color:#202124;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.team-message strong{color:#3c4043;font-size:11px;margin-bottom:4px}.team-message time{color:#80868b;font-weight:400}.team-message span{display:block}
+.team-composer{flex:0 0 auto;padding:10px 0 0;border-top:1px solid #e4e7eb}
+.team-composer input{height:42px;border:1px solid #dadce0;border-radius:21px;background:#f8f9fa;color:#202124;padding:0 16px}
+.team-composer input:focus{outline:2px solid rgba(26,115,232,.2);border-color:#1a73e8}
+.team-composer button{height:42px;width:42px;border-radius:50%;background:#1a73e8}
+.team-sidepanel textarea{background:#f8f9fa;color:#202124;border-color:#dadce0}
+.team-panel-help{color:#5f6368}.team-unread,.team-control-unread{background:#d93025;color:#fff;font-size:10px;font-weight:700;min-width:17px;height:17px;border-radius:999px;padding:1px 5px}
+.team-control-unread{position:absolute;right:-3px;top:-3px;box-shadow:0 0 0 2px #202124}
+
+@media(max-width:1399px){.calls-page .comm-shell{grid-template-columns:280px minmax(0,1fr)}.calls-page .comm-details{display:none}}
+@media(max-width:900px){.team-sidepanel.is-open{width:320px;flex-basis:320px}}
+@media(max-width:680px){#teamStage .team-layout{flex-direction:row}.team-sidepanel,.team-sidepanel.is-open{position:absolute;inset:0 0 0 auto;width:min(92vw,360px);height:auto;transform:translateX(100%);opacity:1;visibility:visible;transition:transform .22s ease}.team-sidepanel.is-open{transform:translateX(0)}.team-layout .team-grid{min-height:0}.calls-page .comm-shell{height:calc(100vh - 190px)}}
