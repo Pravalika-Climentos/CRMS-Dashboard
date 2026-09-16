@@ -99,3 +99,21 @@ body{background:var(--comm-bg)}
 @media(max-width:1399px){.calls-page .comm-shell{grid-template-columns:280px minmax(0,1fr)}.calls-page .comm-details{display:none}}
 @media(max-width:900px){.team-sidepanel.is-open{width:320px;flex-basis:320px}}
 @media(max-width:680px){#teamStage .team-layout{flex-direction:row}.team-sidepanel,.team-sidepanel.is-open{position:absolute;inset:0 0 0 auto;width:min(92vw,360px);height:auto;transform:translateX(100%);opacity:1;visibility:visible;transition:transform .22s ease}.team-sidepanel.is-open{transform:translateX(0)}.team-layout .team-grid{min-height:0}.calls-page .comm-shell{height:calc(100vh - 190px)}}
+
+/* Compact professional header for the Calls workspace. */
+.calls-page .comm-hero{display:grid;grid-template-columns:minmax(240px,.75fr) minmax(620px,2fr);gap:28px;padding:22px 24px;margin-bottom:16px;background:#fff;border:1px solid var(--comm-border);border-radius:16px;box-shadow:0 6px 22px rgba(20,30,55,.05)}
+.calls-page .comm-hero>div:first-child{align-self:center;min-width:0}
+.calls-page .comm-title{font-size:23px;line-height:1.15;margin-bottom:5px;white-space:nowrap}
+.calls-page .comm-subtitle{max-width:430px;font-size:12px;line-height:1.5}
+.calls-page .comm-actions{display:grid;grid-template-columns:minmax(220px,1fr) repeat(4,max-content);gap:9px;align-items:center;min-width:0}
+.calls-page .comm-search{width:100%;height:42px;border-radius:10px;background:#f8fafc;border-color:#e2e8f0;padding-left:15px;box-shadow:none}
+.calls-page .comm-search:focus{background:#fff;border-color:#818cf8;box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.calls-page #identityBtnTop{display:none!important}
+.calls-page .comm-actions .btn{height:42px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;font-size:12px;font-weight:600;border-color:#d9deea;color:#3f4756;background:#fff}
+.calls-page .comm-actions .btn:hover{background:#f5f7fb;border-color:#bfc6d5;color:var(--comm-primary)}
+.calls-page .comm-actions #newConversation{padding-inline:17px;color:#fff;background:var(--comm-primary);border-color:var(--comm-primary);box-shadow:0 5px 12px rgba(79,70,229,.18)}
+.calls-page .comm-actions #newConversation:hover{background:var(--comm-primary-dark)}
+
+@media(max-width:1250px){.calls-page .comm-hero{grid-template-columns:1fr;padding:18px 20px;gap:15px}.calls-page .comm-title{white-space:normal}.calls-page .comm-actions{grid-template-columns:minmax(220px,1fr) repeat(4,max-content)}}
+@media(max-width:900px){.calls-page .comm-actions{grid-template-columns:1fr 1fr}.calls-page .comm-actions .comm-search{grid-column:1/-1}.calls-page .comm-actions .btn{width:100%}}
+@media(max-width:520px){.calls-page .comm-hero{padding:16px}.calls-page .comm-actions{grid-template-columns:1fr}.calls-page .comm-actions .comm-search{grid-column:auto}.calls-page .comm-subtitle{display:none}}
