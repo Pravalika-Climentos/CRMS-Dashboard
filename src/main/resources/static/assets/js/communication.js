@@ -70,6 +70,7 @@
   let callTimer = null;
   let ringTimeout = null;
   let pendingOffer = null;
+  let incomingRingTimeout = null;
   let pendingIceCandidates = [];
 
   // ---- Call recording (client-side; mixes local + remote audio, and for
@@ -254,6 +255,27 @@
     if (ringInterval) clearInterval(ringInterval);
     ringInterval = null;
     if (ringAudioCtx) { try { ringAudioCtx.close(); } catch (_) {} ringAudioCtx = null; }
+  }
+
+  function clearIncomingCall() {
+    stopRingtone();
+    if (incomingRingTimeout) clearTimeout(incomingRingTimeout);
+    incomingRingTimeout = null;
+    pendingOffer = null;
+    $('incomingCall')?.classList.remove('show');
+  }
+
+  function expireIncomingCall() {
+    const expiredOffer = pendingOffer;
+    clearIncomingCall();
+    if (expiredOffer && socket?.connected) {
+      socket.emit('call:decline', {
+        callId: expiredOffer.callId,
+        to: expiredOffer.from,
+        reason: 'timeout'
+      });
+    }
+    if (expiredOffer) toast('Incoming call timed out.', 'info');
   }
 
   // ---- Browser/OS notifications for incoming calls ----
@@ -528,12 +550,14 @@
       // the existing toast/error handling below.
       window.LivekitClient.setLogLevel?.('error');
       const { Room, RoomEvent, Track } = window.LivekitClient;
-      // Screen sharing must not be allowed to downshift/pause because the
-      // spotlight element changes size/visibility. Keep the room's video
-      // forwarding path stable; this is much more reliable for presentations.
+      // Let LiveKit pause/downshift video that is hidden or rendered small.
+      // This materially reduces bandwidth and decode load in larger rooms.
       teamRoom = new Room({
-        adaptiveStream: false,
-        dynacast: false,
+        adaptiveStream: true,
+        dynacast: true,
+        videoCaptureDefaults: {
+          resolution: { width: 640, height: 360, frameRate: 15 }
+        },
         audioCaptureDefaults: {
           autoGainControl: true,
           echoCancellation: true,
@@ -1162,10 +1186,8 @@
 
   async function acceptIncoming() {
     if (!pendingOffer) return;
-    stopRingtone();
     const p = pendingOffer;
-    pendingOffer = null;
-    $('incomingCall').classList.remove('show');
+    clearIncomingCall();
     selected = contacts.find(c => c.id === p.callerUserId) || {
       id: p.callerUserId,
       email: p.callerEmail || p.from,
@@ -1227,6 +1249,10 @@
     const contact = contacts.find(c => normalizeEmail(c.email) === email || c.id === p.userId);
     if (!contact) return;
     contact.status = p.status;
+    if (p.status === 'offline' && pendingOffer && String(p.userId) === String(pendingOffer.callerUserId)) {
+      clearIncomingCall();
+      toast('The caller disconnected.', 'info');
+    }
     if (selected?.id === contact.id) {
       $('personStatus').textContent = labelStatus(contact.status);
       $('personPresence').className = `presence ${contact.status}`;
@@ -1255,7 +1281,10 @@
       if (err.message === 'AUTH_INVALID' || err.message === 'AUTH_REQUIRED') toast('Your session expired. Please sign in again.', 'warning');
       else toast('Realtime server is unavailable. Calls will not work until it reconnects.', 'warning');
     });
-    socket.on('disconnect', () => { if (callId) toast('Realtime connection lost.', 'warning'); });
+    socket.on('disconnect', () => {
+      clearIncomingCall();
+      if (callId) toast('Realtime connection lost.', 'warning');
+    });
     socket.on('presence:snapshot', list => list.forEach(applyPresence));
     socket.on('presence:update', applyPresence);
     socket.on('team:update', renderTeamBadge);
@@ -1281,12 +1310,14 @@
 
     socket.on('call:offer', p => {
       if (callId) return socket.emit('call:decline', { callId:p.callId, to:p.from });
+      clearIncomingCall();
       pendingOffer = p;
       $('incomingAvatar').src = p.avatar || 'assets/img/profiles/avatar-01.jpg';
       $('incomingName').textContent = p.callerName || p.from;
       $('incomingType').textContent = p.type === 'video' ? 'Incoming video call' : 'Incoming audio call';
       $('incomingCall').classList.add('show');
       startRingtone();
+      incomingRingTimeout = setTimeout(expireIncomingCall, 40000);
       notifyIncomingCall(p);
     });
     socket.on('call:ringing', () => { $('callSubtitle').textContent='Ringing…'; $('audioStatus').textContent='Ringing…'; });
@@ -1303,11 +1334,11 @@
         else await pc.addIceCandidate(p.candidate);
       } catch (e) { console.warn('ICE error', e); }
     });
-    socket.on('call:declined', () => { toast('Call declined.', 'warning'); endCall(false); refreshCallStats(); });
-    socket.on('call:unavailable', () => { toast('Customer is no longer connected.', 'warning'); endCall(false); refreshCallStats(); });
-    socket.on('call:forbidden', () => { toast('You are not permitted to contact this customer.', 'warning'); endCall(false); });
-    socket.on('call:error', p => { toast(p.message || 'Call could not be started.', 'warning'); endCall(false); });
-    socket.on('call:ended', () => { toast('Call ended.'); endCall(false); refreshCallStats(); });
+    socket.on('call:declined', () => { clearIncomingCall(); toast('Call declined.', 'warning'); endCall(false); refreshCallStats(); });
+    socket.on('call:unavailable', () => { clearIncomingCall(); toast('Customer is no longer connected.', 'warning'); endCall(false); refreshCallStats(); });
+    socket.on('call:forbidden', () => { clearIncomingCall(); toast('You are not permitted to contact this customer.', 'warning'); endCall(false); });
+    socket.on('call:error', p => { clearIncomingCall(); toast(p.message || 'Call could not be started.', 'warning'); endCall(false); });
+    socket.on('call:ended', () => { clearIncomingCall(); toast('Call ended.'); endCall(false); refreshCallStats(); });
   }
 
   async function newConversation() {
@@ -1379,10 +1410,9 @@
   $('endCallBtn').onclick = () => endCall(true);
   $('acceptCall').onclick = () => acceptIncoming();
   $('declineCall').onclick = () => {
-    stopRingtone();
-    if (pendingOffer) socket.emit('call:decline', { callId:pendingOffer.callId, to:pendingOffer.from });
-    pendingOffer = null;
-    $('incomingCall').classList.remove('show');
+    const declinedOffer = pendingOffer;
+    clearIncomingCall();
+    if (declinedOffer && socket?.connected) socket.emit('call:decline', { callId:declinedOffer.callId, to:declinedOffer.from });
     refreshCallStats();
   };
   $('muteBtn').onclick = () => {
@@ -1464,6 +1494,7 @@
     toast('Some Calls & Conversations data could not be loaded. Your session is still active; please refresh in a moment.', 'warning');
   });
   window.addEventListener('beforeunload', () => {
+    clearIncomingCall();
     if (callId && socket?.connected) socket.emit('call:end', { callId, to:callTargetId, type:callType });
   });
 })();
