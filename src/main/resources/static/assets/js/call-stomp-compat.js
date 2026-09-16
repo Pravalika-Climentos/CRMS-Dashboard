@@ -2,7 +2,7 @@
 (() => {
   class CallSocketCompat {
     constructor() {
-      this.connected=false; this.handlers=new Map(); this.roomSubscription=null; this.timeoutAck=false;
+      this.connected=false; this.handlers=new Map(); this.roomSubscription=null; this.pendingRoom=null; this.timeoutAck=false;
       const scheme=location.protocol==='https:'?'wss':'ws';
       this.client=new StompJs.Client({
         brokerURL:`${scheme}://${location.host}/ws-chat`,
@@ -12,6 +12,7 @@
           this.connected=true;
           this.client.subscribe('/user/queue/calls',frame=>{const event=JSON.parse(frame.body);this.dispatch(event.type,event.payload);});
           this.client.subscribe('/topic/calls/presence',frame=>{const event=JSON.parse(frame.body);this.dispatch(event.type,event.payload);});
+          this.subscribeToRoom();
           fetch('/api/calls/presence').then(required).then(r=>r.json()).then(list=>this.dispatch('presence:snapshot',list)).catch(()=>{});
           this.dispatch('connect');
         },
@@ -22,7 +23,16 @@
     }
     on(name,handler){if(!this.handlers.has(name))this.handlers.set(name,[]);this.handlers.get(name).push(handler);return this;}
     dispatch(name,payload){(this.handlers.get(name)||[]).forEach(handler=>handler(payload));}
-    disconnect(){this.roomSubscription?.unsubscribe();this.client.deactivate();}
+    subscribeToRoom(){
+      if(!this.connected||!this.pendingRoom)return;
+      this.roomSubscription?.unsubscribe();
+      const room=this.pendingRoom;
+      this.roomSubscription=this.client.subscribe(`/topic/call-rooms/${room}`,frame=>{
+        const event=JSON.parse(frame.body);
+        this.dispatch(event.type,event.payload);
+      });
+    }
+    disconnect(){this.pendingRoom=null;this.roomSubscription?.unsubscribe();this.roomSubscription=null;this.client.deactivate();}
     timeout(){this.timeoutAck=true;return this;}
     emit(name,payload={},callback){
       const ack=typeof callback==='function'?callback:()=>{};
@@ -52,11 +62,11 @@
         if(name==='call:decline'){await required(fetch(`/api/calls/${payload.callId}/decline`,{method:'PATCH'}));publish('/app/calls/declined',payload);return ok({ok:true});}
         if(name==='call:end'){await required(fetch(`/api/calls/${payload.callId}/end`,{method:'PATCH'}));publish('/app/calls/ended',payload);return ok({ok:true});}
         if(name==='team:join'){
-          this.roomSubscription?.unsubscribe();
-          this.roomSubscription=this.client.subscribe(`/topic/call-rooms/${payload.room}`,frame=>{const event=JSON.parse(frame.body);this.dispatch(event.type,event.payload);});
+          this.pendingRoom=payload.room;
+          this.subscribeToRoom();
           return ok({ok:true});
         }
-        if(name==='team:leave'){this.roomSubscription?.unsubscribe();this.roomSubscription=null;await fetch(`/api/team-rooms/${encodeURIComponent(payload.room)}/leave`,{method:'POST'});return ok({ok:true});}
+        if(name==='team:leave'){this.pendingRoom=null;this.roomSubscription?.unsubscribe();this.roomSubscription=null;await fetch(`/api/team-rooms/${encodeURIComponent(payload.room)}/leave`,{method:'POST'});return ok({ok:true});}
         if(name==='team:chat'){publish('/app/call-rooms/chat',payload);return ok({ok:true});}
         if(name==='team:notes'){publish('/app/call-rooms/notes',payload);return ok({ok:true});}
         if(name==='chat:join')return ok({ok:true});
