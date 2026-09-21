@@ -707,6 +707,7 @@
             default:
                 break;
         }
+        window.dispatchEvent(new CustomEvent('crms:chat-notification-change'));
     }
 
     function upsertRealtimeMessage(message, conversationIdValue) {

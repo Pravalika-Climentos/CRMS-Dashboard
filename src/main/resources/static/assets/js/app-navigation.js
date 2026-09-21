@@ -3,6 +3,22 @@
 
   const currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
 
+  function preservePageHeaderActions(currentHeader, sharedHeader) {
+    if (!currentHeader || !sharedHeader || currentPage !== 'calendar.html') return;
+    const destination = sharedHeader.querySelector('.page-container.topbar-menu > .d-flex.align-items-center:last-child');
+    const separator = destination?.querySelector('.header-line');
+    if (!destination) return;
+
+    currentHeader.querySelectorAll(
+      'button[data-bs-target="#invitations_modal"], button[data-bs-target="#tcr_modal"]'
+    ).forEach(button => {
+      const item = button.closest('.header-item');
+      if (!item) return;
+      if (separator) destination.insertBefore(item, separator);
+      else destination.prepend(item);
+    });
+  }
+
   async function installSharedShell() {
     if (currentPage === 'index.html') return;
     try {
@@ -16,6 +32,7 @@
       if (sharedHeader) {
         const header = document.importNode(sharedHeader, true);
         header.style.removeProperty('display');
+        preservePageHeaderActions(currentHeader, header);
         if (currentHeader) currentHeader.replaceWith(header);
         else document.querySelector('.main-wrapper')?.prepend(header);
       }
@@ -121,6 +138,75 @@
     }
   }
 
+  function notificationBadge(link) {
+    const badge = link?.querySelector('.badge');
+    if (!badge) return null;
+    badge.classList.add('bg-danger');
+    badge.style.display = 'none';
+    badge.textContent = '';
+    return badge;
+  }
+
+  function setBadge(badge, count) {
+    if (!badge) return;
+    const value = Math.max(0, Number(count) || 0);
+    badge.textContent = value > 99 ? '99+' : String(value);
+    badge.style.display = value > 0 ? '' : 'none';
+  }
+
+  async function refreshChatNotification() {
+    const links = Array.from(document.querySelectorAll('a[href="chat.html"]'))
+      .filter(link => link.querySelector('.ti-message-circle-exclamation'));
+    if (!links.length) return;
+    try {
+      const response = await fetch('/api/chat/conversations', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Chat notifications failed (${response.status}).`);
+      const conversations = await response.json();
+      const unread = (Array.isArray(conversations) ? conversations : conversations.items || [])
+        .reduce((total, conversation) => total + Math.max(0, Number(conversation.unreadCount) || 0), 0);
+      links.forEach(link => {
+        setBadge(notificationBadge(link), unread);
+        link.title = unread ? `${unread} unread chat message${unread === 1 ? '' : 's'}` : 'No unread chat messages';
+        link.setAttribute('aria-label', link.title);
+      });
+    } catch (error) {
+      console.warn('Chat notification count could not be loaded.', error);
+    }
+  }
+
+  async function refreshCalendarNotifications() {
+    const invitationBadge = document.getElementById('invitationBadge');
+    const timeChangeBadge = document.getElementById('tcrBadge');
+    if (!invitationBadge && !timeChangeBadge) return;
+    const requests = [];
+    if (invitationBadge) {
+      requests.push(fetch('/api/calendar/invitations/summary', { cache: 'no-store' })
+        .then(response => response.ok ? response.json() : Promise.reject(new Error(`Invitations failed (${response.status}).`)))
+        .then(summary => setBadge(invitationBadge, summary.pending)));
+    }
+    if (timeChangeBadge) {
+      requests.push(fetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=1', { cache: 'no-store' })
+        .then(response => response.ok ? response.json() : Promise.reject(new Error(`Time-change notifications failed (${response.status}).`)))
+        .then(page => setBadge(timeChangeBadge, page.totalElements)));
+    }
+    await Promise.allSettled(requests);
+  }
+
+  function installNotifications() {
+    const refresh = () => {
+      refreshChatNotification();
+      refreshCalendarNotifications();
+    };
+    refresh();
+    const timer = window.setInterval(refresh, 15000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) refresh();
+    });
+    window.addEventListener('focus', refresh);
+    window.addEventListener('crms:chat-notification-change', refreshChatNotification);
+    window.addEventListener('beforeunload', () => window.clearInterval(timer), { once: true });
+  }
+
   document.addEventListener('DOMContentLoaded', async () => {
     await installSharedShell();
     const sidebar = document.getElementById('sidebar');
@@ -132,6 +218,7 @@
     installMobileNavigation(sidebar);
     if (currentPage !== 'index.html') installSubmenus(menu);
     enhanceCallsPage();
+    installNotifications();
     document.querySelectorAll('[data-crms-logout], #signOutLink, .profile-dropdown a[href="login.html"]').forEach(link => {
       link.addEventListener('click', event => {
         event.preventDefault();

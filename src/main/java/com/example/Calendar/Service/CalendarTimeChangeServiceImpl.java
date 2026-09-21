@@ -17,6 +17,7 @@ import com.example.Common.Exception.ConflictException;
 import com.example.Common.Exception.ForbiddenOperationException;
 import com.example.Common.Exception.ResourceNotFoundException;
 import com.example.Common.Service.CurrentUserService;
+import com.example.Email.Service.InternalEmailNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,8 @@ public class CalendarTimeChangeServiceImpl
     private final CalendarEventMapper eventMapper;
 
     private final CurrentUserService currentUserService;
+
+    private final InternalEmailNotificationService emailNotifications;
 
   
 
@@ -201,6 +204,16 @@ public class CalendarTimeChangeServiceImpl
 
         entity = requestRepository.saveAndFlush(
                 entity
+        );
+
+        emailNotifications.send(
+                entity.getRequester(),
+                List.of(event.getOrganizer()),
+                "Time-change request: " + event.getTitle(),
+                entity.getRequester().getFullName()
+                        + " requested a different time for “" + event.getTitle() + "”.\n\n"
+                        + "Reason: " + entity.getReason() + "\n\n"
+                        + "Open Calendar in CRMS to review the proposed time."
         );
 
         return timeChangeMapper.toResponse(
@@ -440,6 +453,16 @@ public class CalendarTimeChangeServiceImpl
             entity = requestRepository
                     .saveAndFlush(entity);
 
+            emailNotifications.send(
+                    event.getOrganizer(),
+                    List.of(entity.getRequester()),
+                    "Time-change request declined: " + event.getTitle(),
+                    "Your request to change the time for “" + event.getTitle()
+                            + "” was declined."
+                            + decisionNoteText(entity.getDecisionNote())
+                            + "\n\nOpen Calendar in CRMS for event details."
+            );
+
             return timeChangeMapper.toResponse(
                     entity,
                     currentUserId
@@ -536,6 +559,18 @@ public class CalendarTimeChangeServiceImpl
                         now
                 );
 
+        emailNotifications.send(
+                event.getOrganizer(),
+                participants.stream()
+                        .map(CalendarEventParticipant::getUser)
+                        .toList(),
+                "Meeting time updated: " + event.getTitle(),
+                "The time-change request for “" + event.getTitle()
+                        + "” was approved and the meeting schedule was updated."
+                        + decisionNoteText(entity.getDecisionNote())
+                        + "\n\nOpen Calendar in CRMS to review the new time and respond."
+        );
+
         return timeChangeMapper.toResponse(
                 entity,
                 currentUserId
@@ -581,6 +616,20 @@ public class CalendarTimeChangeServiceImpl
         requestRepository.saveAndFlush(
                 request
         );
+
+        emailNotifications.send(
+                request.getRequester(),
+                List.of(request.getEvent().getOrganizer()),
+                "Time-change request withdrawn: " + request.getEvent().getTitle(),
+                request.getRequester().getFullName() + " withdrew the time-change request for “"
+                        + request.getEvent().getTitle() + "”."
+        );
+    }
+
+    private String decisionNoteText(String decisionNote) {
+        return decisionNote == null || decisionNote.isBlank()
+                ? ""
+                : "\n\nOrganizer note: " + decisionNote;
     }
 
     private void renewInvitations(
