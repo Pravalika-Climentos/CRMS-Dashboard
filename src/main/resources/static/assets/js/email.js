@@ -5,7 +5,7 @@
   const names={INBOX:'Inbox',SENT:'Sent',DRAFTS:'Drafts',STARRED:'Starred',IMPORTANT:'Important',ARCHIVE:'Archive',SPAM:'Spam',TRASH:'Trash'};
   document.addEventListener('DOMContentLoaded',init);
 
-  async function init(){bind();identity();await completeOAuth();await Promise.all([counts(),load(),loadOrganization(),loadAccounts()]);}
+  async function init(){bind();identity();await completeOAuth();await Promise.all([counts(),load(),loadOrganization(),loadAccounts()]);setInterval(silentReload,15000);}
   function bind(){
     $('compose_mail').onclick=()=>openCompose(); $('compose-close').onclick=closeCompose;
     $('composeForm').onsubmit=send; $('saveDraft').onclick=saveDraft; $('discardDraft').onclick=discard;
@@ -28,6 +28,7 @@
   function identity(){const u=window.CrmsAuth?.getCurrentUser?.()||{};const n=u.fullName||u.name||u.email||'Current User';$('emailUserName').textContent=n;$('emailUserAddress').textContent=u.email||'';$('emailUserInitials').textContent=initials(n);}
   async function api(url,options={}){const h=new Headers(options.headers||{});if(options.body&&!(options.body instanceof FormData))h.set('Content-Type','application/json');const r=await fetch(url,{...options,headers:h});if(r.status===204)return null;const ct=r.headers.get('content-type')||'';const body=ct.includes('json')?await r.json().catch(()=>null):await r.text();if(!r.ok)throw new Error(body?.message||body?.detail||(typeof body==='string'&&body)||`Request failed (${r.status})`);return body;}
   async function refresh(){try{status('Synchronizing Gmail...');const result=await api('/api/email-accounts/sync',{method:'POST'});await Promise.all([counts(),load(),loadAccounts()]);toast(result.imported?`${result.imported} Gmail messages synchronized.`:'Email is already up to date.','success')}catch(e){await Promise.all([counts(),load()]);toast(e.message,'danger')}}
+  async function silentReload(){if(document.hidden||$('compose-view').classList.contains('show'))return;try{await Promise.all([counts(),load()])}catch(_){}}
   async function counts(){try{const c=await api('/api/emails/counts');Object.entries(c).forEach(([k,v])=>{const e=document.querySelector(`[data-count="${k}"]`);if(e)e.textContent=v});$('emailUnread').textContent=`${c.unread} Unread`;}catch(e){toast(e.message,'danger')}}
   async function load(){status('Loading emails...');try{const q=new URLSearchParams({folder:state.folder,search:state.search,page:state.page,size:state.size});if(state.labelId)q.set('labelId',state.labelId);if(state.customFolderId)q.set('customFolderId',state.customFolderId);state.result=await api(`/api/emails?${q}`);renderList();}catch(e){$('emailList').replaceChildren();status(e.message,true)}}
   function selectFolder(b){state.folder=b.dataset.folder;state.labelId=null;state.customFolderId=null;state.page=0;document.querySelectorAll('.email-folder').forEach(x=>{x.classList.toggle('active',x===b);x.classList.toggle('bg-light',x===b);x.classList.toggle('bg-transparent',x!==b)});$('emailFolderTitle').textContent=names[state.folder];load();}

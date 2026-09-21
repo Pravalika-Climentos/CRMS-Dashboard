@@ -8,6 +8,7 @@ import com.example.Email.Repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -53,6 +54,20 @@ public class GmailSyncService {
         return synchronizedMessages;
     }
 
+    @Scheduled(fixedDelayString = "${email.gmail.sync-interval:30s}")
+    @Transactional
+    public void syncAllConnectedAccounts() {
+        List<EmailAccount> connected = accounts.findByProviderAndStatus(
+                EmailProvider.GMAIL, EmailAccountStatus.CONNECTED);
+        for (EmailAccount account : connected) {
+            try {
+                synchronize(account);
+            } catch (RuntimeException ignored) {
+                // synchronize stores the account error; continue with the other mailboxes.
+            }
+        }
+    }
+
     @Transactional
     public int sync(Long accountId) {
         EmailAccount account = accounts.findByAccountIdAndUserUserId(accountId, currentUser.getCurrentUserId())
@@ -70,16 +85,20 @@ public class GmailSyncService {
         accounts.save(account);
         try {
             String accessToken = validAccessToken(account);
-            int remaining = Math.max(1, Math.min(initialSyncLimit, 500));
+            boolean initialSynchronization = account.getLastSyncAt() == null;
+            int remaining = initialSynchronization ? Math.max(1, Math.min(initialSyncLimit, 500)) : 50;
             int synchronizedMessages = 0;
             String pageToken = null;
+            String recentQuery = initialSynchronization ? null
+                    : "after:" + account.getLastSyncAt().minusSeconds(90).getEpochSecond();
             do {
                 int pageSize = Math.min(remaining, 100);
                 String url = UriComponentsBuilder.fromUriString(GMAIL_API + "/messages")
                         .queryParam("maxResults", pageSize)
                         .queryParam("includeSpamTrash", true)
+                        .queryParamIfPresent("q", Optional.ofNullable(recentQuery))
                         .queryParamIfPresent("pageToken", Optional.ofNullable(pageToken))
-                        .build(true).toUriString();
+                        .build().encode().toUriString();
                 Map<String, Object> page = get(url, accessToken);
                 for (Map<String, Object> item : maps(page.get("messages"))) {
                     String providerMessageId = string(item.get("id"));

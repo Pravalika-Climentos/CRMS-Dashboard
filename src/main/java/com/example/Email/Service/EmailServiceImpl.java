@@ -35,6 +35,7 @@ public class EmailServiceImpl implements EmailService {
     private final CurrentUserService currentUserService;
     private final Clock clock;
     private final EmailCrmLinkService crmLinks;
+    private final GmailDeliveryService gmailDelivery;
 
     @Value("${email.storage-root:uploads/email}")
     private String storageRoot;
@@ -136,14 +137,15 @@ public class EmailServiceImpl implements EmailService {
         requireVersion(message.getVersion(), expectedVersion, "EMAIL_DRAFT_VERSION_CONFLICT");
         List<EmailRecipient> currentRecipients = recipients.findAllByMessageId(messageId);
         if (currentRecipients.isEmpty()) throw new IllegalArgumentException("At least one recipient is required.");
-        validateInternalRecipients(currentRecipients, message.getSender().getUserId());
+        deliverThroughGmail(message, currentRecipients, message.getSender());
         Instant now = clock.instant();
         message.setStatus(EmailMessageStatus.SENT);
         message.setSentAt(now);
         currentRecipients.forEach(recipient -> {
             recipient.setDeliveryStatus(EmailDeliveryStatus.DELIVERED);
             recipient.setDeliveredAt(now);
-            createMailboxIfMissing(message, recipient.getRecipientUser(), EmailMailboxRole.RECIPIENT, false);
+            if (recipient.getRecipientUser() != null)
+                createMailboxIfMissing(message, recipient.getRecipientUser(), EmailMailboxRole.RECIPIENT, false);
         });
         messages.flush();
         return detail(accessible(messageId), currentUserId());
@@ -283,11 +285,18 @@ public class EmailServiceImpl implements EmailService {
         List<ResolvedRecipient> resolved = resolveRecipients(request, true, sender.getUserId());
         message.setStatus(EmailMessageStatus.SENT); message.setSentAt(clock.instant());
         message = messages.saveAndFlush(message);
-        persistRecipients(message, resolved, true);
+        List<EmailRecipient> persisted = persistRecipients(message, resolved, false);
+        deliverThroughGmail(message, persisted, sender);
+        Instant deliveredAt = clock.instant();
+        persisted.forEach(recipient -> {
+            recipient.setDeliveryStatus(EmailDeliveryStatus.DELIVERED);
+            recipient.setDeliveredAt(deliveredAt);
+        });
         crmLinks.autoLink(message, resolved.stream().map(ResolvedRecipient::email).toList());
         createMailbox(message, sender, EmailMailboxRole.SENDER, true);
         for (ResolvedRecipient recipient : resolved)
-            createMailboxIfMissing(message, recipient.user(), EmailMailboxRole.RECIPIENT, false);
+            if (recipient.user() != null)
+                createMailboxIfMissing(message, recipient.user(), EmailMailboxRole.RECIPIENT, false);
         return detail(accessible(message.getMessageId()), sender.getUserId());
     }
 
@@ -295,7 +304,7 @@ public class EmailServiceImpl implements EmailService {
         persistRecipients(message, resolveRecipients(request, sending, message.getSender().getUserId()), sending);
     }
 
-    private void persistRecipients(EmailMessage message, List<ResolvedRecipient> values, boolean delivered) {
+    private List<EmailRecipient> persistRecipients(EmailMessage message, List<ResolvedRecipient> values, boolean delivered) {
         Instant now = clock.instant();
         List<EmailRecipient> entities = values.stream().map(value -> {
             EmailRecipient recipient = new EmailRecipient();
@@ -305,7 +314,7 @@ public class EmailServiceImpl implements EmailService {
             recipient.setDeliveredAt(delivered ? now : null);
             return recipient;
         }).toList();
-        recipients.saveAll(entities);
+        return recipients.saveAll(entities);
     }
 
     private List<ResolvedRecipient> resolveRecipients(EmailContentRequest request, boolean required, Long senderId) {
@@ -316,19 +325,27 @@ public class EmailServiceImpl implements EmailService {
         if (required && addresses.isEmpty()) throw new IllegalArgumentException("At least one recipient is required.");
         return addresses.entrySet().stream().map(entry -> {
             User user = users.findByEmailIgnoreCase(entry.getKey()).filter(u -> Boolean.TRUE.equals(u.getActive()))
-                    .orElseThrow(() -> new IllegalArgumentException("External delivery is not configured. Recipient must be an active CRM user: " + entry.getKey()));
-            if (user.getUserId().equals(senderId)) throw new IllegalArgumentException("You cannot send an email to yourself.");
+                    .orElse(null);
+            if (user != null && user.getUserId().equals(senderId)) throw new IllegalArgumentException("You cannot send an email to yourself.");
             return new ResolvedRecipient(entry.getKey(), entry.getValue(), user);
         }).toList();
     }
 
-    private void validateInternalRecipients(List<EmailRecipient> values, Long senderId) {
-        for (EmailRecipient recipient : values) {
-            User user = recipient.getRecipientUser();
-            if (user == null || !Boolean.TRUE.equals(user.getActive()))
-                throw new IllegalArgumentException("All recipients must be active CRM users.");
-            if (user.getUserId().equals(senderId)) throw new IllegalArgumentException("You cannot send an email to yourself.");
+    private void deliverThroughGmail(EmailMessage message, List<EmailRecipient> values, User sender) {
+        boolean hasExternalRecipient = values.stream().anyMatch(value -> value.getRecipientUser() == null);
+        if (!gmailDelivery.hasConnectedAccount(sender.getUserId())) {
+            if (hasExternalRecipient)
+                throw new IllegalStateException("Connect a Gmail account before sending email to an external address.");
+            return;
         }
+        GmailDeliveryService.DeliveryResult result = gmailDelivery.send(
+                new GmailDeliveryService.UserMail(sender.getUserId()), message,
+                values.stream().map(value -> new GmailDeliveryService.RecipientMail(
+                        value.getEmailAddress(), value.getRecipientType())).toList(),
+                attachments.findByMessageMessageIdOrderByAttachmentId(message.getMessageId()));
+        message.setAccount(result.account());
+        message.setProviderMessageId(result.providerMessageId());
+        message.setProviderThreadId(result.providerThreadId());
     }
 
     private void addAddresses(Map<String, EmailRecipientType> target, List<String> values, EmailRecipientType type) {
