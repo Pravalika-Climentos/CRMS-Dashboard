@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -94,10 +95,14 @@ public class GlobalExceptionHandler {
                         )
                 );
 
+        String message = validationErrors.values().stream()
+                .distinct()
+                .collect(Collectors.joining(" "));
+
         ApiErrorResponse response =
                 buildError(
                         HttpStatus.BAD_REQUEST,
-                        "Validation failed.",
+                        message.isBlank() ? "Please correct the invalid information and try again." : message,
                         request.getRequestURI(),
                         validationErrors
                 );
@@ -201,11 +206,15 @@ public ResponseEntity<ApiErrorResponse> handleConstraintViolation(
                     )
             );
 
+    String message = validationErrors.values().stream()
+            .distinct()
+            .collect(Collectors.joining(" "));
+
     ApiErrorResponse response =
             buildError(
                     HttpStatus.BAD_REQUEST,
                     "VALIDATION_FAILED",
-                    "Request parameter validation failed.",
+                    message.isBlank() ? "Please correct the invalid information and try again." : message,
                     request.getRequestURI(),
                     validationErrors
             );
