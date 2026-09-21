@@ -192,10 +192,86 @@
     await Promise.allSettled(requests);
   }
 
+  function escapeNotificationText(value) {
+    return String(value ?? '').replace(/[&<>'"]/g, character => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+    })[character]);
+  }
+
+  function localNotificationTime(value) {
+    if (!value) return '';
+    const text = String(value);
+    const normalized = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text)
+      && !/(?:Z|[+-]\d{2}:?\d{2})$/i.test(text) ? `${text}Z` : text;
+    const date = new Date(normalized);
+    return Number.isNaN(date.getTime()) ? '' : date.toLocaleString([], {
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  async function refreshBellNotifications() {
+    const bellButton = document.querySelector('.navbar-header button .ti-bell-check')?.closest('button');
+    const menu = bellButton?.parentElement?.querySelector('.dropdown-menu');
+    const body = menu?.querySelector('.notification-body');
+    if (!bellButton || !body) return;
+
+    body.innerHTML = '<div class="p-4 text-center text-muted">Loading notifications…</div>';
+    try {
+      const [invitationResponse, timeChangeResponse] = await Promise.all([
+        fetch('/api/calendar/invitations?status=PENDING&page=0&size=5', { cache: 'no-store' }),
+        fetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=5', { cache: 'no-store' })
+      ]);
+      if (!invitationResponse.ok || !timeChangeResponse.ok) {
+        throw new Error('Notification data could not be loaded.');
+      }
+      const invitationsPage = await invitationResponse.json();
+      const timeChangesPage = await timeChangeResponse.json();
+      const invitations = invitationsPage.items || [];
+      const timeChanges = timeChangesPage.items || [];
+      const rows = [
+        ...invitations.map(item => ({
+          icon: 'ti-calendar-event',
+          title: item.title || 'Meeting invitation',
+          detail: `Invitation from ${item.invitedBy?.fullName || item.organizer?.fullName || 'an organizer'}`,
+          time: item.startAt || item.startDate
+        })),
+        ...timeChanges.map(item => ({
+          icon: 'ti-clock-edit',
+          title: item.eventTitle || 'Meeting time-change request',
+          detail: `${item.requester?.fullName || 'A participant'} requested a different time`,
+          time: item.proposedStartAt || item.proposedStartDate
+        }))
+      ];
+      body.innerHTML = rows.length ? rows.map((item, index) => `
+        <a class="dropdown-item notification-item py-3 text-wrap border-bottom" href="calendar.html" id="live-notification-${index}">
+          <div class="d-flex gap-2">
+            <span class="avatar avatar-md rounded-circle bg-light text-primary d-inline-flex align-items-center justify-content-center flex-shrink-0"><i class="ti ${item.icon} fs-20"></i></span>
+            <span class="flex-grow-1 min-width-0">
+              <strong class="d-block text-dark text-truncate">${escapeNotificationText(item.title)}</strong>
+              <span class="d-block text-muted text-wrap">${escapeNotificationText(item.detail)}</span>
+              <small class="text-muted"><i class="ti ti-clock me-1"></i>${escapeNotificationText(localNotificationTime(item.time))}</small>
+            </span>
+          </div>
+        </a>`).join('') : '<div class="p-4 text-center text-muted">No new notifications.</div>';
+      const total = Number(invitationsPage.totalElements || invitations.length)
+        + Number(timeChangesPage.totalElements || timeChanges.length);
+      setBadge(notificationBadge(bellButton), total);
+      const footerLink = menu.querySelector('.border-top a');
+      if (footerLink) {
+        footerLink.href = 'calendar.html';
+        footerLink.textContent = 'Open Calendar';
+      }
+    } catch (error) {
+      body.innerHTML = '<div class="p-4 text-center text-muted">Notifications are temporarily unavailable.</div>';
+      console.warn('Header notifications could not be loaded.', error);
+    }
+  }
+
   function installNotifications() {
     const refresh = () => {
       refreshChatNotification();
       refreshCalendarNotifications();
+      refreshBellNotifications();
     };
     refresh();
     const timer = window.setInterval(refresh, 15000);

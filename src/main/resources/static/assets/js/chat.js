@@ -244,7 +244,7 @@
         try {
             const data = await request(`/conversations/${conversationIdValue}/messages?page=0&size=50`);
             if (sequence !== state.requestSequence || Number(conversationIdValue) !== state.activeConversationId) return;
-            state.messages = asArray(data).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            state.messages = asArray(data).sort((a, b) => parseApiDate(a.createdAt) - parseApiDate(b.createdAt));
             renderMessages();
             const last = state.messages[state.messages.length - 1];
             if (last?.messageId) markRead(last.messageId, false);
@@ -715,7 +715,7 @@
         const index = state.messages.findIndex(item => Number(item.messageId) === Number(message.messageId));
         if (index >= 0) state.messages[index] = message;
         else state.messages.push(message);
-        state.messages.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        state.messages.sort((a, b) => parseApiDate(a.createdAt) - parseApiDate(b.createdAt));
         renderMessages();
 
         if (Number(message.sender?.userId) !== CURRENT_USER_ID) {
@@ -1052,7 +1052,7 @@
 
     function formatTime(value) {
         if (!value) return '';
-        const date = new Date(value);
+        const date = parseApiDate(value);
         if (Number.isNaN(date.getTime())) return '';
         const today = new Date();
         return date.toDateString() === today.toDateString()
@@ -1061,20 +1061,33 @@
     }
 
     function formatMessageTime(value) {
-        const date = new Date(value);
+        const date = parseApiDate(value);
         return Number.isNaN(date.getTime()) ? '' : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
 
 
     function formatDay(value) {
-        const date = new Date(value);
+        const date = parseApiDate(value);
         if (Number.isNaN(date.getTime())) return '';
         const today = new Date();
         const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
         if (date.toDateString() === today.toDateString()) return 'Today';
         if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
         return date.toLocaleDateString([], { day: 'numeric', month: 'short', year: date.getFullYear() === today.getFullYear() ? undefined : 'numeric' });
+    }
+
+    function parseApiDate(value) {
+        if (!value) return new Date(NaN);
+        const text = String(value).trim();
+        // Chat timestamps are stored in UTC, but LocalDateTime JSON values do
+        // not include a zone suffix. Explicitly mark them as UTC so the
+        // browser converts them to the user's real local time.
+        const normalized = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text)
+            && !/(?:Z|[+-]\d{2}:?\d{2})$/i.test(text)
+            ? `${text}Z`
+            : text;
+        return new Date(normalized);
     }
 
     function formatBytes(bytes) {
