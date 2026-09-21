@@ -1,0 +1,2 @@
+package com.example.Email.Repository;import com.example.Email.Entity.EmailCrmLink;import org.springframework.data.jpa.repository.JpaRepository;import java.util.*;
+public interface EmailCrmLinkRepository extends JpaRepository<EmailCrmLink,Long>{boolean existsByMessageMessageIdAndEntityTypeAndEntityIdAndRelationshipType(Long m,String t,String i,String r);List<EmailCrmLink> findByEntityTypeAndEntityIdOrderByCreatedAtDesc(String t,String i);}

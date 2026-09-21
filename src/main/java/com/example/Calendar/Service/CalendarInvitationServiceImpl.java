@@ -16,6 +16,7 @@ import com.example.Common.Exception.ConflictException;
 import com.example.Common.Exception.ForbiddenOperationException;
 import com.example.Common.Exception.ResourceNotFoundException;
 import com.example.Common.Service.CurrentUserService;
+import com.example.Email.Service.InternalEmailNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +48,8 @@ public class CalendarInvitationServiceImpl
     private final CalendarEventMapper calendarEventMapper;
 
     private final CurrentUserService currentUserService;
+
+    private final InternalEmailNotificationService emailNotifications;
 
     @Override
     @Transactional
@@ -310,6 +313,11 @@ public class CalendarInvitationServiceImpl
         invitation =
                 participantRepository
                         .saveAndFlush(invitation);
+
+        emailNotifications.send(invitation.getUser(), List.of(event.getOrganizer()),
+                "Invitation response: " + event.getTitle(),
+                invitation.getUser().getFullName() + " " + invitation.getStatus().name().toLowerCase()
+                        + " the invitation to “" + event.getTitle() + "”.");
 
         return toResponse(
                 invitation,

@@ -31,6 +31,7 @@ import com.example.Common.Exception.ConflictException;
 import com.example.Common.Exception.ForbiddenOperationException;
 import com.example.Common.Exception.ResourceNotFoundException;
 import com.example.Common.Service.CurrentUserService;
+import com.example.Email.Service.InternalEmailNotificationService;
 import com.example.Calendar.Repository.CalendarTimeChangeRequestRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -79,6 +80,8 @@ public class CalendarEventServiceImpl
             teamMemberRepository;
 
     private final CurrentUserService currentUserService;
+
+    private final InternalEmailNotificationService emailNotifications;
 
     private final CalendarScheduleValidator
             scheduleValidator;
@@ -183,6 +186,10 @@ public class CalendarEventServiceImpl
 
         participantRepository.saveAll(participants);
         participantRepository.flush();
+
+        emailNotifications.send(organizer, invitedUsers,
+                "Calendar invitation: " + event.getTitle(),
+                "You have been invited to “" + event.getTitle() + "”. Open Calendar in CRMS to review and respond.");
 
         return calendarEventMapper.toResponse(
                 event,
@@ -1379,6 +1386,11 @@ public void cancelEvent(
 
     participantRepository.saveAll(participants);
     participantRepository.flush();
+
+    emailNotifications.send(event.getOrganizer(),
+            participants.stream().map(CalendarEventParticipant::getUser).toList(),
+            "Calendar event cancelled: " + event.getTitle(),
+            "The calendar event “" + event.getTitle() + "” has been cancelled.");
 }
 
 @Override

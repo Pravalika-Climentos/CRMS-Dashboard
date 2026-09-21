@@ -1,0 +1,1 @@
+package com.example.Email.DTO.Response;import java.time.Instant;public record EmailCrmLinkResponse(Long linkId,Long messageId,String entityType,String entityId,String relationshipType,Instant createdAt){}
