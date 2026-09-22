@@ -346,7 +346,7 @@ public class EmailServiceImpl implements EmailService {
         boolean hasExternalRecipient = values.stream().anyMatch(value -> value.getRecipientUser() == null);
         if (!gmailDelivery.hasConnectedAccount(sender.getUserId())) {
             if (hasExternalRecipient)
-                throw new IllegalStateException("Connect a Gmail account before sending email to an external address.");
+                throw new IllegalArgumentException("Connect a Gmail account before sending email to an external address.");
             return;
         }
         GmailDeliveryService.DeliveryResult result = gmailDelivery.send(

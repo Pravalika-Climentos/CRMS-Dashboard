@@ -41,7 +41,7 @@ public class GmailDeliveryService {
             account = accounts.findByUserUserIdAndProviderAndStatus(
                             sender.userId(), EmailProvider.GMAIL, EmailAccountStatus.CONNECTED)
                     .stream().findFirst()
-                    .orElseThrow(() -> new IllegalStateException(
+                    .orElseThrow(() -> new IllegalArgumentException(
                             "Connect a Gmail account before sending email to an external address."));
         } else if (!account.getUser().getUserId().equals(sender.userId())
                 || account.getProvider() != EmailProvider.GMAIL
