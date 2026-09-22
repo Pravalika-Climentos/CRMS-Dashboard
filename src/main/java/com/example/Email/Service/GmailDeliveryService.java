@@ -36,11 +36,18 @@ public class GmailDeliveryService {
 
     public DeliveryResult send(UserMail sender, EmailMessage message, List<RecipientMail> recipients,
                                List<EmailAttachment> attachments) {
-        EmailAccount account = accounts.findByUserUserIdAndProviderAndStatus(
-                        sender.userId(), EmailProvider.GMAIL, EmailAccountStatus.CONNECTED)
-                .stream().findFirst()
-                .orElseThrow(() -> new IllegalStateException(
-                        "Connect a Gmail account before sending email to an external address."));
+        EmailAccount account = message.getAccount();
+        if (account == null) {
+            account = accounts.findByUserUserIdAndProviderAndStatus(
+                            sender.userId(), EmailProvider.GMAIL, EmailAccountStatus.CONNECTED)
+                    .stream().findFirst()
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Connect a Gmail account before sending email to an external address."));
+        } else if (!account.getUser().getUserId().equals(sender.userId())
+                || account.getProvider() != EmailProvider.GMAIL
+                || account.getStatus() != EmailAccountStatus.CONNECTED) {
+            throw new IllegalArgumentException("The selected Gmail account is unavailable.");
+        }
 
         String rawMessage = mime(account, message, recipients, attachments);
         Map<?, ?> response = http.post().uri(SEND_URL)

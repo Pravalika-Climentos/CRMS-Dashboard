@@ -36,16 +36,19 @@ public class EmailServiceImpl implements EmailService {
     private final Clock clock;
     private final EmailCrmLinkService crmLinks;
     private final GmailDeliveryService gmailDelivery;
+    private final EmailAccountRepository emailAccounts;
 
     @Value("${email.storage-root:uploads/email}")
     private String storageRoot;
 
     @Override
-    public PageResponse<EmailSummaryResponse> list(EmailFolder folder, String search, int page, int size) {
+    public PageResponse<EmailSummaryResponse> list(EmailFolder folder, Long accountId, String search, boolean unreadOnly, int page, int size) {
         if (page < 0 || size < 1 || size > 100) throw new IllegalArgumentException("Invalid pagination values.");
         String query = search == null ? "" : search.trim();
         if (query.length() > 150) throw new IllegalArgumentException("Search cannot exceed 150 characters.");
-        Page<EmailMailboxEntry> result = mailbox.findMailbox(currentUserId(), folder.name(), query,
+        if (accountId != null && emailAccounts.findByAccountIdAndUserUserId(accountId, currentUserId()).isEmpty())
+            throw new IllegalArgumentException("The selected email account is unavailable.");
+        Page<EmailMailboxEntry> result = mailbox.findMailbox(currentUserId(), folder.name(), accountId, query, unreadOnly,
                 PageRequest.of(page, size));
         return page(result);
     }
@@ -88,8 +91,14 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Transactional
     public EmailDetailResponse details(Long messageId) {
-        return detail(accessible(messageId), currentUserId());
+        EmailMailboxEntry entry = accessible(messageId);
+        if (!yes(entry.getRead())) {
+            entry.setRead(true);
+            mailbox.flush();
+        }
+        return detail(entry, currentUserId());
     }
 
     @Override @Transactional
@@ -168,8 +177,10 @@ public class EmailServiceImpl implements EmailService {
                     .forEach(to::add);
         }
         if (to.isEmpty()) throw new IllegalArgumentException("Reply has no recipient.");
+        Long accountId = request.accountId() != null ? request.accountId()
+                : original.getAccount() == null ? null : original.getAccount().getAccountId();
         EmailContentRequest content = new EmailContentRequest(List.copyOf(to), request.cc(), request.bcc(),
-                replySubject(original.getSubject()), request.body(), null);
+                replySubject(original.getSubject()), request.body(), accountId, null);
         EmailMessage reply = new EmailMessage();
         reply.setSender(sender); reply.setThreadKey(original.getThreadKey()); reply.setParentMessage(original);
         applyContent(reply, content);
@@ -185,7 +196,7 @@ public class EmailServiceImpl implements EmailService {
                 + "From: " + messageSender(original).fullName() + " <" + messageSender(original).email() + ">\n"
                 + "Subject: " + original.getSubject() + "\n\n" + original.getBody();
         EmailContentRequest content = new EmailContentRequest(request.to(), request.cc(), request.bcc(),
-                forwardSubject(original.getSubject()), body, null);
+                forwardSubject(original.getSubject()), body, request.accountId(), null);
         EmailMessage forwarded = new EmailMessage();
         forwarded.setSender(currentUser()); forwarded.setThreadKey(UUID.randomUUID().toString());
         forwarded.setParentMessage(original); applyContent(forwarded, content);
@@ -361,6 +372,13 @@ public class EmailServiceImpl implements EmailService {
     private void applyContent(EmailMessage message, EmailContentRequest request) {
         message.setSubject(request.subject() == null ? "" : request.subject().trim());
         message.setBody(request.body() == null ? "" : request.body().trim());
+        if (request.accountId() != null) {
+            EmailAccount account = emailAccounts.findByAccountIdAndUserUserId(request.accountId(), message.getSender().getUserId())
+                    .filter(value -> value.getProvider() == EmailProvider.GMAIL
+                            && value.getStatus() == EmailAccountStatus.CONNECTED)
+                    .orElseThrow(() -> new IllegalArgumentException("Select a connected Gmail account you own."));
+            message.setAccount(account);
+        }
     }
 
     private EmailMessage ownedDraft(Long messageId) {
@@ -393,7 +411,9 @@ public class EmailServiceImpl implements EmailService {
         String body = message.getBody().replaceAll("\\s+", " ").trim();
         String preview = body.length() <= 160 ? body : body.substring(0, 157) + "...";
         return new EmailSummaryResponse(message.getMessageId(), message.getThreadKey(), messageSender(message),
-                message.getSubject(), preview, message.getStatus(), entry.getMailboxRole(), message.getSentAt(),
+                message.getSubject(), preview, message.getStatus(), entry.getMailboxRole(),
+                message.getAccount() == null ? null : message.getAccount().getAccountId(),
+                message.getAccount() == null ? null : message.getAccount().getEmailAddress(), message.getSentAt(),
                 yes(entry.getRead()), yes(entry.getStarred()), yes(entry.getImportant()), yes(entry.getArchived()),
                 yes(entry.getSpam()), entry.getTrashedAt(), attachmentCount,
                 message.getVersion(), entry.getVersion());
@@ -415,6 +435,8 @@ public class EmailServiceImpl implements EmailService {
         return new EmailDetailResponse(message.getMessageId(), message.getThreadKey(),
                 message.getParentMessage() == null ? null : message.getParentMessage().getMessageId(), messageSender(message),
                 recipientResponses, message.getSubject(), message.getBody(), message.getStatus(), entry.getMailboxRole(),
+                message.getAccount() == null ? null : message.getAccount().getAccountId(),
+                message.getAccount() == null ? null : message.getAccount().getEmailAddress(),
                 message.getSentAt(), yes(entry.getRead()), yes(entry.getStarred()), yes(entry.getImportant()),
                 yes(entry.getArchived()), yes(entry.getSpam()), entry.getTrashedAt(), attachmentResponses,
                 message.getVersion(), entry.getVersion(), message.getCreatedAt(), message.getUpdatedAt());

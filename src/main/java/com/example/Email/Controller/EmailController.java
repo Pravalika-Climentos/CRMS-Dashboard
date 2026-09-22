@@ -29,13 +29,15 @@ public class EmailController {
             @RequestParam(defaultValue = "INBOX") EmailFolder folder,
             @RequestParam(required = false) Long labelId,
             @RequestParam(required = false) Long customFolderId,
+            @RequestParam(required = false) Long accountId,
             @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "false") boolean unreadOnly,
             @RequestParam(defaultValue = "0") @PositiveOrZero int page,
             @RequestParam(defaultValue = "20") @Min(1) @Max(100) int size) {
         if (labelId != null && customFolderId != null) throw new IllegalArgumentException("Choose either a label or a custom folder.");
         if (labelId != null) return service.listLabel(labelId, search, page, size);
         if (customFolderId != null) return service.listCustomFolder(customFolderId, search, page, size);
-        return service.list(folder, search, page, size);
+        return service.list(folder, accountId, search, unreadOnly, page, size);
     }
 
     @GetMapping("/counts")

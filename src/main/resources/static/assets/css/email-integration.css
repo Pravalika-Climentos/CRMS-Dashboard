@@ -1,13 +1,26 @@
-.email-app-shell { min-height: calc(100vh - 64px); }
-.email-sidebar { max-width: 280px; flex: 0 0 280px; }
-.email-folder { color: var(--bs-body-color); text-align: left; }
-.email-folder:hover, .email-folder.active { color: var(--bs-primary); }
-.mail-notifications { min-width: 0; display: flex; flex-direction: column; max-height: calc(100vh - 64px); }
+.email-page { padding: 20px !important; background: #f5f7fb; }
+.email-app-shell { min-height: calc(100vh - 104px); gap: 18px; }
+.email-sidebar { max-width: 300px; flex: 0 0 300px; border: 1px solid #e7eaf0; border-radius: 16px; box-shadow: 0 8px 28px rgba(15,23,42,.05); overflow: hidden; }
+.email-profile-card { background: linear-gradient(135deg,#f7f8ff,#fff); border: 1px solid #e7e9ff; border-radius: 12px; }
+.email-compose-button { min-height: 44px; border-radius: 10px; font-weight: 600; box-shadow: 0 7px 16px rgba(var(--bs-primary-rgb),.18); }
+.email-folder { color: var(--bs-body-color); text-align: left; min-height: 38px; transition: all .15s ease; }
+.email-folder:hover { background: #f6f7fb !important; transform: translateX(2px); }
+.email-folder.active { color: var(--bs-primary); background: rgba(var(--bs-primary-rgb),.09) !important; font-weight: 600; }
+.mail-notifications { min-width: 0; display: flex; flex-direction: column; max-height: calc(100vh - 104px); border: 1px solid #e7eaf0; border-radius: 16px; box-shadow: 0 8px 28px rgba(15,23,42,.05); overflow: hidden; }
+.email-toolbar { background: rgba(255,255,255,.96); }
+.email-summary-filter { border: 1px solid #e4e7ec; background: #fff; color: #667085; border-radius: 999px; padding: .25rem .65rem; font-size: .78rem; transition: all .15s ease; }
+.email-summary-filter:hover, .email-summary-filter.active { border-color: rgba(var(--bs-primary-rgb),.35); color: var(--bs-primary); background: rgba(var(--bs-primary-rgb),.07); }
+.email-account-card { border: 1px solid #e6e9ef; background: #fff; border-radius: 10px; padding: .65rem; transition: border-color .15s ease, box-shadow .15s ease; }
+.email-account-card:hover, .email-account-card.selected { border-color: rgba(var(--bs-primary-rgb),.45); box-shadow: 0 4px 12px rgba(15,23,42,.07); }
+.email-account-card .account-select { min-width: 0; border: 0; background: transparent; padding: 0; text-align: left; }
+.email-account-status { color: #039855; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+.email-account-status.error, .account-error-help { color: #d92d20; }
 .mails-list { overflow-y: auto; flex: 1 1 auto; min-height: 220px; }
-.email-row { cursor: pointer; transition: background-color .15s ease; }
-.email-row:hover { background: var(--bs-light); }
-.email-row.unread { background: rgba(var(--bs-primary-rgb), .055); }
+.email-row { cursor: pointer; border-color: #eef0f4; transition: background-color .15s ease, transform .15s ease; }
+.email-row:hover { background: #fafbff; transform: translateX(2px); }
+.email-row.unread { background: rgba(var(--bs-primary-rgb), .045); border-left: 3px solid var(--bs-primary); }
 .email-row.unread h6, .email-row.unread .fw-semibold { font-weight: 700 !important; }
+.email-account-badge { display: inline-flex; align-items: center; max-width: 190px; font-size: .68rem; color: #667085; background: #f2f4f7; border-radius: 999px; padding: .12rem .45rem; }
 .email-icon-button { border: 0; background: transparent; padding: .25rem; color: var(--bs-secondary-color); }
 .min-width-0 { min-width: 0; }
 .email-status { text-align: center; }
@@ -15,8 +28,12 @@
 .email-detail-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; min-height: 120px; }
 .email-toast { position: fixed; top: 80px; right: 22px; z-index: 2000; max-width: 420px; }
 #compose-view { z-index: 1060; }
-#compose-view .compose-view { width: min(680px, calc(100vw - 24px)); max-height: calc(100vh - 90px); overflow-y: auto; margin: 0 18px 18px 0; }
+#compose-view .compose-view { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 90px); overflow-y: auto; margin: 0 18px 18px 0; border-radius: 16px !important; box-shadow: 0 24px 70px rgba(15,23,42,.28); }
+#compose-view .compose-header { background: linear-gradient(135deg,#111827,#344054) !important; }
+#compose-view .form-control, #compose-view .form-select { border-color: #e4e7ec; border-radius: 9px; }
 @media (max-width: 767.98px) {
+  .email-page { padding: 10px !important; }
+  .email-app-shell { gap: 10px; }
   .email-sidebar { max-width: none; flex-basis: auto; }
   .mail-notifications { max-height: none; min-height: 60vh; }
   #compose-view .compose-view { margin: 0; width: 100%; max-height: 92vh; }

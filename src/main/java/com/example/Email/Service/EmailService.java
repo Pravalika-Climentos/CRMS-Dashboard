@@ -7,7 +7,7 @@ import com.example.Email.Entity.EmailFolder;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface EmailService {
-    PageResponse<EmailSummaryResponse> list(EmailFolder folder, String search, int page, int size);
+    PageResponse<EmailSummaryResponse> list(EmailFolder folder, Long accountId, String search, boolean unreadOnly, int page, int size);
     PageResponse<EmailSummaryResponse> listCustomFolder(Long folderId, String search, int page, int size);
     PageResponse<EmailSummaryResponse> listLabel(Long labelId, String search, int page, int size);
     EmailFolderCountsResponse counts();
