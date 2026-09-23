@@ -220,11 +220,14 @@
     const anchor = $('teamRoomBtn'); if (!anchor || $('scheduleMeetingBtn')) return;
     const button = document.createElement('button'); button.id = 'scheduleMeetingBtn'; button.className = 'btn btn-outline-primary'; button.innerHTML = '<i class="ti ti-calendar-event me-1"></i>Schedule'; anchor.after(button);
     button.onclick = () => {
-      const raw = prompt('Meeting date and time (for example: 2026-09-09T15:30)'); if (!raw) return;
-      const when = new Date(raw); if (Number.isNaN(when.getTime()) || when <= new Date()) return toast('Enter a future date and time.', 'warning');
-      const meetings = JSON.parse(localStorage.getItem('crmMeetings') || '[]'); meetings.push({ id:crypto.randomUUID(), when:when.toISOString(), notified:false }); localStorage.setItem('crmMeetings', JSON.stringify(meetings)); toast(`Team Room scheduled for ${formatDateTime(when)}. You will be reminded five minutes before.`, 'success');
+      const params = new URLSearchParams({ action:'schedule-call' });
+      if (selected) {
+        params.set('participantUserId', selected.id);
+        params.set('participantName', selected.name || 'Customer');
+        if (selected.email) params.set('participantEmail', selected.email);
+      }
+      window.location.assign(`calendar.html?${params}`);
     };
-    setInterval(() => { const now = Date.now(); const meetings = JSON.parse(localStorage.getItem('crmMeetings') || '[]'); let changed = false; meetings.forEach(m => { const until = new Date(m.when).getTime() - now; if (!m.notified && until <= 300000 && until > -60000) { m.notified = true; changed = true; toast(`Team Room starts at ${formatDateTime(m.when)}.`, 'info'); if (Notification.permission === 'granted') new Notification('Team Room starts soon', { body:`Starts at ${formatDateTime(m.when)}` }); } }); if (changed) localStorage.setItem('crmMeetings', JSON.stringify(meetings)); }, 30000);
   }
 
   // ---- Ringtone (no external audio file needed) ----

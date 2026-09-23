@@ -164,6 +164,35 @@
         });
     }
 
+    function openCallSchedulingRequest() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('action') !== 'schedule-call') return;
+
+        const participantUserId = Number(params.get('participantUserId'));
+        const participantName = (params.get('participantName') || '').trim();
+        const participantEmail = (params.get('participantEmail') || '').trim();
+        const hasParticipant = Number.isInteger(participantUserId)
+            && participantUserId > 0
+            && participantUserId !== CURRENT_USER_ID;
+
+        $('#team_event').one('shown.bs.modal', () => {
+            if (hasParticipant) {
+                const label = participantName || participantEmail || `User ${participantUserId}`;
+                const value = `user:${participantUserId}`;
+                if (!$(`#te_invitees option[value="${value}"]`).length) {
+                    $('#te_invitees').append(new Option(label, value, true, true));
+                }
+                $('#te_invitees').val([value]).trigger('change');
+                $('#te_title').val(`Call with ${label}`);
+            } else {
+                $('#te_title').val('Scheduled call');
+            }
+        });
+
+        modal('team_event').show();
+        window.history.replaceState({}, document.title, 'calendar.html');
+    }
+
     function getContrastTextColor(hex) {
 
         if (!hex) return '#ffffff';
@@ -1013,6 +1042,7 @@
 
         refreshInvitationBadge();
         refreshTimeChangeBadge();
+        openCallSchedulingRequest();
     });
     $(document).on('click', '#editEventBtn', () => {
 
@@ -1553,4 +1583,3 @@
     $('#refreshCalendarBtn').on('click', () => { calendar?.refetchEvents(); loadUpcoming(); refreshInvitationBadge(); refreshTimeChangeBadge(); });
     $('#add_event').on('hidden.bs.modal', () => { if (!editingEvent) resetEventForm(); });
 })();
-
