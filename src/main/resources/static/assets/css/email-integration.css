@@ -41,6 +41,8 @@
 @media (prefers-reduced-motion: reduce) { .email-skeleton-avatar, .email-skeleton-copy i { animation: none; } }
 .recipient-suggestions { position: absolute; left: 1rem; right: 1rem; z-index: 1085; max-height: 230px; overflow-y: auto; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
 .email-detail-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; min-height: 120px; }
+.email-detail-body:has(.email-html-viewer) { white-space: normal; overflow-wrap: normal; }
+.email-html-viewer { display: block; width: 100%; min-height: 520px; border: 0; background: #fff; }
 .email-toast { position: fixed; top: 80px; right: 22px; z-index: 2000; max-width: 420px; }
 #compose-view { z-index: 1060; }
 #compose-view .compose-view { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 90px); overflow-y: auto; margin: 0 18px 18px 0; border-radius: 16px !important; box-shadow: 0 24px 70px rgba(15,23,42,.28); }

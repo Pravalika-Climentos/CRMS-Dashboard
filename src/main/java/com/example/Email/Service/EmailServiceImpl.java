@@ -434,7 +434,7 @@ public class EmailServiceImpl implements EmailService {
                 .stream().map(a -> new EmailAttachmentResponse(a.getAttachmentId(), a.getOriginalFilename(), a.getContentType(), a.getFileSize())).toList();
         return new EmailDetailResponse(message.getMessageId(), message.getThreadKey(),
                 message.getParentMessage() == null ? null : message.getParentMessage().getMessageId(), messageSender(message),
-                recipientResponses, message.getSubject(), message.getBody(), message.getStatus(), entry.getMailboxRole(),
+                recipientResponses, message.getSubject(), message.getBody(), message.getHtmlBody(), message.getStatus(), entry.getMailboxRole(),
                 message.getAccount() == null ? null : message.getAccount().getAccountId(),
                 message.getAccount() == null ? null : message.getAccount().getEmailAddress(),
                 message.getSentAt(), yes(entry.getRead()), yes(entry.getStarred()), yes(entry.getImportant()),

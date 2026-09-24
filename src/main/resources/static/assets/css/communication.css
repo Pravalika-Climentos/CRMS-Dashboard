@@ -131,4 +131,17 @@ body{background:var(--comm-bg)}
 .calls-page .chat-area::-webkit-scrollbar-thumb{background:#aeb6c5;border:2px solid #eef1f5;border-radius:10px}
 .calls-page .chat-area::-webkit-scrollbar-thumb:hover{background:#8791a3}
 @media(max-width:1250px){.calls-page .comm-hero{grid-template-columns:1fr}.calls-page .comm-hero>div:first-child{padding-right:0}}
+
+/* Match the CRM white-and-red visual system while preserving the dark meeting stage. */
+.calls-page{--comm-primary:var(--primary,#E41F07);--comm-primary-dark:#b91c0c;--comm-bg:#f8f9fa;--comm-border:#e7e9ee}
+.calls-page .comm-tabs .nav-link.active,.calls-page .avatar-fallback{background:rgba(var(--primary-rgb,228,31,7),.10)}
+.calls-page .contact-item:hover,.calls-page .contact-item.active{background:rgba(var(--primary-rgb,228,31,7),.045)}
+.calls-page .icon-btn:hover{background:rgba(var(--primary-rgb,228,31,7),.08);border-color:rgba(var(--primary-rgb,228,31,7),.28)}
+.calls-page .composer input:focus,.calls-page .comm-search:focus{border-color:rgba(var(--primary-rgb,228,31,7),.55);box-shadow:0 0 0 3px rgba(var(--primary-rgb,228,31,7),.10)}
+.calls-page .mode-card:hover,.calls-page .mode-card.selected{border-color:rgba(var(--primary-rgb,228,31,7),.38);background:rgba(var(--primary-rgb,228,31,7),.045)}
+.calls-page .profile-avatar{border-color:rgba(var(--primary-rgb,228,31,7),.10)}
+.calls-page .comm-actions #newConversation{box-shadow:0 5px 12px rgba(var(--primary-rgb,228,31,7),.18)}
+.calls-page .call-dock .dock-return,#teamStage .team-composer button,#teamScreenBtn.active{background:var(--comm-primary)}
+#teamStage .team-panel-tab.active{color:var(--comm-primary);background:rgba(var(--primary-rgb,228,31,7),.08)}
+#teamStage .call-person .mini-avatar,#teamStage .team-tile .tile-avatar{background:var(--comm-primary)!important}
 @media(max-width:767px){.calls-page .mobile-contacts-button{display:inline-flex!important}}

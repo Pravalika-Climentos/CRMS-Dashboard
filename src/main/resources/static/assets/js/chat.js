@@ -64,6 +64,8 @@
         $('#user-search-results, #new-chat-user-results')?.addEventListener('change', onUserSelection);
         $('#cancel-reply-btn')?.addEventListener('click', clearReply);
         $('#clear-attachment-btn')?.addEventListener('click', clearSelectedFile);
+        $('#active-chat-call')?.addEventListener('click', event => openCallFromChat(event, 'audio'));
+        $('#active-chat-video')?.addEventListener('click', event => openCallFromChat(event, 'video'));
 
         // Group participant management
         $('#manage-participants-btn')?.addEventListener('click', openManageParticipants);
@@ -222,6 +224,27 @@
 
         const groupDropdown = $('#group-manage-dropdown');
         if (groupDropdown) groupDropdown.style.display = isGroup ? '' : 'none';
+        ['#active-chat-call','#active-chat-video'].forEach(selector => {
+            const button=$(selector);if(!button)return;
+            button.classList.toggle('disabled',isGroup);
+            button.setAttribute('aria-disabled',String(isGroup));
+            button.title=isGroup?'One-to-one calls are available for direct conversations only.':'';
+        });
+    }
+
+    function openCallFromChat(event, mode) {
+        event.preventDefault();
+        const conversation=activeConversation();
+        if(!conversation){showError(new Error('Select a conversation first.'),'Select a conversation first.');return}
+        if(conversation.conversationType==='GROUP'){showError(new Error('Start one-to-one calls from a direct conversation.'),'Start one-to-one calls from a direct conversation.');return}
+        const participant=otherParticipant(conversation);
+        if(!participant?.userId){showError(new Error('The selected contact is unavailable.'),'The selected contact is unavailable.');return}
+        const params=new URLSearchParams({mode,contactId:String(participant.userId)});
+        if(participant.email)params.set('contactEmail',participant.email);
+        const target=`calls.html?${params}`;
+        if(window.parent!==window&&window.parent.__crmsNavigate)window.parent.__crmsNavigate(target);
+        else if(window.__crmsNavigate)window.__crmsNavigate(target);
+        else window.location.assign(target);
     }
 
     async function loadActiveUserStatus() {
@@ -976,7 +999,7 @@
                 .chat-section-label{padding:12px 0 6px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gray-500)}
                 .chat-archived{width:100%;max-width:100%;overflow:hidden}.chat-archived summary{cursor:pointer;list-style:none;position:sticky;bottom:0;background:var(--white);z-index:2}.chat-date-separator{display:flex;align-items:center;gap:12px;margin:20px 0;color:var(--gray-500);font-size:12px}
                 .chat-date-separator:before,.chat-date-separator:after{content:'';height:1px;background:var(--border-color);flex:1}.chat-empty-state{min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--gray-500)}
-                .chat-empty-state i{font-size:42px}.message-footer{flex-shrink:0}.chat-wrapper [title="Voice Call"],.chat-wrapper [title="Video Call"]{pointer-events:none;opacity:.45}
+                .chat-empty-state i{font-size:42px}.message-footer{flex-shrink:0}.chat-wrapper #active-chat-call.disabled,.chat-wrapper #active-chat-video.disabled{pointer-events:none;opacity:.45}
                 #new-chat-user-results,#add-participant-results{max-height:320px;overflow-y:auto}.chat-user-choice:checked+img,.add-participant-choice:checked+img{outline:2px solid var(--primary);outline-offset:2px}
                 #current-participants-list{max-height:220px;overflow-y:auto}
                 .chat-attachment-preview{background:var(--white);flex-shrink:0}.chat-attachment-preview>div{max-width:520px}
@@ -985,9 +1008,6 @@
             `;
             document.head.appendChild(style);
         }
-        ['#active-chat-call, [data-bs-title="Voice Call"]', '#active-chat-video, [data-bs-title="Video Call"]'].forEach(selector => {
-            $$(selector).forEach(button => { button.setAttribute('aria-disabled', 'true'); button.setAttribute('title', 'Coming soon'); });
-        });
     }
 
     function activeConversation() { return state.conversations.find(c => conversationId(c) === state.activeConversationId); }

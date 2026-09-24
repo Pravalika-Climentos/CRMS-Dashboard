@@ -230,6 +230,7 @@
     if (currentPage !== 'calls.html') return;
     document.body.classList.add('calls-page');
     document.querySelector('.comm-view-switcher')?.remove();
+    document.querySelector('.comm-page > .alert')?.remove();
 
     const params = new URLSearchParams(location.search);
     const mode = params.get('mode');

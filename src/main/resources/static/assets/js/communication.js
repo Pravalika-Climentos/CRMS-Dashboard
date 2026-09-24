@@ -60,6 +60,10 @@
   let selected = null;
   let filter = 'all';
   let webrtcConfig = null;
+  const launchParams = new URLSearchParams(location.search);
+  let requestedCallMode = ['audio','video'].includes(launchParams.get('mode')) ? launchParams.get('mode') : null;
+  const requestedContactId = launchParams.get('contactId');
+  const requestedContactEmail = normalizeEmail(launchParams.get('contactEmail'));
 
   let localStream = null;
   let pc = null;
@@ -1281,6 +1285,11 @@
       const room = activeTeamRoomName || localStorage.getItem('crmsLastTeamRoom') || 'crm-team-room';
       socket.emit('team:snapshot', { room }, members => renderTeamBadge(members || []));
       toast('Secure realtime connection ready.', 'success');
+      if (requestedCallMode && selected) {
+        const mode = requestedCallMode;
+        requestedCallMode = null;
+        window.setTimeout(() => beginCall(mode), 150);
+      }
     });
     socket.on('connect_error', err => {
       console.error('Socket connection error', err.message);
@@ -1374,6 +1383,18 @@
       toast('Using fallback call configuration. Group calling still requires the backend configuration.', 'warning');
     }
     await loadContacts();
+    if (requestedContactId || requestedContactEmail) {
+      const requested = contacts.find(contact => contact.id === String(requestedContactId || '')
+        || normalizeEmail(contact.email) === requestedContactEmail);
+      if (requested) {
+        selectCustomer(requested.id);
+        document.querySelectorAll('.mode-card').forEach(card => card.classList.remove('selected'));
+        $(requestedCallMode === 'video' ? 'modeVideo' : requestedCallMode === 'audio' ? 'modeAudio' : 'modeChat')?.classList.add('selected');
+      } else {
+        requestedCallMode = null;
+        toast('The selected chat contact is not available for calling.', 'warning');
+      }
+    }
     connectSocket();
     requestNotificationPermission();
     installBrowserReadiness();
