@@ -17290,3 +17290,14 @@ th.fc-day-header {
     font-weight: 600;
 }
 /*# sourceMappingURL=style.css.map */
+/* Keep the current user visible while the ranked performance list scrolls independently. */
+.performance-scroll-list {
+    max-height: 315px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    padding-right: 6px;
+}
+
+.performance-scroll-list::-webkit-scrollbar { width: 6px; }
+.performance-scroll-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }

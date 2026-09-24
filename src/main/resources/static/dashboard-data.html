@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en"><head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard Data | CRMS</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/plugins/tabler-icons/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/plugins/simplebar/simplebar.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/dashboard-data/dashboard-data.css?v=2">
+  <script src="assets/js/theme-script.js?v=2"></script><script src="assets/js/auth-guard.js"></script>
+</head><body><div class="main-wrapper">
+  <div class="page-wrapper"><div class="content dashboard-data-page">
+    <section id="ddOtpGate" class="dd-otp-gate">
+      <div class="dd-otp-card">
+        <span class="dd-otp-icon"><i class="ti ti-shield-lock"></i></span>
+        <span class="eyebrow">Protected administration</span>
+        <h2>Verify your identity</h2>
+        <p class="text-muted">Enter your registered CRM email. We will send a 6-digit code that is valid for 60 seconds.</p>
+        <form id="ddOtpForm" novalidate>
+          <label class="form-label" for="ddOtpEmail">Email address</label>
+          <div class="input-group mb-3"><span class="input-group-text"><i class="ti ti-mail"></i></span><input id="ddOtpEmail" class="form-control" type="email" autocomplete="email" placeholder="name@example.com" required><button id="ddSendOtp" class="btn btn-primary" type="button">Send OTP</button></div>
+          <div id="ddOtpEntry" class="d-none">
+            <label class="form-label" for="ddOtpCode">Verification code</label>
+            <input id="ddOtpCode" class="form-control dd-otp-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" placeholder="000000" required>
+            <div class="d-flex align-items-center justify-content-between mt-2 mb-3"><small id="ddOtpTimer" class="text-muted">Code expires in 60s</small><button id="ddResendOtp" class="btn btn-link btn-sm p-0" type="button" disabled>Resend OTP</button></div>
+            <button id="ddVerifyOtp" class="btn btn-primary w-100" type="submit"><i class="ti ti-shield-check me-1"></i>Verify and continue</button>
+          </div>
+        </form>
+        <div id="ddOtpAlert" class="alert d-none mt-3 mb-0" role="alert"></div>
+      </div>
+    </section>
+    <div id="ddAdminContent" class="d-none">
+    <div class="dashboard-data-hero d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+      <div><span class="eyebrow">Dashboard administration</span><h2 class="mb-1">Dashboard Data</h2><p class="mb-0 text-muted">Manage the database records used by dashboard cards and charts.</p></div>
+      <a href="index.html" class="btn btn-primary"><i class="ti ti-layout-dashboard me-1"></i>Open Dashboard</a>
+    </div>
+    <div id="ddAlert" class="alert d-none" role="alert"></div>
+    <div class="card border-0 shadow-sm"><div class="card-header bg-white border-bottom p-3">
+      <ul class="nav nav-pills gap-2" id="ddTabs">
+        <li><button class="nav-link active" data-resource="sales-targets">Monthly Targets</button></li>
+        <li><button class="nav-link" data-resource="transactions">Sales Transactions</button></li>
+        <li><button class="nav-link" data-resource="deals">Deals</button></li>
+        <li><button class="nav-link" data-resource="leads">Leads</button></li>
+      </ul>
+    </div><div class="card-body p-0">
+      <div class="dd-toolbar d-flex align-items-center justify-content-between gap-3 p-3 border-bottom">
+        <div><h5 id="ddTitle" class="mb-1">Monthly Targets</h5><small id="ddDescription" class="text-muted">Set the monthly target used by dashboard performance charts.</small></div>
+        <button id="ddAdd" class="btn btn-primary"><i class="ti ti-plus me-1"></i>Add</button>
+      </div>
+      <div class="table-responsive dd-table-wrap"><table class="table table-hover align-middle mb-0"><thead id="ddHead"></thead><tbody id="ddBody"></tbody></table></div>
+    </div></div></div>
+  </div></div>
+</div>
+<div class="modal fade" id="ddEditor" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+  <form id="ddForm"><div class="modal-header"><h5 id="ddEditorTitle" class="modal-title">Add record</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+  <div id="ddFields" class="modal-body row g-3"></div><div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button id="ddSave" class="btn btn-primary" type="submit">Save</button></div></form>
+</div></div></div>
+<script src="assets/js/auth-client.js"></script><script src="assets/js/jquery-3.7.1.min.js"></script><script src="assets/js/bootstrap.bundle.min.js"></script><script src="assets/plugins/simplebar/simplebar.min.js"></script>
+<script src="assets/dashboard-data/dashboard-data.js?v=2"></script><script src="assets/js/script.js"></script><script src="assets/js/app-navigation.js?v=9"></script>
+</body></html>

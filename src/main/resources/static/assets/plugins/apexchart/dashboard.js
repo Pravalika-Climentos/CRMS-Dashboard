@@ -53,7 +53,8 @@ if (executives.length === 0) {
     return;
 }
 
-    const currentUserId = 2;
+    const authenticatedUser = window.CrmsAuth?.getCurrentUser?.() || {};
+    const currentUserId = Number(authenticatedUser.userId ?? authenticatedUser.id);
 
     /*
      * Find maximum values.
@@ -140,7 +141,7 @@ if (executives.length === 0) {
     const currentExecutive =
         rankedExecutives.find(
             executive =>
-                executive.id === currentUserId
+                Number(executive.id) === currentUserId
         );
 
     /*
@@ -276,7 +277,7 @@ if (executives.length === 0) {
     const otherExecutives =
         rankedExecutives.filter(
             executive =>
-                executive.id !== currentUserId
+                Number(executive.id) !== currentUserId
         );
 
     /*

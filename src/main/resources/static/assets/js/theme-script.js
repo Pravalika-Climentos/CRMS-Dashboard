@@ -171,6 +171,9 @@ class ThemeCustomizer {
     }
 }
 document.addEventListener("DOMContentLoaded", function(e) {
+    if (new URLSearchParams(window.location.search).get('crmsEmbedded') === '1'
+            || document.getElementById('theme-settings-offcanvas')
+            || document.querySelector('.sidebar-contact .toggle-theme')) return;
     let themesetting = `
 	<div class="sidebar-contact">
     	<div class="toggle-theme"  data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas"><i class="ti ti-settings"></i></div>

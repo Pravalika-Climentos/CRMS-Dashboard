@@ -19,6 +19,7 @@ $(document).ready(function() {
     console.log("Recent Deals from backend:", recentDeals);
 
 
+    if ($.fn.DataTable.isDataTable('#deal-project')) $('#deal-project').DataTable().clear().destroy();
     $('#deal-project').DataTable({
 
         "bFilter": false,
@@ -202,6 +203,7 @@ $(document).ready(function() {
 });
 
     if ($('#recent-deals').length > 0) {
+        if ($.fn.DataTable.isDataTable('#recent-deals')) $('#recent-deals').DataTable().clear().destroy();
         $('#recent-deals').DataTable({
             "bFilter": false,
             "bInfo": false,
@@ -270,6 +272,7 @@ $(document).ready(function() {
     }
 
     if ($('#executive-project').length > 0) {
+        if ($.fn.DataTable.isDataTable('#executive-project')) $('#executive-project').DataTable().clear().destroy();
         $('#executive-project').DataTable({
             "bFilter": false,
             "bInfo": false,

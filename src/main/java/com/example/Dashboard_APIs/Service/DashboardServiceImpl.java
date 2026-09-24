@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.Dashboard_APIs.Repository.DashboardRepository;
+import com.example.Dashboard_Data.Repository.SalesTargetRepository;
 import com.example.Dashboard_APIs.Repository.Projection.DashboardProjections.ConversionRateProjection;
 import com.example.Dashboard_APIs.Repository.Projection.DashboardProjections.DailySalesProjection;
 import com.example.Dashboard_APIs.Repository.Projection.DashboardProjections.DashboardCardsProjection;
@@ -52,6 +53,7 @@ public class DashboardServiceImpl implements DashboardService {
 
     private final DashboardRepository dashboardRepository;
     private final DashboardMapper dashboardMapper;
+    private final SalesTargetRepository salesTargetRepository;
 
     /*
      * Dashboard target.
@@ -60,12 +62,16 @@ public class DashboardServiceImpl implements DashboardService {
      * For now it is kept here so the dashboard can work with the
      * existing frontend contract.
      */
-    private static final int MONTHLY_TARGET = 1_000_000;
+    private static final int DEFAULT_MONTHLY_TARGET = 1_000_000;
 
     @Override
     public DashboardData getDashboardData() {
 
         LocalDate today = LocalDate.now();
+        int monthlyTarget = salesTargetRepository
+                .findFirstByTargetMonthLessThanEqualOrderByTargetMonthDesc(today.withDayOfMonth(1))
+                .map(target -> target.getTargetAmount().intValue())
+                .orElse(DEFAULT_MONTHLY_TARGET);
 
         /*
          * ---------------------------------------------------------
@@ -194,7 +200,7 @@ public class DashboardServiceImpl implements DashboardService {
             );
         }
 
-        int dailyTarget = MONTHLY_TARGET / today.lengthOfMonth();
+        int dailyTarget = monthlyTarget / today.lengthOfMonth();
 
         SalesPerformance salesPerformance =
                 dashboardMapper.toSalesPerformance(
@@ -554,10 +560,11 @@ public class DashboardServiceImpl implements DashboardService {
                         .map(row ->
                                 dashboardMapper.toDealWonCompany(
                                         row.getCompanyName(),
-                                        null
+                                        companyAvatar(row.getCompanyId())
                                 )
                         )
-                        .toList();
+                .toList();
+
 
 
         /*
@@ -571,7 +578,7 @@ public class DashboardServiceImpl implements DashboardService {
                 salesPerformance,
                 revenueOverview,
                 dashboardCards,
-                MONTHLY_TARGET,
+                monthlyTarget,
                 sales,
                 pipelineStatistics,
                 dealsOverview,
@@ -680,6 +687,18 @@ public class DashboardServiceImpl implements DashboardService {
         return value
                 .setScale(0, RoundingMode.HALF_UP)
                 .toPlainString() + "%";
+    }
+
+    private String companyAvatar(Long companyId) {
+        String[] avatars = {
+                "assets/img/company/company-01.svg",
+                "assets/img/company/company-02.svg",
+                "assets/img/company/company-09.svg",
+                "assets/img/company/company-10.svg",
+                "assets/img/company/company-11.svg"
+        };
+        int index = companyId == null ? 0 : Math.floorMod(companyId.intValue(), avatars.length);
+        return avatars[index];
     }
 
 

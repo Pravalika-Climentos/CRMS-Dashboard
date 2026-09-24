@@ -4880,13 +4880,19 @@ function loadTrafficSourcesChart(data) {
         return;
     }
 
-    // Update external HTML Labels & Values
-    traffic.labels.forEach((label, index) => {
-        $("#traffic-label-" + index).text(label);
-        $("#traffic-value-" + index).text(
-            Number(traffic.series[index] || 0).toLocaleString()
-        );
-    });
+    const palette = ['#2EAD5F','#3B82F6','#F59E0B','#8B0A8B','#EC4899','#14B8A6','#6366F1','#F97316'];
+    const legend = document.getElementById('traffic-sources-legend');
+    if (legend) {
+        legend.replaceChildren(...traffic.labels.map((label,index) => {
+            const row=document.createElement('div');
+            row.className='px-3 py-2 d-flex align-items-center justify-content-between border-bottom';
+            const name=document.createElement('p');name.className='text-dark d-flex align-items-center mb-0';
+            const dot=document.createElement('i');dot.className='ti ti-circle-filled fs-8 me-1';dot.style.color=palette[index%palette.length];
+            const text=document.createElement('span');text.textContent=label;name.append(dot,text);
+            const value=document.createElement('p');value.className='text-dark fw-semibold mb-0';value.textContent=Number(traffic.series[index]||0).toLocaleString();
+            row.append(name,value);return row;
+        }));
+    }
 
     const options = {
         chart: {
@@ -4901,12 +4907,7 @@ function loadTrafficSourcesChart(data) {
 
         labels: traffic.labels,
 
-        colors: [
-            '#2EAD5F',
-            '#3B82F6',
-            '#F59E0B',
-            '#8B0A8B'
-        ],
+        colors: traffic.labels.map((_,index)=>palette[index%palette.length]),
 
         plotOptions: {
             pie: {
@@ -5899,12 +5900,10 @@ if (avatarContainer && Array.isArray(companies)) {
         avatar.className =
             "avatar avatar-rounded border bg-white p-1 d-inline-flex align-items-center justify-content-center";
 
-        avatar.innerHTML = `
-            <img
-                class="w-auto h-auto img-fluid"
-                src="${company.avatar}"
-                alt="${company.name}">
-        `;
+        const image=document.createElement('img');
+        image.className='w-auto h-auto img-fluid';image.src=company.avatar||'assets/img/company/company-01.svg';image.alt=company.name||'Company';
+        image.addEventListener('error',()=>{image.src='assets/img/company/company-01.svg'},{once:true});
+        avatar.appendChild(image);
 
         avatarContainer.appendChild(avatar);
 

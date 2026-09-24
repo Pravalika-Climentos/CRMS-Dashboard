@@ -1108,7 +1108,7 @@
         <div class="page-wrapper">
             <div class="content email-page">
                 <div class="d-md-flex email-app-shell">
-                    <div class="email-sidebar bg-white w-100" data-simplebar="">
+                    <div class="email-sidebar bg-white w-100">
                         <div class="p-3">
                             <div class="email-profile-card p-3 mb-3">
                                 <div class="d-flex align-items-center">
@@ -1165,11 +1165,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="emailStatus" class="email-status p-3 text-muted">Loading emails...</div>
+                        <div id="emailStatus" class="email-status p-3 text-muted d-none" role="status" aria-live="polite"></div>
                         <div id="emailList" class="list-group list-group-flush mails-list"></div>
                         <div class="p-3 border-top d-flex align-items-center justify-content-between">
                             <span id="emailPageInfo" class="text-muted small">Page 1</span>
-                            <div class="btn-group btn-group-sm"><button id="emailPrev" type="button" class="btn btn-outline-secondary">Previous</button><button id="emailNext" type="button" class="btn btn-outline-secondary">Next</button></div>
                         </div>
                     </div>
                 </div>
@@ -1234,9 +1233,9 @@
     <script src="assets/plugins/simplebar/simplebar.min.js"></script>
 
     <!-- Main JS -->
-    <script src="assets/js/email.js"></script>
+<script src="assets/js/email.js?v=2"></script>
     <script src="assets/js/script.js"></script>
-    <script src="assets/js/app-navigation.js"></script>
+<script src="assets/js/app-navigation.js?v=9"></script>
 
 </body>
 

@@ -226,7 +226,10 @@
         params.set('participantName', selected.name || 'Customer');
         if (selected.email) params.set('participantEmail', selected.email);
       }
-      window.location.assign(`calendar.html?${params}`);
+      const calendarUrl = `calendar.html?${params}`;
+      if (window.parent !== window && window.parent.__crmsNavigate) window.parent.__crmsNavigate(calendarUrl);
+      else if (window.__crmsNavigate) window.__crmsNavigate(calendarUrl);
+      else window.location.assign(calendarUrl);
     };
   }
 

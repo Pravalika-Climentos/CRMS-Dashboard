@@ -2,6 +2,128 @@
   'use strict';
 
   const currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+  const persistentPages = new Set(['index.html', 'dashboard-data.html', 'calls.html', 'calendar.html', 'email.html', 'chat.html']);
+  const embeddedView = new URLSearchParams(location.search).get('crmsEmbedded') === '1';
+
+  function pageFromUrl(url) {
+    return (new URL(url, location.href).pathname.split('/').pop() || 'index.html').toLowerCase();
+  }
+
+  function cleanViewUrl(value) {
+    const url = new URL(value, location.href);
+    url.searchParams.delete('crmsEmbedded');
+    return `${url.pathname}${url.search}${url.hash}`;
+  }
+
+  function installEmbeddedViewBridge() {
+    if (!embeddedView) return false;
+    document.documentElement.classList.add('crms-embedded-view');
+    const style = document.createElement('style');
+    style.textContent = `
+      .crms-embedded-view .navbar-header,
+      .crms-embedded-view .header,
+      .crms-embedded-view #sidebar { display: none !important; }
+      .crms-embedded-view .page-wrapper { margin: 0 !important; min-height: 100vh !important; }
+      .crms-embedded-view .content { padding-top: 18px !important; }
+    `;
+    document.head.appendChild(style);
+    document.addEventListener('click', event => {
+      const link = event.target.closest('a[href]');
+      if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.target || link.hasAttribute('download')) return;
+      const target = new URL(href, location.href);
+      if (target.origin !== location.origin) return;
+      event.preventDefault();
+      if (persistentPages.has(pageFromUrl(target.href))) window.parent.__crmsNavigate?.(cleanViewUrl(target.href));
+      else window.parent.location.assign(cleanViewUrl(target.href));
+    }, true);
+    return true;
+  }
+
+  function installPersistentNavigation() {
+    const initialWrapper = document.querySelector('.page-wrapper');
+    const main = document.querySelector('.main-wrapper');
+    if (!initialWrapper || !main) return;
+
+    const initialPage = currentPage;
+    const initialTitle = document.title;
+    const views = new Map();
+    const host = document.createElement('div');
+    host.className = 'page-wrapper crms-view-host';
+    host.hidden = true;
+    host.style.cssText = 'padding:0;overflow:hidden;background:var(--bs-body-bg,#f5f7fb);';
+    main.appendChild(host);
+
+    const setActiveNavigation = page => {
+      document.querySelectorAll('#sidebar-menu a[href]').forEach(link => {
+        const active = pageFromUrl(link.href) === page;
+        link.classList.toggle('active', active);
+        link.closest('li')?.classList.toggle('active', active);
+      });
+    };
+
+    const show = (value, push = true) => {
+      const cleanUrl = cleanViewUrl(value);
+      const page = pageFromUrl(cleanUrl);
+      if (!persistentPages.has(page)) {
+        location.assign(cleanUrl);
+        return;
+      }
+
+      if (push && cleanUrl !== `${location.pathname}${location.search}${location.hash}`) {
+        history.pushState({ crmsView: page }, '', cleanUrl);
+      }
+      initialWrapper.style.display = page === initialPage ? '' : 'none';
+      host.hidden = page === initialPage;
+      if (page === initialPage) document.title = initialTitle;
+      views.forEach((frame, key) => { frame.style.display = key === page ? 'block' : 'none'; });
+
+      if (page !== initialPage && !views.has(page)) {
+        const target = new URL(cleanUrl, location.origin);
+        target.searchParams.set('crmsEmbedded', '1');
+        const frame = document.createElement('iframe');
+        frame.className = 'crms-persistent-view';
+        frame.title = `${page.replace('.html', '')} view`;
+        frame.style.cssText = 'display:block;width:100%;height:calc(100vh - 65px);border:0;background:#fff;';
+        frame.src = `${target.pathname}${target.search}${target.hash}`;
+        frame.dataset.viewUrl = cleanUrl;
+        frame.addEventListener('load', () => {
+          const title = frame.contentDocument?.title;
+          if (title && pageFromUrl(location.href) === page) document.title = title;
+        });
+        views.set(page, frame);
+        host.appendChild(frame);
+      } else if (page !== initialPage) {
+        const frame = views.get(page);
+        const target = new URL(cleanUrl, location.origin);
+        if ((target.search || target.hash) && frame.dataset.viewUrl !== cleanUrl) {
+          target.searchParams.set('crmsEmbedded', '1');
+          frame.dataset.viewUrl = cleanUrl;
+          frame.src = `${target.pathname}${target.search}${target.hash}`;
+        }
+      }
+      setActiveNavigation(page);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    };
+
+    window.__crmsNavigate = show;
+    window.addEventListener('crms:dashboard-data-change', event => {
+      window.dispatchEvent(new CustomEvent('crms:dashboard-refresh'));
+      views.forEach(frame => frame.contentWindow?.dispatchEvent(new CustomEvent('crms:dashboard-refresh')));
+    });
+    document.addEventListener('click', event => {
+      const link = event.target.closest('a[href]');
+      if (!link || event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || link.target || link.hasAttribute('download')) return;
+      const target = new URL(href, location.href);
+      if (target.origin !== location.origin || !persistentPages.has(pageFromUrl(target.href))) return;
+      event.preventDefault();
+      show(target.href);
+    }, true);
+    window.addEventListener('popstate', () => show(location.href, false));
+  }
 
   function preservePageHeaderActions(currentHeader, sharedHeader) {
     if (!currentHeader || !sharedHeader || currentPage !== 'calendar.html') return;
@@ -284,6 +406,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
+    if (installEmbeddedViewBridge()) return;
     await installSharedShell();
     const sidebar = document.getElementById('sidebar');
     const menu = document.getElementById('sidebar-menu');
@@ -294,6 +417,7 @@
     installMobileNavigation(sidebar);
     if (currentPage !== 'index.html') installSubmenus(menu);
     enhanceCallsPage();
+    installPersistentNavigation();
     installNotifications();
     document.querySelectorAll('[data-crms-logout], #signOutLink, .profile-dropdown a[href="login.html"]').forEach(link => {
       link.addEventListener('click', event => {

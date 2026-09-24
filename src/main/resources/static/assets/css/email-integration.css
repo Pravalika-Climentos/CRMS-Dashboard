@@ -1,6 +1,9 @@
 .email-page { padding: 20px !important; background: #f5f7fb; }
 .email-app-shell { min-height: calc(100vh - 104px); gap: 18px; }
-.email-sidebar { max-width: 300px; flex: 0 0 300px; border: 1px solid #e7eaf0; border-radius: 16px; box-shadow: 0 8px 28px rgba(15,23,42,.05); overflow: hidden; }
+.email-sidebar { max-width: 300px; max-height: calc(100vh - 104px); flex: 0 0 300px; border: 1px solid #e7eaf0; border-radius: 16px; box-shadow: 0 8px 28px rgba(15,23,42,.05); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.email-sidebar::-webkit-scrollbar { width: 7px; }
+.email-sidebar::-webkit-scrollbar-track { background: transparent; }
+.email-sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
 .email-profile-card { background: linear-gradient(135deg,#f7f8ff,#fff); border: 1px solid #e7e9ff; border-radius: 12px; }
 .email-compose-button { min-height: 44px; border-radius: 10px; font-weight: 600; box-shadow: 0 7px 16px rgba(var(--bs-primary-rgb),.18); }
 .email-folder { color: var(--bs-body-color); text-align: left; min-height: 38px; transition: all .15s ease; }
@@ -16,14 +19,26 @@
 .email-account-status { color: #039855; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
 .email-account-status.error, .account-error-help { color: #d92d20; }
 .mails-list { overflow-y: auto; flex: 1 1 auto; min-height: 220px; }
-.email-row { cursor: pointer; border-color: #eef0f4; transition: background-color .15s ease, transform .15s ease; }
-.email-row:hover { background: #fafbff; transform: translateX(2px); }
+.email-row { position: relative; cursor: pointer; border-color: #eef0f4; transition: background-color .15s ease; }
+.email-row:hover { background: #fafbff; }
+.email-row:has(.dropdown-menu.show) { z-index: 30; }
+.email-row .dropdown-menu { min-width: 180px; z-index: 1090; background: #fff; border-color: #e4e7ec; box-shadow: 0 12px 30px rgba(15,23,42,.16); }
 .email-row.unread { background: rgba(var(--bs-primary-rgb), .045); border-left: 3px solid var(--bs-primary); }
 .email-row.unread h6, .email-row.unread .fw-semibold { font-weight: 700 !important; }
 .email-account-badge { display: inline-flex; align-items: center; max-width: 190px; font-size: .68rem; color: #667085; background: #f2f4f7; border-radius: 999px; padding: .12rem .45rem; }
 .email-icon-button { border: 0; background: transparent; padding: .25rem; color: var(--bs-secondary-color); }
 .min-width-0 { min-width: 0; }
 .email-status { text-align: center; }
+.email-skeleton-row { display: flex; align-items: center; gap: 12px; min-height: 92px; padding: 16px; border-bottom: 1px solid #eef0f4; }
+.email-skeleton-avatar { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; }
+.email-skeleton-copy { display: grid; gap: 8px; width: min(620px, 75%); }
+.email-skeleton-copy i { display: block; height: 10px; border-radius: 999px; }
+.email-skeleton-copy i:nth-child(1) { width: 36%; }
+.email-skeleton-copy i:nth-child(2) { width: 68%; }
+.email-skeleton-copy i:nth-child(3) { width: 88%; }
+.email-skeleton-avatar, .email-skeleton-copy i { background: linear-gradient(90deg,#eef1f5 25%,#f8f9fb 50%,#eef1f5 75%); background-size: 200% 100%; animation: email-skeleton-shimmer 1.2s ease-in-out infinite; }
+@keyframes email-skeleton-shimmer { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .email-skeleton-avatar, .email-skeleton-copy i { animation: none; } }
 .recipient-suggestions { position: absolute; left: 1rem; right: 1rem; z-index: 1085; max-height: 230px; overflow-y: auto; box-shadow: 0 .5rem 1rem rgba(0,0,0,.15); }
 .email-detail-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.65; min-height: 120px; }
 .email-toast { position: fixed; top: 80px; right: 22px; z-index: 2000; max-width: 420px; }
@@ -34,7 +49,7 @@
 @media (max-width: 767.98px) {
   .email-page { padding: 10px !important; }
   .email-app-shell { gap: 10px; }
-  .email-sidebar { max-width: none; flex-basis: auto; }
+  .email-sidebar { max-width: none; max-height: 70vh; flex-basis: auto; }
   .mail-notifications { max-height: none; min-height: 60vh; }
   #compose-view .compose-view { margin: 0; width: 100%; max-height: 92vh; }
 }

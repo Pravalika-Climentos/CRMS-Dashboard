@@ -22,7 +22,7 @@
     <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
 
     <!-- Theme Config Js -->
-    <script src="assets/js/theme-script.js"></script>
+    <script src="assets/js/theme-script.js?v=2"></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -503,6 +503,7 @@
                                     </a>
                                     <ul>
                                         <li><a href="index.html" class="active">Dashboard</a></li>
+                                        <li><a href="dashboard-data.html">Dashboard Data</a></li>
                                         <!-- <li><a href="sales-dashboard.html">Sales Overview</a></li> -->
                                         <!-- <li><a href="executive-dashboard.html">Executive Dashboard</a></li> -->
                                         <!-- <li><a href="deals-dashboard.html">Deals Dashboard</a></li> -->
@@ -1253,7 +1254,7 @@
                                 </div>
                                 <div id="traffic-sources-chart"></div>
                             </div>
-                            <div class="mb-1">
+                            <div class="mb-1" id="traffic-sources-legend">
                                 <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
                                     <p class="text-dark d-flex align-items-center mb-0">
                                         <i class="ti ti-circle-filled text-success fs-8 me-1"></i>
@@ -1563,7 +1564,8 @@
 
         <!-- Other Executives -->
         <div id="executive-performance-list"
-            class="flex-grow-1">
+            class="flex-grow-1 performance-scroll-list"
+            aria-label="Sales executive performance ranking">
         </div>
 
         <!-- View All -->
@@ -1913,14 +1915,14 @@
 
     <!-- Apexchart JS: dashboard API helpers must exist before chart-data runs. -->
     <script src="assets/plugins/apexchart/apexcharts.min.js"></script>
-    <script src="assets/plugins/apexchart/chart-data.js"></script>
+    <script src="assets/plugins/apexchart/chart-data.js?v=2"></script>
 
     <!-- Custom Json Js -->
      <script src="assets/json/dashboard.js"></script> 
 
     <!-- Main JS -->
     <script src="assets/js/script.js"></script>
-    <script src="assets/js/app-navigation.js?v=6"></script>
+<script src="assets/js/app-navigation.js?v=9"></script>
 
 </body>
 

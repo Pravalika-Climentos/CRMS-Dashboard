@@ -36,3 +36,5 @@ async function loadDashboardData() {
         return null;
     }
 }
+
+window.addEventListener('crms:dashboard-refresh', loadDashboardData);
