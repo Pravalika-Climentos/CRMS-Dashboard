@@ -429,26 +429,33 @@
   function setParticipantMicStatus(identity, muted, name) {
     const status = ensureParticipantMicStatus(identity, name);
     if (!status) return;
-    const isMuted = Boolean(muted);
+    const isMuted = muted === true;
     status.classList.toggle('muted', isMuted);
     status.innerHTML = `<i class=\"ti ti-microphone${isMuted ? '-off' : ''}\"></i>`;
-    status.title = isMuted ? 'Microphone muted' : 'Microphone on';
+    status.title = muted == null ? 'Microphone status unavailable' : (isMuted ? 'Microphone muted' : 'Microphone on');
+    status.style.opacity = muted == null ? '0.5' : '';
   }
 
   function participantMicrophoneMuted(participant) {
-    if (!participant) return true;
+    if (!participant) return null;
     const publications = participant.trackPublications
       ? Array.from(participant.trackPublications.values()) : [];
     const mic = publications.find(publication => {
       try { return publication.source === window.LivekitClient.Track.Source.Microphone; }
       catch (_) { return false; }
     });
-    return mic ? Boolean(mic.isMuted) : true;
+    return mic ? Boolean(mic.isMuted) : null;
   }
 
   function refreshParticipantMicStatus(participant) {
     if (!participant) return;
     setParticipantMicStatus(participant.identity, participantMicrophoneMuted(participant), participant.name || participant.identity);
+  }
+
+  function refreshTeamParticipantCount() {
+    if (teamRoom && $('teamSubtitle')) {
+      $('teamSubtitle').textContent = `${teamRoom.remoteParticipants.size + 1} in the room`;
+    }
   }
 
   function removeTile(identity) {
@@ -545,7 +552,7 @@
 
   async function joinTeamRoom() {
     if (teamRoom) return;
-    const requestedName = prompt('Enter a Team Room name. Everyone joining the same name joins the same private meeting.', localStorage.getItem('crmsLastTeamRoom') || 'crm-team-room');
+    const requestedName = prompt('Enter a Team Room name. Signed-in colleagues can join using the same name.', localStorage.getItem('crmsLastTeamRoom') || 'crm-team-room');
     if (requestedName === null) return;
     const cleanedName = requestedName.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/-+/g, '-').slice(0, 64);
     if (!cleanedName) return toast('Enter a Team Room name using letters, numbers, hyphens, or underscores.', 'warning');
@@ -583,10 +590,26 @@
 
       // Do this only after requesting playback activation. Awaiting a network
       // request first would lose the click's user-activation context.
-      const data = await api('/api/livekit/token', { method: 'POST', body: JSON.stringify({ room: activeTeamRoomName }) });
+      const joinRequest = { room: activeTeamRoomName };
+      // Team pages can supply a team ID; the backend always checks membership.
+      const teamId = Number(new URLSearchParams(location.search).get('teamId'));
+      if (Number.isSafeInteger(teamId) && teamId > 0) joinRequest.teamId = teamId;
+      const data = await api('/api/livekit/token', { method: 'POST', body: JSON.stringify(joinRequest) });
       activeTeamRoomName = data.room;
+      if (data.host && data.roomId && !$('teamEndMeeting')) {
+        const end = document.createElement('button');
+        end.id='teamEndMeeting';end.type='button';end.className='btn btn-danger';end.textContent='End for everyone';
+        end.onclick=async()=>{
+          if(!confirm('End this meeting for everyone?'))return;
+          end.disabled=true;
+          try { await api(`/api/call-rooms/${encodeURIComponent(data.roomId)}/end`,{method:'PATCH'});leaveTeamRoom(true); }
+          catch(error){end.disabled=false;toast('The end request could not complete. Please retry.','warning');}
+        };
+        $('teamStage').querySelector('.call-controls')?.appendChild(end);
+      }
 
       teamRoom.on(RoomEvent.ParticipantConnected, p => {
+        refreshTeamParticipantCount();
         ensureTile(p.identity, p.name);
         refreshParticipantMicStatus(p);
       });
@@ -594,14 +617,23 @@
         document.querySelectorAll('.team-tile.speaking').forEach(tile => tile.classList.remove('speaking'));
         speakers.forEach(person => document.getElementById(tileId(person.identity))?.classList.add('speaking'));
       });
-      teamRoom.on(RoomEvent.ParticipantDisconnected, p => { removeTile(p.identity); removeScreenTile(p.identity); });
+      teamRoom.on(RoomEvent.ParticipantDisconnected, p => { removeTile(p.identity); removeScreenTile(p.identity); refreshTeamParticipantCount(); });
       if (RoomEvent.TrackMuted) teamRoom.on(RoomEvent.TrackMuted, (pub, participant) => {
         if (pub?.source === Track.Source.Microphone && participant) refreshParticipantMicStatus(participant);
       });
       if (RoomEvent.TrackUnmuted) teamRoom.on(RoomEvent.TrackUnmuted, (pub, participant) => {
         if (pub?.source === Track.Source.Microphone && participant) refreshParticipantMicStatus(participant);
       });
+      for (const event of [RoomEvent.TrackPublished, RoomEvent.TrackUnpublished]) {
+        if (event) teamRoom.on(event, (pub, participant) => refreshParticipantMicStatus(participant));
+      }
+      if (RoomEvent.Reconnected) teamRoom.on(RoomEvent.Reconnected, () => {
+        refreshParticipantMicStatus(teamRoom.localParticipant);
+        teamRoom.remoteParticipants.forEach(refreshParticipantMicStatus);
+        refreshTeamParticipantCount();
+      });
       teamRoom.on(RoomEvent.TrackSubscribed, (track, pub, participant) => {
+        refreshParticipantMicStatus(participant);
         if (pub.source === Track.Source.ScreenShare) {
           const videoEl = ensureScreenTile(participant.identity, participant.name).querySelector('video');
           track.attach(videoEl);
@@ -616,6 +648,7 @@
         if (pub.source === Track.Source.ScreenShare) removeScreenTile(participant.identity);
       });
       teamRoom.on(RoomEvent.LocalTrackPublished, pub => {
+        refreshParticipantMicStatus(teamRoom.localParticipant);
         if (pub.track && pub.source === Track.Source.ScreenShare) {
           const videoEl = ensureScreenTile(
             teamRoom.localParticipant.identity,
@@ -627,6 +660,7 @@
         }
       });
       teamRoom.on(RoomEvent.LocalTrackUnpublished, pub => {
+        refreshParticipantMicStatus(teamRoom.localParticipant);
         if (pub.source === Track.Source.ScreenShare) {
           removeScreenTile(teamRoom.localParticipant.identity);
           teamScreenSharing = false;
@@ -690,7 +724,7 @@
       });
 
       $('teamStage').classList.add('active');
-      $('teamSubtitle').textContent = `${teamRoom.numParticipants} in the room`;
+      refreshTeamParticipantCount();
       teamStart = Date.now();
       clearInterval(teamTimer);
       teamTimer = setInterval(() => { $('teamTimer').textContent = formatDuration(Math.floor((Date.now() - teamStart) / 1000)); }, 1000);
@@ -702,7 +736,10 @@
       toast(`Joined Team Room: ${activeTeamRoomName}`);
     } catch (e) {
       console.error('Team room join failed', e);
+      const failedRoom = teamRoom;
       teamRoom = null;
+      try { await failedRoom?.disconnect(); } catch (_) {}
+      $('teamEndMeeting')?.remove();
       const micErrors = {
         NotAllowedError: 'Microphone/camera permission was blocked. Check the site permissions in your browser (and OS-level mic permission), then try again.',
         NotFoundError: 'No microphone or camera was found on this device.',
@@ -718,8 +755,10 @@
 
   function leaveTeamRoom(silent) {
     stopTeamRecording();
-    if (teamRoom) { try { teamRoom.disconnect(); } catch (_) {} }
+    const leavingRoom = teamRoom;
     teamRoom = null;
+    if (leavingRoom) { try { leavingRoom.disconnect(); } catch (_) {} }
+    $('teamEndMeeting')?.remove();
     $('teamCamGrid').innerHTML = '';
     $('teamScreenArea').innerHTML = '';
     $('teamEnableAudio')?.remove();
@@ -737,7 +776,7 @@
     $('teamCameraBtn')?.classList.remove('active');
     $('teamScreenBtn')?.classList.remove('active');
     setTeamPanelOpen(false);
-    if (activeTeamRoomName) socket?.emit('team:leave', { room:activeTeamRoomName });
+    if (activeTeamRoomName) socket?.emit('team:leave', { room:activeTeamRoomName, disconnected:!!silent });
     activeTeamRoomName = null;
     if (!silent) toast('Left the team room.');
   }
@@ -1524,4 +1563,66 @@
     clearIncomingCall();
     if (callId && socket?.connected) socket.emit('call:end', { callId, to:callTargetId, type:callType });
   });
+  // Window controls change presentation only; media stays connected.
+  function windowButton(label, icon, action) {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'meeting-window-button';
+    button.title = label; button.setAttribute('aria-label', label);
+    button.innerHTML = `<i class="ti ti-${icon}"></i>`;
+    button.onclick = action;
+    return button;
+  }
+  async function exitMeetingFullscreen(stage) {
+    if (document.fullscreenElement === stage) await document.exitFullscreen();
+  }
+  for (const id of ['callStage', 'teamStage']) {
+    const stage = $(id);
+    const actions = document.createElement('div');
+    actions.className = 'meeting-window-actions';
+    const full = windowButton('Fullscreen', 'maximize', async () => {
+      try {
+        if (document.fullscreenElement === stage) await document.exitFullscreen();
+        else if (stage.requestFullscreen) await stage.requestFullscreen();
+        else toast('Fullscreen is unavailable in this browser.', 'warning');
+      } catch (_) { toast('Could not change fullscreen mode.', 'warning'); }
+    });
+    document.addEventListener('fullscreenchange', () => {
+      const expanded = document.fullscreenElement === stage;
+      full.title = expanded ? 'Exit fullscreen' : 'Fullscreen';
+      full.setAttribute('aria-label', full.title);
+      full.innerHTML = `<i class="ti ti-${expanded ? 'minimize' : 'maximize'}"></i>`;
+    });
+    let dock;
+    if (id === 'teamStage') {
+      dock = document.createElement('div'); dock.className = 'call-dock';
+      dock.appendChild(windowButton('Return to team room', 'users-group', () => {
+        stage.classList.add('active'); dock.classList.remove('show');
+      }));
+      const label = document.createElement('span'); label.textContent = 'Team room — still connected';
+      dock.appendChild(label); document.body.appendChild(dock);
+      // Remove the dock when the existing leave flow tears the meeting down.
+      new MutationObserver(() => { if (!teamRoom) dock.classList.remove('show'); })
+        .observe(stage, { attributes: true, attributeFilter: ['class'] });
+    }
+    actions.append(full, windowButton('Minimize call', 'minus', async () => {
+      try { await exitMeetingFullscreen(stage); }
+      catch (_) { return toast('Exit fullscreen before minimizing.', 'warning'); }
+      if (id === 'callStage') minimizeCall();
+      else { stage.classList.remove('active'); dock.classList.add('show'); }
+    }));
+    stage.querySelector('.call-top').appendChild(actions);
+    new MutationObserver(() => {
+      if (!stage.classList.contains('active')) exitMeetingFullscreen(stage).catch(() => {});
+    }).observe(stage, { attributes: true, attributeFilter: ['class'] });
+  }
+  function addMeetingChatClose() {
+    const tabs = $('teamSidepanel')?.querySelector('.team-panel-tabs');
+    if (!tabs || $('teamPanelClose')) return;
+    const close = windowButton('Close chat and notes', 'x', () => {
+      setTeamPanelOpen(false); $('teamChatToggle')?.focus();
+    });
+    close.id = 'teamPanelClose'; tabs.appendChild(close);
+  }
+  addMeetingChatClose();
+  new MutationObserver(addMeetingChatClose).observe($('teamStage'), { childList: true, subtree: true });
 })();
