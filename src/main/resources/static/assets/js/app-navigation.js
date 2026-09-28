@@ -190,13 +190,88 @@
   function populateHeaderUser() {
     const user = window.CrmsAuth?.getCurrentUser?.();
     if (!user) return;
+    const displayName = user.fullName || user.name || user.email || 'User';
+    const initials = displayName.split(/\s+/).filter(Boolean).slice(0, 2)
+      .map(part => part.charAt(0)).join('').toUpperCase() || 'U';
     const name = document.querySelector('.profile-dropdown .dropdown-menu .fw-medium');
     const role = name?.parentElement?.querySelector('.fs-13');
-    if (name) name.textContent = user.fullName || user.email || 'User';
+    if (name) name.textContent = displayName;
     if (role) role.textContent = user.designation || String(user.role || '').replaceAll('_', ' ') || 'CRM User';
-    if (user.avatar) {
-      document.querySelectorAll('.profile-dropdown img').forEach(image => { image.src = user.avatar; });
+    document.querySelectorAll('.profile-dropdown img').forEach(image => {
+      const badge = document.createElement('span');
+      badge.className = `avatar-title rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-semibold ${image.classList.contains('rounded-1') ? 'rounded-1' : ''}`;
+      badge.style.width = `${image.getAttribute('width') || 42}px`;
+      badge.style.height = `${image.getAttribute('height') || image.getAttribute('width') || 42}px`;
+      badge.textContent = initials;
+      badge.setAttribute('aria-label', displayName);
+      image.replaceWith(badge);
+    });
+  }
+
+  function initialsFor(value) {
+    return String(value || 'User').trim().split(/\s+/).filter(Boolean).slice(0, 2)
+      .map(part => part.charAt(0)).join('').toUpperCase() || 'U';
+  }
+
+  function avatarName(element) {
+    const idTargets = {
+      personAvatar: 'personName', detailAvatar: 'detailName', callAvatar: 'callName',
+      audioAvatar: 'audioName', incomingAvatar: 'incomingName',
+      'active-chat-avatar': 'active-chat-name', 'current-user-avatar': 'current-user-name'
+    };
+    const target = idTargets[element.id];
+    if (target) return document.getElementById(target)?.textContent?.trim() || 'User';
+    if (element.closest('.profile-dropdown')) {
+      const user = window.CrmsAuth?.getCurrentUser?.() || {};
+      return user.fullName || user.name || user.email || 'User';
     }
+    const container = element.closest('.contact-item,.user-list,.chat-list,.profile-card,.call-person,.incoming-head,.history-item,.participant-item,.d-flex');
+    const label = container?.querySelector('[data-user-name],.user-name,.contact-name,h4,h5,h6,strong,.fw-semibold,.fw-medium,.fs-14,a:not(.avatar)');
+    const alt = element.getAttribute('alt')?.trim();
+    return label?.textContent?.trim() || (alt && !/^(img|image|user|avatar)$/i.test(alt) ? alt : '') || 'User';
+  }
+
+  function installInitialAvatars() {
+    if (document.getElementById('crms-initial-avatar-style')) return;
+    const style = document.createElement('style');
+    style.id = 'crms-initial-avatar-style';
+    style.textContent = `.crms-initial-avatar{display:inline-flex!important;align-items:center;justify-content:center;flex-shrink:0;background:var(--primary,#e41f07)!important;color:#fff!important;font-weight:700;line-height:1;text-transform:uppercase;object-fit:unset!important;border-radius:50%}.avatar-wrap>.crms-initial-avatar{width:44px!important;height:44px!important;font-size:14px}.chat-avatar>.crms-initial-avatar{width:40px!important;height:40px!important}.profile-avatar.crms-initial-avatar{width:86px!important;height:86px!important;font-size:24px}.audio-avatar.crms-initial-avatar{width:120px!important;height:120px!important;font-size:34px}.mini-avatar.crms-initial-avatar{width:38px!important;height:38px!important}.profile-avatar.crms-initial-avatar,.audio-avatar.crms-initial-avatar{display:flex!important}`;
+    document.head.appendChild(style);
+    const selector = [
+      '.profile-dropdown img', '.avatar-wrap img', '.avatar img:not([src*="/company/"]):not(.img-flag)', 'img.profile-avatar', 'img.mini-avatar',
+      'img.audio-avatar', '.chat-avatar img', '#current-user-avatar', '#active-chat-avatar',
+      '.conversation-open .avatar img', '#current-participants-list img', '#add-participant-results img',
+      '#new-chat-user-results img', 'img[src*="assets/img/profiles/avatar-"]',
+      'img[src*="assets/img/users/user-"]'
+    ].join(',');
+    let scheduled = false;
+    const refresh = () => {
+      scheduled = false;
+      document.querySelectorAll(selector).forEach(image => {
+        if (image.closest('.email-detail-body,.message-text,.attachment-preview')) return;
+        const badge = document.createElement('span');
+        for (const attribute of image.attributes) {
+          if (!['src','srcset','alt','loading','decoding'].includes(attribute.name)) badge.setAttribute(attribute.name, attribute.value);
+        }
+        badge.classList.add('crms-initial-avatar');
+        if (!badge.style.width && image.getAttribute('width')) badge.style.width = `${image.getAttribute('width')}px`;
+        if (!badge.style.height && image.getAttribute('height')) badge.style.height = `${image.getAttribute('height')}px`;
+        badge.textContent = initialsFor(avatarName(image));
+        badge.setAttribute('aria-label', avatarName(image));
+        image.replaceWith(badge);
+      });
+      document.querySelectorAll('.crms-initial-avatar').forEach(badge => {
+        const value = initialsFor(avatarName(badge));
+        if (badge.textContent !== value) badge.textContent = value;
+      });
+    };
+    const schedule = () => {
+      if (scheduled) return;
+      scheduled = true;
+      queueMicrotask(refresh);
+    };
+    refresh();
+    new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   function installMobileNavigation(sidebar) {
@@ -223,6 +298,31 @@
         child.style.display = opening ? 'block' : 'none';
         toggle.classList.toggle('subdrop', opening);
       });
+    });
+  }
+
+  function installWorkInProgressLinks(root) {
+    root.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+      let target;
+      try { target = new URL(href, location.href); } catch (_) { return; }
+      if (target.origin !== location.origin || !target.pathname.toLowerCase().endsWith('.html')) return;
+      if (persistentPages.has(pageFromUrl(target.href)) || pageFromUrl(target.href) === 'login.html') return;
+      link.dataset.crmsWorkInProgress = 'true';
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const label = link.querySelector('span')?.textContent?.trim() || link.textContent.trim() || 'This page';
+        document.getElementById('crmsWorkInProgressModal')?.remove();
+        const shell = document.createElement('div');
+        shell.innerHTML = `<div class="modal fade" id="crmsWorkInProgressModal" tabindex="-1" aria-labelledby="crmsWorkInProgressTitle" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-body text-center p-5"><span class="avatar avatar-xl rounded-circle bg-light text-primary d-inline-flex align-items-center justify-content-center mb-3"><i class="ti ti-tools fs-32"></i></span><h4 id="crmsWorkInProgressTitle">Work Under Progress</h4><p class="text-muted mb-4">${escapeNotificationText(label)} is currently being developed and will be available soon.</p><button type="button" class="btn btn-primary px-4" data-bs-dismiss="modal">Okay</button></div></div></div></div>`;
+        const element = shell.firstElementChild;
+        document.body.appendChild(element);
+        const modal = new bootstrap.Modal(element);
+        element.addEventListener('hidden.bs.modal', () => element.remove(), { once: true });
+        modal.show();
+      }, true);
     });
   }
 
@@ -275,6 +375,34 @@
     const value = Math.max(0, Number(count) || 0);
     badge.textContent = value > 99 ? '99+' : String(value);
     badge.style.display = value > 0 ? '' : 'none';
+  }
+
+  function notificationPreferenceKey() {
+    const user = window.CrmsAuth?.getCurrentUser?.() || {};
+    return `crms.notifications.enabled.${user.userId || user.id || user.email || 'anonymous'}`;
+  }
+
+  function notificationsEnabled() {
+    return localStorage.getItem(notificationPreferenceKey()) !== 'false';
+  }
+
+  function clearNotificationIndicators() {
+    document.querySelectorAll('.navbar-header .badge').forEach(badge => {
+      if (badge.closest('button') || badge.closest('a[href="chat.html"]')) setBadge(badge, 0);
+    });
+  }
+
+  function installNotificationPreference() {
+    const control = document.getElementById('notify');
+    if (!control) return;
+    control.checked = notificationsEnabled();
+    control.addEventListener('change', () => {
+      localStorage.setItem(notificationPreferenceKey(), String(control.checked));
+      if (!control.checked) clearNotificationIndicators();
+      window.dispatchEvent(new CustomEvent('crms:notification-preference-change', {
+        detail: { enabled: control.checked }
+      }));
+    });
   }
 
   async function refreshChatNotification() {
@@ -392,6 +520,10 @@
 
   function installNotifications() {
     const refresh = () => {
+      if (!notificationsEnabled()) {
+        clearNotificationIndicators();
+        return;
+      }
       refreshChatNotification();
       refreshCalendarNotifications();
       refreshBellNotifications();
@@ -403,6 +535,7 @@
     });
     window.addEventListener('focus', refresh);
     window.addEventListener('crms:chat-notification-change', refreshChatNotification);
+    window.addEventListener('crms:notification-preference-change', refresh);
     window.addEventListener('beforeunload', () => window.clearInterval(timer), { once: true });
   }
 
@@ -415,8 +548,11 @@
     normalizeCallLinks(menu);
     markCurrent(menu);
     populateHeaderUser();
+    installInitialAvatars();
+    installNotificationPreference();
     installMobileNavigation(sidebar);
     if (currentPage !== 'index.html') installSubmenus(menu);
+    installWorkInProgressLinks(document);
     enhanceCallsPage();
     installPersistentNavigation();
     installNotifications();

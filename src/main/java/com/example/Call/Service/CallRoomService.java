@@ -66,7 +66,8 @@ public class CallRoomService {
         }
         if (!participants.existsByRoomRoomIdAndUserUserIdAndLeftAtIsNull(room.getRoomId(), userId)) {
             if (participants.countByRoomRoomIdAndLeftAtIsNull(room.getRoomId()) >= properties.getGroup().getMaximumParticipants())
-                throw new ConflictException("TEAM_ROOM_FULL", "The team room is full.");
+                throw new ConflictException("TEAM_ROOM_FULL",
+                        "Participants overloaded: this Team Room already has 25 participants.");
             CallRoomParticipant attendance=new CallRoomParticipant(); attendance.setRoom(room); attendance.setUser(user);
             attendance.setParticipantRole(room.getRoomCreator().getUserId().equals(userId) ? CallRoomParticipantRole.HOST : CallRoomParticipantRole.MEMBER);
             attendance.setJoinedAt(clock.instant()); participants.save(attendance);

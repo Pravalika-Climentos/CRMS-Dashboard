@@ -901,10 +901,19 @@
     function populateCurrentUser() {
         const current = state.conversations.flatMap(c => c.participants || []).find(p => Number(p.userId) === CURRENT_USER_ID);
         if (!current) return;
-        setText('#current-user-name', current.fullName || 'Current User');
+        const displayName = current.fullName || current.email || 'Current User';
+        setText('#current-user-name', displayName);
         setText('#current-user-role', current.designation || '');
         const avatar = $('#current-user-avatar');
-        if (avatar) avatar.src = avatarUrl(current.avatar);
+        if (avatar) {
+            const badge = document.createElement('span');
+            badge.id = 'current-user-avatar';
+            badge.className = 'avatar-title rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-semibold w-100 h-100';
+            badge.textContent = displayName.split(/\s+/).filter(Boolean).slice(0, 2)
+                .map(part => part.charAt(0)).join('').toUpperCase() || 'U';
+            badge.setAttribute('aria-label', displayName);
+            avatar.replaceWith(badge);
+        }
     }
 
     function openTextModal(title, action, value) {

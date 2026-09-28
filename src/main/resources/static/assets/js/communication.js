@@ -28,6 +28,18 @@
   const escapeHtml = value => String(value ?? '').replace(/[&<>'"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;' }[c]));
   const formatDateTime = value => value ? new Date(value).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '—';
   const formatDuration = seconds => `${String(Math.floor((seconds || 0) / 60)).padStart(2,'0')}:${String((seconds || 0) % 60).padStart(2,'0')}`;
+  const participantInitials = value => String(value || 'Participant')
+    .replace(/\s*\(You\)\s*/gi, ' ').trim().split(/\s+/).filter(Boolean).slice(0, 2)
+    .map(part => part.charAt(0)).join('').toUpperCase() || 'P';
+  const teamRoomChoices = [
+    ['crm-team-room', 'CRM Team Room'],
+    ['sales-room', 'Sales Room'],
+    ['developer-room', 'Developer Room'],
+    ['test-room', 'Test Room'],
+    ['research-room', 'Research Room'],
+    ['finance-room', 'Finance Room'],
+    ['digital-marketing-room', 'Digital Marketing Room']
+  ];
 
   // Never show the template's sample counters while authenticated data loads.
   ['statConversations', 'statVideo', 'statAudio', 'statMissed'].forEach(id => {
@@ -289,12 +301,19 @@
   }
 
   // ---- Browser/OS notifications for incoming calls ----
+  function notificationsEnabled() {
+    const user = session?.user || {};
+    const key = `crms.notifications.enabled.${user.userId || user.id || user.email || 'anonymous'}`;
+    return localStorage.getItem(key) !== 'false';
+  }
   function requestNotificationPermission() {
+    if (!notificationsEnabled()) return;
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission().catch(() => {});
     }
   }
   function notifyIncomingCall(p) {
+    if (!notificationsEnabled()) return;
     if (!('Notification' in window) || Notification.permission !== 'granted') return;
     try {
       const title = `Incoming ${p.type === 'video' ? 'video' : 'audio'} call`;
@@ -334,7 +353,12 @@
     const response = await fetch(path, { ...options, headers });
     let data = {};
     try { data = await response.json(); } catch (_) {}
-    if (!response.ok) throw new Error(data.details || data.error || `HTTP_${response.status}`);
+    if (!response.ok) {
+      const error = new Error(data.details || data.message || data.error || `HTTP_${response.status}`);
+      error.code = data.code || null;
+      error.status = response.status;
+      throw error;
+    }
     return data;
   }
 
@@ -387,7 +411,7 @@
     tile = document.createElement('div');
     tile.id = tileId(identity);
     tile.className = 'team-tile';
-    tile.innerHTML = `<div class="tile-avatar">${escapeHtml((name || '?').slice(0,1).toUpperCase())}</div><span class="tile-name">${escapeHtml(name || 'Participant')}</span>`;
+    tile.innerHTML = `<div class="tile-avatar">${escapeHtml(participantInitials(name))}</div><span class="tile-name">${escapeHtml(name || 'Participant')}</span>`;
     $('teamCamGrid').appendChild(tile);
     updateTeamGridLayout();
     return tile;
@@ -550,14 +574,35 @@
     $('teamStage').querySelector('.call-controls')?.prepend(button);
   }
 
+  function chooseTeamRoom() {
+    return new Promise(resolve => {
+      const existing = $('teamRoomSelectModal');
+      if (existing) existing.remove();
+      const preferred = localStorage.getItem('crmsLastTeamRoom') || teamRoomChoices[0][0];
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = `<div class="modal fade" id="teamRoomSelectModal" tabindex="-1" aria-labelledby="teamRoomSelectTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+          <div class="modal-header"><div><h5 class="modal-title" id="teamRoomSelectTitle">Join a Team Room</h5><p class="small text-muted mb-0">Choose the room your colleagues are using.</p></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+          <div class="modal-body"><label class="form-label" for="teamRoomSelect">Team room</label><select id="teamRoomSelect" class="form-select form-select-lg">${teamRoomChoices.map(([value,label]) => `<option value="${value}"${value === preferred ? ' selected' : ''}>${label}</option>`).join('')}</select></div>
+          <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="confirmTeamRoom"><i class="ti ti-users-group me-1"></i>Join room</button></div>
+        </div></div></div>`;
+      const element = wrapper.firstElementChild;
+      document.body.appendChild(element);
+      const modal = new bootstrap.Modal(element);
+      let selectedRoom = null;
+      $('confirmTeamRoom').onclick = () => { selectedRoom = $('teamRoomSelect').value; modal.hide(); };
+      element.addEventListener('shown.bs.modal', () => $('teamRoomSelect')?.focus(), { once: true });
+      element.addEventListener('hidden.bs.modal', () => { element.remove(); resolve(selectedRoom); }, { once: true });
+      modal.show();
+    });
+  }
+
   async function joinTeamRoom() {
     if (teamRoom) return;
-    const requestedName = prompt('Enter a Team Room name. Signed-in colleagues can join using the same name.', localStorage.getItem('crmsLastTeamRoom') || 'crm-team-room');
-    if (requestedName === null) return;
-    const cleanedName = requestedName.trim().toLowerCase().replace(/[^a-z0-9_-]/g, '-').replace(/-+/g, '-').slice(0, 64);
-    if (!cleanedName) return toast('Enter a Team Room name using letters, numbers, hyphens, or underscores.', 'warning');
-    activeTeamRoomName = cleanedName;
-    localStorage.setItem('crmsLastTeamRoom', cleanedName);
+    const selectedRoom = await chooseTeamRoom();
+    if (!selectedRoom) return;
+    activeTeamRoomName = selectedRoom;
+    localStorage.setItem('crmsLastTeamRoom', selectedRoom);
     buildTeamCollaborationPanel();
     ensureTeamStatusStyles();
     if (!window.LivekitClient) return toast('Group calling library failed to load.', 'warning');
@@ -747,7 +792,7 @@
         OverconstrainedError: 'Your microphone/camera does not support the requested settings.'
       };
       const message = e.message === 'GROUP_CALLING_NOT_CONFIGURED' ? 'Group calling is not set up yet on the server.'
-        : e.message === 'TEAM_ROOM_FULL' ? 'The Team Room is currently full. Please wait for someone to leave and try again.'
+        : e.code === 'TEAM_ROOM_FULL' || e.message === 'TEAM_ROOM_FULL' ? 'Participants overloaded: this Team Room already has 25 participants. Please wait for someone to leave and try again.'
         : micErrors[e.name] || 'Could not join the team room.';
       toast(message, 'warning');
     }

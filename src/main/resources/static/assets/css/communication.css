@@ -144,6 +144,19 @@ body{background:var(--comm-bg)}
 .calls-page .call-dock .dock-return,#teamStage .team-composer button,#teamScreenBtn.active{background:var(--comm-primary)}
 #teamStage .team-panel-tab.active{color:var(--comm-primary);background:rgba(var(--primary-rgb,228,31,7),.08)}
 #teamStage .call-person .mini-avatar,#teamStage .team-tile .tile-avatar{background:var(--comm-primary)!important}
+#teamRoomSelectModal .btn-primary{background:var(--comm-primary,#e41f07)!important;border-color:var(--comm-primary,#e41f07)!important;color:#fff!important}
+#teamRoomSelectModal .btn-primary:hover{background:var(--comm-primary-dark,#b91c0c)!important;border-color:var(--comm-primary-dark,#b91c0c)!important}
+#teamRoomSelectModal .form-select:focus{border-color:#e41f07!important;box-shadow:0 0 0 .2rem rgba(228,31,7,.16)!important}
+#teamRoomSelectModal .form-select{accent-color:#e41f07}
+#teamRoomSelectModal .form-select option:checked{background:#e41f07;color:#fff}
+#teamStage .team-panel-tab.active{border-color:var(--comm-primary)!important}
+#teamStage .team-message strong{color:#ff8f83}
+.calls-page .comm-details{padding:22px 20px}
+.calls-page .profile-card .crms-initial-avatar{margin-inline:auto}
+.calls-page .detail-row{display:grid;grid-template-columns:minmax(82px,auto) minmax(0,1fr);align-items:start;column-gap:16px}
+.calls-page .detail-row span:first-child{white-space:nowrap;text-align:left}
+.calls-page .detail-row span:last-child{min-width:0;text-align:right;overflow-wrap:anywhere;word-break:normal;line-height:1.45}
+.calls-page .comm-details h6{margin-top:0}
 @media(max-width:767px){.calls-page .mobile-contacts-button{display:inline-flex!important}}
 /* Meeting window actions and native fullscreen layout. */
 .meeting-window-actions{display:flex;align-items:center;gap:8px;margin-left:12px}
