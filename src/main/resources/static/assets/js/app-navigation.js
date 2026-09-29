@@ -540,7 +540,15 @@
   }
 
   document.addEventListener('DOMContentLoaded', async () => {
-    if (installEmbeddedViewBridge()) return;
+    if (installEmbeddedViewBridge()) {
+      // Persistent navigation loads application pages in an embedded same-origin
+      // view. Visual normalization must still run there on the first load;
+      // otherwise avatars and the legacy Calls banner remain until a refresh.
+      populateHeaderUser();
+      installInitialAvatars();
+      enhanceCallsPage();
+      return;
+    }
     await installSharedShell();
     const sidebar = document.getElementById('sidebar');
     const menu = document.getElementById('sidebar-menu');
