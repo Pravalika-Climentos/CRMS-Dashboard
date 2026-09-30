@@ -94,7 +94,7 @@ public class CalendarUserServiceImpl
                 user.getFullName(),
                 user.getEmail(),
                 user.getDesignation(),
-                user.getRole(),
+                user.getRole().name(),
                 user.getAvatar()
         );
     }

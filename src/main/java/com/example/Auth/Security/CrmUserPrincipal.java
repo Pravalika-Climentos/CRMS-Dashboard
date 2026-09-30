@@ -5,7 +5,7 @@ import java.security.Principal;
 
 public record CrmUserPrincipal(Long userId, String email, String role) implements Principal {
     public static CrmUserPrincipal from(User user) {
-        return new CrmUserPrincipal(user.getUserId(), user.getEmail(), user.getRole());
+        return new CrmUserPrincipal(user.getUserId(), user.getEmail(), user.getRole().name());
     }
 
     @Override

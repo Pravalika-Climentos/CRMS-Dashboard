@@ -38,7 +38,7 @@ public class JwtService {
                 .withIssuer(issuer)
                 .withSubject(String.valueOf(user.getUserId()))
                 .withClaim("email", user.getEmail())
-                .withClaim("role", user.getRole())
+                .withClaim("role", user.getRole().name())
                 .withClaim("type", "access")
                 .withIssuedAt(now)
                 .withExpiresAt(expiresAt)

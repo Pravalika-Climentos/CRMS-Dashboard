@@ -41,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (user != null) {
                     CrmUserPrincipal principal = CrmUserPrincipal.from(user);
                     var authentication = new UsernamePasswordAuthenticationToken(
-                            principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
+                            principal, null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (RuntimeException ignored) {

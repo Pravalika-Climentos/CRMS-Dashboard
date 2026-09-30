@@ -7,6 +7,7 @@ import com.example.Auth.DTO.RegisterRequest;
 import com.example.Auth.DTO.UserSessionResponse;
 import com.example.Auth.Security.JwtService;
 import com.example.CRM.Entity.User;
+import com.example.CRM.Entity.UserRole;
 import com.example.CRM.Repository.UserRepository;
 import com.example.Common.Service.CurrentUserService;
 import org.springframework.beans.factory.annotation.Value;
@@ -68,7 +69,7 @@ public class AuthService {
         user.setFullName(request.fullName().trim());
         user.setEmail(email);
         user.setPasswordHash(passwords.encode(request.password()));
-        user.setRole("SALES_EXECUTIVE");
+        user.setRole(UserRole.SALES_EXECUTIVE);
         user.setActive(true);
         user.setAccountLocked(false);
         user.setFailedLoginAttempts(0);
@@ -105,7 +106,7 @@ public class AuthService {
 
     private UserSessionResponse toSession(User user) {
         return new UserSessionResponse(user.getUserId(), user.getFullName(), user.getEmail(),
-                user.getRole(), user.getDesignation(), user.getAvatar());
+                user.getRole().name(), user.getDesignation(), user.getAvatar());
     }
 
     public static class InvalidCredentialsException extends RuntimeException {}

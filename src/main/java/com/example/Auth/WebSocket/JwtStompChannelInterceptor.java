@@ -38,7 +38,7 @@ public class JwtStompChannelInterceptor implements ChannelInterceptor {
                     .orElseThrow(() -> new MessagingException("WebSocket user is unavailable."));
             var principal = CrmUserPrincipal.from(user);
             accessor.setUser(new UsernamePasswordAuthenticationToken(principal, null,
-                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()))));
+                    List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))));
         }
         return message;
     }
