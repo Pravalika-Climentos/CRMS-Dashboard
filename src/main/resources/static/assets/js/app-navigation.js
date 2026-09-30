@@ -55,6 +55,14 @@
     host.style.cssText = 'padding:0;overflow:hidden;background:var(--bs-body-bg,#f5f7fb);';
     main.appendChild(host);
 
+    const notifyViewVisibility = (target, active) => {
+      try {
+        target.dispatchEvent(new CustomEvent('crms:view-visibility', { detail: { active } }));
+      } catch (_) {
+        // A view may still be loading. Its load handler sends the current state.
+      }
+    };
+
     const setActiveNavigation = page => {
       document.querySelectorAll('#sidebar-menu a[href]').forEach(link => {
         const active = pageFromUrl(link.href) === page;
@@ -77,7 +85,12 @@
       initialWrapper.style.display = page === initialPage ? '' : 'none';
       host.hidden = page === initialPage;
       if (page === initialPage) document.title = initialTitle;
-      views.forEach((frame, key) => { frame.style.display = key === page ? 'block' : 'none'; });
+      notifyViewVisibility(window, page === initialPage);
+      views.forEach((frame, key) => {
+        const active = key === page;
+        frame.style.display = active ? 'block' : 'none';
+        if (frame.contentWindow) notifyViewVisibility(frame.contentWindow, active);
+      });
 
       if (page !== initialPage && !views.has(page)) {
         const target = new URL(cleanUrl, location.origin);
@@ -91,6 +104,7 @@
         frame.addEventListener('load', () => {
           const title = frame.contentDocument?.title;
           if (title && pageFromUrl(location.href) === page) document.title = title;
+          if (frame.contentWindow) notifyViewVisibility(frame.contentWindow, pageFromUrl(location.href) === page);
         });
         views.set(page, frame);
         host.appendChild(frame);
@@ -226,17 +240,19 @@
       return user.fullName || user.name || user.email || 'User';
     }
     const container = element.closest('.contact-item,.user-list,.chat-list,.profile-card,.call-person,.incoming-head,.history-item,.participant-item,.d-flex');
-    const label = container?.querySelector('[data-user-name],.user-name,.contact-name,h4,h5,h6,strong,.fw-semibold,.fw-medium,.fs-14,a:not(.avatar)');
+    const label = container?.querySelector('[data-user-name],.user-name,.contact-name,h4,h5,h6,strong,.fw-semibold:not(.crms-initial-avatar),.fw-medium:not(.crms-initial-avatar),.fs-14:not(.crms-initial-avatar),a:not(.avatar)');
     const alt = element.getAttribute('alt')?.trim();
     return label?.textContent?.trim() || (alt && !/^(img|image|user|avatar)$/i.test(alt) ? alt : '') || 'User';
   }
 
   function installInitialAvatars() {
-    if (document.getElementById('crms-initial-avatar-style')) return;
-    const style = document.createElement('style');
-    style.id = 'crms-initial-avatar-style';
-    style.textContent = `.crms-initial-avatar{display:inline-flex!important;align-items:center;justify-content:center;flex-shrink:0;background:var(--primary,#e41f07)!important;color:#fff!important;font-weight:700;line-height:1;text-transform:uppercase;object-fit:unset!important;border-radius:50%}.avatar-wrap>.crms-initial-avatar{width:44px!important;height:44px!important;font-size:14px}.chat-avatar>.crms-initial-avatar{width:40px!important;height:40px!important}.profile-avatar.crms-initial-avatar{width:86px!important;height:86px!important;font-size:24px}.audio-avatar.crms-initial-avatar{width:120px!important;height:120px!important;font-size:34px}.mini-avatar.crms-initial-avatar{width:38px!important;height:38px!important}.profile-avatar.crms-initial-avatar,.audio-avatar.crms-initial-avatar{display:flex!important}`;
-    document.head.appendChild(style);
+    if (window.__crmsInitialAvatarObserver) return;
+    if (!document.getElementById('crms-initial-avatar-style')) {
+      const style = document.createElement('style');
+      style.id = 'crms-initial-avatar-style';
+      style.textContent = `.crms-initial-avatar{display:inline-flex!important;align-items:center;justify-content:center;flex-shrink:0;background:var(--primary,#e41f07)!important;color:#fff!important;font-weight:700;line-height:1;text-transform:uppercase;object-fit:unset!important;border-radius:50%}.avatar-wrap>.crms-initial-avatar{width:44px!important;height:44px!important;font-size:14px}.chat-avatar>.crms-initial-avatar{width:40px!important;height:40px!important}.profile-avatar.crms-initial-avatar{width:86px!important;height:86px!important;font-size:24px}.audio-avatar.crms-initial-avatar{width:120px!important;height:120px!important;font-size:34px}.mini-avatar.crms-initial-avatar{width:38px!important;height:38px!important}.profile-avatar.crms-initial-avatar,.audio-avatar.crms-initial-avatar{display:flex!important}`;
+      document.head.appendChild(style);
+    }
     const selector = [
       '.profile-dropdown img', '.avatar-wrap img', '.avatar img:not([src*="/company/"]):not(.img-flag)', 'img.profile-avatar', 'img.mini-avatar',
       'img.audio-avatar', '.chat-avatar img', '#current-user-avatar', '#active-chat-avatar',
@@ -244,34 +260,59 @@
       '#new-chat-user-results img', 'img[src*="assets/img/profiles/avatar-"]',
       'img[src*="assets/img/users/user-"]'
     ].join(',');
-    let scheduled = false;
-    const refresh = () => {
-      scheduled = false;
-      document.querySelectorAll(selector).forEach(image => {
-        if (image.closest('.email-detail-body,.message-text,.attachment-preview')) return;
-        const badge = document.createElement('span');
-        for (const attribute of image.attributes) {
-          if (!['src','srcset','alt','loading','decoding'].includes(attribute.name)) badge.setAttribute(attribute.name, attribute.value);
-        }
-        badge.classList.add('crms-initial-avatar');
-        if (!badge.style.width && image.getAttribute('width')) badge.style.width = `${image.getAttribute('width')}px`;
-        if (!badge.style.height && image.getAttribute('height')) badge.style.height = `${image.getAttribute('height')}px`;
-        badge.textContent = initialsFor(avatarName(image));
-        badge.setAttribute('aria-label', avatarName(image));
-        image.replaceWith(badge);
-      });
-      document.querySelectorAll('.crms-initial-avatar').forEach(badge => {
-        const value = initialsFor(avatarName(badge));
-        if (badge.textContent !== value) badge.textContent = value;
-      });
+    const updateBadge = badge => {
+      const name = avatarName(badge);
+      const value = initialsFor(name);
+      if (badge.textContent !== value) badge.textContent = value;
+      if (badge.getAttribute('aria-label') !== name) badge.setAttribute('aria-label', name);
     };
-    const schedule = () => {
-      if (scheduled) return;
-      scheduled = true;
-      queueMicrotask(refresh);
+    const convertImage = image => {
+      if (!(image instanceof HTMLImageElement) || image.closest('.email-detail-body,.message-text,.attachment-preview')) return;
+      const badge = document.createElement('span');
+      for (const attribute of image.attributes) {
+        if (!['src','srcset','alt','loading','decoding'].includes(attribute.name)) badge.setAttribute(attribute.name, attribute.value);
+      }
+      badge.classList.add('crms-initial-avatar');
+      if (!badge.style.width && image.getAttribute('width')) badge.style.width = `${image.getAttribute('width')}px`;
+      if (!badge.style.height && image.getAttribute('height')) badge.style.height = `${image.getAttribute('height')}px`;
+      const name = avatarName(image);
+      badge.textContent = initialsFor(name);
+      badge.setAttribute('aria-label', name);
+      image.replaceWith(badge);
     };
-    refresh();
-    new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true, characterData: true });
+    const processNode = node => {
+      if (!(node instanceof Element)) return;
+      if (node.matches(selector)) convertImage(node);
+      node.querySelectorAll(selector).forEach(convertImage);
+      if (node.matches('.crms-initial-avatar')) updateBadge(node);
+      node.querySelectorAll('.crms-initial-avatar').forEach(updateBadge);
+    };
+    const updateRelatedBadges = node => {
+      const element = node instanceof Element ? node : node?.parentElement;
+      if (!element) return;
+      const nameTargets = {
+        personName: 'personAvatar', detailName: 'detailAvatar', callName: 'callAvatar',
+        audioName: 'audioAvatar', incomingName: 'incomingAvatar',
+        'active-chat-name': 'active-chat-avatar', 'current-user-name': 'current-user-avatar'
+      };
+      const avatarId = nameTargets[element.id];
+      if (avatarId) {
+        const badge = document.getElementById(avatarId);
+        if (badge?.classList.contains('crms-initial-avatar')) updateBadge(badge);
+      }
+      const container = element.closest('.contact-item,.user-list,.chat-list,.profile-card,.call-person,.incoming-head,.history-item,.participant-item');
+      container?.querySelectorAll('.crms-initial-avatar').forEach(updateBadge);
+    };
+    document.querySelectorAll(selector).forEach(convertImage);
+    document.querySelectorAll('.crms-initial-avatar').forEach(updateBadge);
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(processNode);
+        updateRelatedBadges(mutation.target);
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
+    window.__crmsInitialAvatarObserver = observer;
   }
 
   function installMobileNavigation(sidebar) {
@@ -302,13 +343,8 @@
   }
 
   function installWorkInProgressLinks(root) {
-    root.querySelectorAll('a[href]').forEach(link => {
-      const href = link.getAttribute('href');
-      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
-      let target;
-      try { target = new URL(href, location.href); } catch (_) { return; }
-      if (target.origin !== location.origin || !target.pathname.toLowerCase().endsWith('.html')) return;
-      if (persistentPages.has(pageFromUrl(target.href)) || pageFromUrl(target.href) === 'login.html') return;
+    const mark = link => {
+      if (link.dataset.crmsWorkInProgress === 'true') return;
       link.dataset.crmsWorkInProgress = 'true';
       link.addEventListener('click', event => {
         event.preventDefault();
@@ -323,6 +359,20 @@
         element.addEventListener('hidden.bs.modal', () => element.remove(), { once: true });
         modal.show();
       }, true);
+    };
+    root.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      const label = link.querySelector('span')?.textContent?.trim() || link.textContent.trim();
+      if (/^Help\s*&\s*Support$/i.test(label)) {
+        mark(link);
+        return;
+      }
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+      let target;
+      try { target = new URL(href, location.href); } catch (_) { return; }
+      if (target.origin !== location.origin || !target.pathname.toLowerCase().endsWith('.html')) return;
+      if (persistentPages.has(pageFromUrl(target.href)) || pageFromUrl(target.href) === 'login.html') return;
+      mark(link);
     });
   }
 
@@ -519,23 +569,32 @@
   }
 
   function installNotifications() {
-    const refresh = () => {
+    let refreshing = false;
+    const refresh = async (force = false) => {
+      if ((!force && document.hidden) || refreshing) return;
       if (!notificationsEnabled()) {
         clearNotificationIndicators();
         return;
       }
-      refreshChatNotification();
-      refreshCalendarNotifications();
-      refreshBellNotifications();
+      refreshing = true;
+      try {
+        await Promise.allSettled([
+          refreshChatNotification(),
+          refreshCalendarNotifications(),
+          refreshBellNotifications()
+        ]);
+      } finally {
+        refreshing = false;
+      }
     };
-    refresh();
-    const timer = window.setInterval(refresh, 15000);
+    refresh(true);
+    const timer = window.setInterval(() => refresh(), 30000);
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) refresh();
+      if (!document.hidden) refresh(true);
     });
-    window.addEventListener('focus', refresh);
+    window.addEventListener('focus', () => refresh());
     window.addEventListener('crms:chat-notification-change', refreshChatNotification);
-    window.addEventListener('crms:notification-preference-change', refresh);
+    window.addEventListener('crms:notification-preference-change', () => refresh(true));
     window.addEventListener('beforeunload', () => window.clearInterval(timer), { once: true });
   }
 
