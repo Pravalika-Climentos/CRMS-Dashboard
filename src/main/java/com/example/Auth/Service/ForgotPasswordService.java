@@ -25,6 +25,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import com.example.Email.Entity.EmailAccount;
+import com.example.Email.Entity.EmailAccountStatus;
+import com.example.Email.Entity.EmailProvider;
+import com.example.Email.Repository.EmailAccountRepository;
+import org.springframework.beans.factory.annotation.Value;
+
+
 
 @Slf4j
 @Service
@@ -42,6 +49,11 @@ public class ForgotPasswordService {
     private final SecureRandom random = new SecureRandom();
     private final Map<String, Challenge> challenges = new ConcurrentHashMap<>();
     private final Map<String, Instant> requestLimits = new ConcurrentHashMap<>();
+    
+    private final EmailAccountRepository emailAccounts;
+
+    @Value("${auth.email.sender-address:}")
+    private String authenticationSenderAddress;
 
     public ChallengeResponse request(String requestedEmail) {
         String email = normalize(requestedEmail);
@@ -61,35 +73,73 @@ public class ForgotPasswordService {
         return new ChallengeResponse(token, GENERIC_MESSAGE, CODE_LIFETIME.toSeconds());
     }
 
-    private void send(User user, String token, Instant now) {
-        if (!gmailDelivery.hasConnectedAccount(user.getUserId())) {
-            log.warn("Password reset email was not sent because user {} has no connected Gmail account.",
-                    user.getUserId());
-            return;
-        }
+   private void send(User user, String token, Instant now) {
+    EmailAccount senderAccount = emailAccounts
+            .findFirstByProviderAndEmailAddressIgnoreCaseAndStatusOrderByCreatedAtAsc(
+                    EmailProvider.GMAIL,
+                    authenticationSenderAddress.trim(),
+                    EmailAccountStatus.CONNECTED
+            )
+            .orElse(null);
 
-        String code = "%06d".formatted(random.nextInt(1_000_000));
-        Challenge challenge = new Challenge(user.getUserId(), digest(token, code),
-                now.plus(CODE_LIFETIME), 0);
-        challenges.put(token, challenge);
-
-        EmailMessage message = new EmailMessage();
-        message.setSender(user);
-        message.setThreadKey(UUID.randomUUID().toString());
-        message.setSubject("Your CRMS password reset code");
-        message.setBody("Your CRMS password reset code is " + code
-                + ". It expires in 10 minutes. If you did not request this reset, you can ignore this email.");
-        message.setStatus(EmailMessageStatus.SENT);
-        message.setSentAt(now);
-        try {
-            gmailDelivery.send(new GmailDeliveryService.UserMail(user.getUserId()), message,
-                    List.of(new GmailDeliveryService.RecipientMail(user.getEmail(), EmailRecipientType.TO)),
-                    List.of());
-        } catch (RuntimeException error) {
-            challenges.remove(token);
-            log.warn("Password reset email delivery failed for user {}.", user.getUserId(), error);
-        }
+    if (senderAccount == null) {
+        log.warn(
+                "Password reset email was not sent because the configured authentication Gmail account is unavailable."
+        );
+        return;
     }
+
+    String code = "%06d".formatted(random.nextInt(1_000_000));
+
+    Challenge challenge = new Challenge(
+            user.getUserId(),
+            digest(token, code),
+            now.plus(CODE_LIFETIME),
+            0
+    );
+
+    challenges.put(token, challenge);
+
+    EmailMessage message = new EmailMessage();
+
+    // The notification account owner is the sender—not the user resetting
+    // their password.
+    message.setSender(senderAccount.getUser());
+    message.setAccount(senderAccount);
+    message.setThreadKey(UUID.randomUUID().toString());
+    message.setSubject("Your CRMS password reset code");
+    message.setBody(
+            "Your CRMS password reset code is " + code
+                    + ". It expires in 10 minutes. "
+                    + "If you did not request this reset, you can ignore this email."
+    );
+    message.setStatus(EmailMessageStatus.SENT);
+    message.setSentAt(now);
+
+    try {
+        gmailDelivery.sendSystemMessage(
+                new GmailDeliveryService.UserMail(
+                        senderAccount.getUser().getUserId()
+                ),
+                message,
+                List.of(
+                        new GmailDeliveryService.RecipientMail(
+                                user.getEmail(),
+                                EmailRecipientType.TO
+                        )
+                ),
+                List.of()
+        );
+    } catch (RuntimeException error) {
+        challenges.remove(token);
+
+        log.warn(
+                "Password reset email delivery failed for user {}.",
+                user.getUserId(),
+                error
+        );
+    }
+}
 
     @Transactional
     public void reset(ResetPasswordRequest request) {

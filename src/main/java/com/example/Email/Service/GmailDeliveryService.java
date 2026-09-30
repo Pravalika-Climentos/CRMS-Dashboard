@@ -34,38 +34,106 @@ public class GmailDeliveryService {
                 userId, EmailProvider.GMAIL, EmailAccountStatus.CONNECTED).isEmpty();
     }
 
-    public DeliveryResult send(UserMail sender, EmailMessage message, List<RecipientMail> recipients,
-                               List<EmailAttachment> attachments) {
-        EmailAccount account = message.getAccount();
-        if (account == null) {
-            account = accounts.findByUserUserIdAndProviderAndStatus(
-                            sender.userId(), EmailProvider.GMAIL, EmailAccountStatus.CONNECTED)
-                    .stream().findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Connect a Gmail account before sending email to an external address."));
-        } else if (!account.getUser().getUserId().equals(sender.userId())
-                || account.getProvider() != EmailProvider.GMAIL
-                || account.getStatus() != EmailAccountStatus.CONNECTED) {
-            throw new IllegalArgumentException("The selected Gmail account is unavailable.");
-        }
+   public DeliveryResult send(
+        UserMail sender,
+        EmailMessage message,
+        List<RecipientMail> recipients,
+        List<EmailAttachment> attachments
+) {
+    return deliver(sender, message, recipients, attachments, false);
+}
 
-        String rawMessage = mime(account, message, recipients, attachments);
-        Map<?, ?> response = http.post().uri(SEND_URL)
-                .header("Authorization", "Bearer " + validAccessToken(account))
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Map.of("raw", Base64.getUrlEncoder().withoutPadding()
-                        .encodeToString(rawMessage.getBytes(StandardCharsets.UTF_8))))
-                .retrieve().body(Map.class);
-        if (response == null || response.get("id") == null)
-            throw new IllegalStateException("Gmail accepted no message identifier.");
-        return new DeliveryResult(account, String.valueOf(response.get("id")),
-                response.get("threadId") == null ? null : String.valueOf(response.get("threadId")));
+public DeliveryResult sendSystemMessage(
+        UserMail sender,
+        EmailMessage message,
+        List<RecipientMail> recipients,
+        List<EmailAttachment> attachments
+) {
+    return deliver(sender, message, recipients, attachments, true);
+}
+
+private DeliveryResult deliver(
+        UserMail sender,
+        EmailMessage message,
+        List<RecipientMail> recipients,
+        List<EmailAttachment> attachments,
+        boolean systemMessage
+) {
+    EmailAccount account = message.getAccount();
+
+    if (account == null) {
+        account = accounts.findByUserUserIdAndProviderAndStatus(
+                        sender.userId(),
+                        EmailProvider.GMAIL,
+                        EmailAccountStatus.CONNECTED
+                )
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Connect a Gmail account before sending email to an external address."
+                ));
+    } else if (!account.getUser().getUserId().equals(sender.userId())
+            || account.getProvider() != EmailProvider.GMAIL
+            || account.getStatus() != EmailAccountStatus.CONNECTED) {
+        throw new IllegalArgumentException(
+                "The selected Gmail account is unavailable."
+        );
     }
 
-    private String mime(EmailAccount account, EmailMessage message, List<RecipientMail> recipients,
-                        List<EmailAttachment> attachments) {
+    String rawMessage = mime(
+            account,
+            message,
+            recipients,
+            attachments,
+            systemMessage
+    );
+
+    Map<?, ?> response = http.post()
+            .uri(SEND_URL)
+            .header(
+                    "Authorization",
+                    "Bearer " + validAccessToken(account)
+            )
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Map.of(
+                    "raw",
+                    Base64.getUrlEncoder()
+                            .withoutPadding()
+                            .encodeToString(
+                                    rawMessage.getBytes(StandardCharsets.UTF_8)
+                            )
+            ))
+            .retrieve()
+            .body(Map.class);
+
+    if (response == null || response.get("id") == null) {
+        throw new IllegalStateException(
+                "Gmail accepted no message identifier."
+        );
+    }
+
+    return new DeliveryResult(
+            account,
+            String.valueOf(response.get("id")),
+            response.get("threadId") == null
+                    ? null
+                    : String.valueOf(response.get("threadId"))
+    );
+}
+
+   private String mime(
+        EmailAccount account,
+        EmailMessage message,
+        List<RecipientMail> recipients,
+        List<EmailAttachment> attachments,
+        boolean systemMessage
+) {
         StringBuilder headers = new StringBuilder();
         headers.append("From: ").append(address(account.getDisplayName(), account.getEmailAddress())).append("\r\n");
+        if (systemMessage) {
+    headers.append(
+            "X-CRMS-System-Message: password-reset\r\n"
+    );}
         appendRecipients(headers, "To", recipients, EmailRecipientType.TO);
         appendRecipients(headers, "Cc", recipients, EmailRecipientType.CC);
         appendRecipients(headers, "Bcc", recipients, EmailRecipientType.BCC);
@@ -150,4 +218,5 @@ public class GmailDeliveryService {
     public record UserMail(Long userId) {}
     public record RecipientMail(String email, EmailRecipientType type) {}
     public record DeliveryResult(EmailAccount account, String providerMessageId, String providerThreadId) {}
+   
 }
