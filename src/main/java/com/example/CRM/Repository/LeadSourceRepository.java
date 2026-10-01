@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface LeadSourceRepository extends JpaRepository<LeadSource, Long> {
 
     Optional<LeadSource> findBySourceName(String sourceName);
+    Optional<LeadSource> findBySourceNameIgnoreCase(String sourceName);
 
     boolean existsBySourceName(String sourceName);
 }

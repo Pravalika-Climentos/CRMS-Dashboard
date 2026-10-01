@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import com.example.CRM.Entity.UserRole;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
@@ -52,4 +54,36 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Page<User> searchActiveCalendarUsers(@Param("search") String search,
                                          @Param("currentUserId") Long currentUserId,
                                          Pageable pageable);
+
+    @EntityGraph(attributePaths = "manager")
+    @Query("""
+        SELECT user
+        FROM User user
+        WHERE (:search = ''
+            OR LOWER(user.fullName) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(user.email) LIKE LOWER(CONCAT('%', :search, '%')))
+        AND (:role IS NULL OR user.role = :role)
+        AND (:active IS NULL OR user.active = :active)
+        ORDER BY user.fullName
+        """)
+    Page<User> searchForUserManagement(
+            @Param("search") String search,
+            @Param("role") UserRole role,
+            @Param("active") Boolean active,
+            Pageable pageable
+    );
+
+    @EntityGraph(attributePaths = "manager")
+    List<User> findByManagerUserIdOrderByFullNameAsc(Long managerUserId);
+
+    @EntityGraph(attributePaths = "manager")
+    List<User> findByManagerUserIdAndActiveTrueOrderByFullNameAsc(
+            Long managerUserId
+    );
+
+    List<User> findByRoleAndActiveTrueOrderByFullNameAsc(UserRole role);
+
+    boolean existsByManagerUserId(Long managerUserId);
+
+    long countByRoleAndActiveTrue(UserRole role);
 }

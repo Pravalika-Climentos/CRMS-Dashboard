@@ -106,15 +106,24 @@ public class DashboardDataAdminService {
         x.setSource(r.sourceId()==null?null:required(sources.findById(r.sourceId()),"Lead source"));
         x.setAssignedUser(r.assignedUserId()==null?null:required(users.findById(r.assignedUserId()),"Assigned user"));
         x.setLeadName(r.leadName().trim()); x.setEmail(blankToNull(r.email())); x.setPhone(blankToNull(r.phone()));
-        x.setStatus(normalize(r.status())); x.setEstimatedValue(r.estimatedValue()); x.setConverted(r.converted());
-        return leadRow(leads.save(x));
+        try {
+            x.setStatus(
+                    LeadStatus.valueOf(normalize(r.status()))
+            );
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Select a valid lead status."
+            );
+        } x.setEstimatedValue(r.estimatedValue()); x.setConverted(r.converted());
+                return leadRow(leads.save(x));
     }
     public void deleteLead(Long id) { leads.delete(required(leads.findById(id),"Lead")); }
 
     private TargetRow targetRow(SalesTarget x){return new TargetRow(x.getTargetId(),x.getTargetMonth(),x.getTargetAmount(),x.getCurrencyCode());}
     private TransactionRow transactionRow(SalesTransaction x){return new TransactionRow(x.getTransactionId(),id(x.getDeal()),x.getDeal()==null?null:x.getDeal().getDealName(),x.getProduct().getProductId(),x.getProduct().getProductName(),x.getSalesUser().getUserId(),x.getSalesUser().getFullName(),x.getTransactionDate(),x.getQuantity(),x.getUnitPrice(),x.getTotalAmount(),x.getCostAmount(),x.getPaymentStatus());}
     private DealRow dealRow(Deal x){return new DealRow(x.getDealId(),x.getDealName(),x.getCompany().getCompanyId(),x.getCompany().getCompanyName(),id(x.getContact()),x.getContact()==null?null:x.getContact().getFirstName()+" "+x.getContact().getLastName(),x.getStage().getStageId(),x.getStage().getStageName(),x.getOwner().getUserId(),x.getOwner().getFullName(),x.getDealValue(),x.getProbability(),x.getExpectedCloseDate(),x.getStatus(),x.getWonDate(),x.getLostReason(),id(x.getLead()));}
-    private LeadRow leadRow(Lead x){return new LeadRow(x.getLeadId(),x.getLeadName(),id(x.getCompany()),x.getCompany()==null?null:x.getCompany().getCompanyName(),id(x.getContact()),x.getContact()==null?null:x.getContact().getFirstName()+" "+x.getContact().getLastName(),id(x.getSource()),x.getSource()==null?null:x.getSource().getSourceName(),id(x.getAssignedUser()),x.getAssignedUser()==null?null:x.getAssignedUser().getFullName(),x.getEmail(),x.getPhone(),x.getStatus(),x.getEstimatedValue(),x.getConverted());}
+    private LeadRow leadRow(Lead x){return new LeadRow(x.getLeadId(),x.getLeadName(),id(x.getCompany()),x.getCompany()==null?null:x.getCompany().getCompanyName(),id(x.getContact()),x.getContact()==null?null:x.getContact().getFirstName()+" "+x.getContact().getLastName(),id(x.getSource()),x.getSource()==null?null:x.getSource().getSourceName(),id(x.getAssignedUser()),x.getAssignedUser()==null?null:x.getAssignedUser().getFullName(),x.getEmail(),x.getPhone(),x.getStatus().name(),x.getEstimatedValue(),x.getConverted());}
     private static Long id(Object x){if(x instanceof Deal v)return v.getDealId();if(x instanceof Contact v)return v.getContactId();if(x instanceof Lead v)return v.getLeadId();if(x instanceof Company v)return v.getCompanyId();if(x instanceof LeadSource v)return v.getSourceId();if(x instanceof User v)return v.getUserId();return null;}
     private static <T>T required(java.util.Optional<T> value,String label){return value.orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,label+" was not found."));}
     private static String normalize(String value){return value.trim().toUpperCase();}

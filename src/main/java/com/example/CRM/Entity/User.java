@@ -51,4 +51,11 @@ public class User extends BaseEntity {
 
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "manager_user_id",
+            foreignKey = @ForeignKey(name = "fk_users_manager")
+    )
+    private User manager;
 }

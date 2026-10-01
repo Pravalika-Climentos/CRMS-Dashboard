@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import com.example.Common.Entity.BaseEntity;
 
@@ -60,6 +61,16 @@ public class Lead extends BaseEntity {
     )
     private User assignedUser;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "manager_owner_id",
+        foreignKey = @ForeignKey(name = "fk_leads_manager_owner")
+    )
+    private User managerOwner;
+
+    @Column(name = "assigned_at")
+    private LocalDateTime assignedAt;
+
     @Column(name = "lead_name", nullable = false, length = 150)
     private String leadName;
 
@@ -69,8 +80,27 @@ public class Lead extends BaseEntity {
     @Column(length = 30)
     private String phone;
 
+    @Column(name = "geo_location", length = 200)
+    private String geoLocation;
+
+    @Column(length = 100)
+    private String state;
+
+    @Column(name = "interested_service", length = 150)
+    private String interestedService;
+
+    @Column(name = "personal_details", columnDefinition = "json")
+    private String personalDetails;
+
+    @Column(name = "external_id", length = 150)
+    private String externalId;
+
+    @Column(name = "duplicate_hash", length = 64)
+    private String duplicateHash;
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 40)
-    private String status = "NEW";
+    private LeadStatus status = LeadStatus.NEW;
 
     @Column(
         name = "estimated_value",
@@ -82,4 +112,8 @@ public class Lead extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean converted = false;
+
+    @Version
+    @Column(nullable = false)
+    private Long version = 0L;
 }

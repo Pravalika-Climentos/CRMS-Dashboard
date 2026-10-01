@@ -2,7 +2,7 @@
   'use strict';
 
   const currentPage = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
-  const persistentPages = new Set(['index.html', 'dashboard-data.html', 'calls.html', 'calendar.html', 'email.html', 'chat.html']);
+  const persistentPages = new Set(['index.html', 'dashboard-data.html', 'lead-import.html', 'leads.html', 'calls.html', 'calendar.html', 'email.html', 'chat.html']);
   const embeddedView = new URLSearchParams(location.search).get('crmsEmbedded') === '1';
 
   function pageFromUrl(url) {
@@ -185,6 +185,31 @@
   function normalizeCallLinks(root) {
     root.querySelectorAll('a[href="video-call.html"],a[href="audio-call.html"],a[href="call-history.html"]')
       .forEach(link => { link.href = 'calls.html'; });
+  }
+
+  function applyRoleBasedNavigation(root) {
+    const role = window.CrmsAuth?.getCurrentUser?.()?.role;
+    const canImportLeads = role === 'ADMIN' || role === 'MANAGER';
+
+    root.querySelectorAll('a[href]').forEach(link => {
+      if (pageFromUrl(link.href) !== 'lead-import.html') return;
+      const item = link.closest('li');
+      if (item) item.hidden = !canImportLeads;
+      else link.hidden = !canImportLeads;
+    });
+
+    if (!canImportLeads) {
+      const workspaceLink = Array.from(root.querySelectorAll('a[href]'))
+        .find(link => pageFromUrl(link.href) === 'leads.html');
+      const leadsGroup = workspaceLink?.closest('li.submenu');
+      if (leadsGroup) {
+        const directLink = document.createElement('a');
+        directLink.href = 'leads.html';
+        directLink.textContent = 'Leads';
+        leadsGroup.classList.remove('submenu');
+        leadsGroup.replaceChildren(directLink);
+      }
+    }
   }
 
   function markCurrent(menu) {
@@ -436,6 +461,21 @@
     return localStorage.getItem(notificationPreferenceKey()) !== 'false';
   }
 
+  function leadNotificationSeenKey() {
+    const user = window.CrmsAuth?.getCurrentUser?.() || {};
+    return `crms.lead.notifications.seen.${user.userId || user.id || user.email || 'anonymous'}`;
+  }
+
+  function leadNotificationSince() {
+    const stored = localStorage.getItem(leadNotificationSeenKey());
+    const date = stored && !Number.isNaN(new Date(stored).getTime())
+      ? new Date(stored)
+      : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    // Spring binds the query value to LocalDateTime, so omit the trailing
+    // timezone marker while retaining second precision.
+    return date.toISOString().slice(0, 19);
+  }
+
   function clearNotificationIndicators() {
     document.querySelectorAll('.navbar-header .badge').forEach(badge => {
       if (badge.closest('button') || badge.closest('a[href="chat.html"]')) setBadge(badge, 0);
@@ -518,15 +558,17 @@
 
     body.innerHTML = '<div class="p-4 text-center text-muted">Loading notifications…</div>';
     try {
-      const [invitationResponse, timeChangeResponse] = await Promise.all([
+      const [invitationResponse, timeChangeResponse, leadNotificationResponse] = await Promise.all([
         fetch('/api/calendar/invitations?status=PENDING&page=0&size=5', { cache: 'no-store' }),
-        fetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=5', { cache: 'no-store' })
+        fetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=5', { cache: 'no-store' }),
+        fetch(`/api/leads/notifications?since=${encodeURIComponent(leadNotificationSince())}&limit=5`, { cache: 'no-store' })
       ]);
-      if (!invitationResponse.ok || !timeChangeResponse.ok) {
+      if (!invitationResponse.ok || !timeChangeResponse.ok || !leadNotificationResponse.ok) {
         throw new Error('Notification data could not be loaded.');
       }
       const invitationsPage = await invitationResponse.json();
       const timeChangesPage = await timeChangeResponse.json();
+      const leadNotifications = await leadNotificationResponse.json();
       const invitations = invitationsPage.items || [];
       const timeChanges = timeChangesPage.items || [];
       const rows = [
@@ -540,11 +582,20 @@
           icon: 'ti-clock-edit',
           title: item.eventTitle || 'Meeting time-change request',
           detail: `${item.requester?.fullName || 'A participant'} requested a different time`,
-          time: item.proposedStartAt || item.proposedStartDate
+          time: item.proposedStartAt || item.proposedStartDate,
+          href: 'calendar.html'
+        })),
+        ...(Array.isArray(leadNotifications) ? leadNotifications : []).map(item => ({
+          icon: item.title === 'Lead converted' ? 'ti-rosette-discount-check' : 'ti-user-check',
+          title: item.title || 'Lead update',
+          detail: item.detail || 'A lead was updated.',
+          time: item.createdAt,
+          href: 'leads.html',
+          leadNotification: true
         }))
       ];
       body.innerHTML = rows.length ? rows.map((item, index) => `
-        <a class="dropdown-item notification-item py-3 text-wrap border-bottom" href="calendar.html" id="live-notification-${index}">
+        <a class="dropdown-item notification-item py-3 text-wrap border-bottom" href="${item.href || 'calendar.html'}" id="live-notification-${index}"${item.leadNotification ? ' data-lead-notification="true"' : ''}>
           <div class="d-flex gap-2">
             <span class="avatar avatar-md rounded-circle bg-light text-primary d-inline-flex align-items-center justify-content-center flex-shrink-0"><i class="ti ${item.icon} fs-20"></i></span>
             <span class="flex-grow-1 min-width-0">
@@ -555,12 +606,22 @@
           </div>
         </a>`).join('') : '<div class="p-4 text-center text-muted">No new notifications.</div>';
       const total = Number(invitationsPage.totalElements || invitations.length)
-        + Number(timeChangesPage.totalElements || timeChanges.length);
+        + Number(timeChangesPage.totalElements || timeChanges.length)
+        + (Array.isArray(leadNotifications) ? leadNotifications.length : 0);
       setBadge(notificationBadge(bellButton), total);
+      if (!body.dataset.leadNotificationHandler) {
+        body.dataset.leadNotificationHandler = 'true';
+        body.addEventListener('click', event => {
+          if (!event.target.closest('[data-lead-notification]')) return;
+          localStorage.setItem(leadNotificationSeenKey(), new Date().toISOString());
+        });
+      }
       const footerLink = menu.querySelector('.border-top a');
       if (footerLink) {
-        footerLink.href = 'calendar.html';
-        footerLink.textContent = 'Open Calendar';
+        footerLink.href = leadNotifications.length && !invitations.length && !timeChanges.length
+          ? 'leads.html' : 'calendar.html';
+        footerLink.textContent = leadNotifications.length && !invitations.length && !timeChanges.length
+          ? 'Open Leads' : 'Open Calendar';
       }
     } catch (error) {
       body.innerHTML = '<div class="p-4 text-center text-muted">Notifications are temporarily unavailable.</div>';
@@ -613,6 +674,7 @@
     const menu = document.getElementById('sidebar-menu');
     if (!sidebar || !menu) return;
     normalizeCallLinks(menu);
+    applyRoleBasedNavigation(menu);
     markCurrent(menu);
     populateHeaderUser();
     installInitialAvatars();

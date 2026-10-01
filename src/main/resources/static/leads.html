@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Leads | CRMS</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/plugins/tabler-icons/tabler-icons.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/leads/leads.css">
+  <script src="assets/js/theme-script.js"></script>
+  <script src="assets/js/auth-guard.js"></script>
+</head>
+<body>
+<div class="main-wrapper"><div class="page-wrapper"><main class="content leads-page">
+  <header class="leads-hero">
+    <div><span class="leads-eyebrow">Lead workspace</span><h2 id="leadsTitle">My Assigned Leads</h2><p id="leadsSubtitle">Review your leads, record progress and keep every opportunity current.</p></div>
+    <div class="d-flex gap-2 flex-wrap justify-content-end">
+      <button class="btn btn-outline-primary d-none" id="leadsExport"><i class="ti ti-file-spreadsheet me-1"></i>Download Excel</button>
+      <button class="btn btn-outline-primary" id="leadsRefresh"><i class="ti ti-refresh me-1"></i>Refresh</button>
+    </div>
+  </header>
+
+  <div id="leadsAlert" class="alert d-none" role="alert"></div>
+  <section class="leads-stats" id="leadsStats"></section>
+
+  <section class="leads-layout">
+    <article class="card border-0 shadow-sm leads-list-card">
+      <div class="card-header bg-white leads-toolbar">
+        <div class="input-group leads-search"><span class="input-group-text bg-white"><i class="ti ti-search"></i></span><input id="leadsSearch" class="form-control" placeholder="Search name, email or phone"></div>
+        <select id="leadsStatusFilter" class="form-select"><option value="">All statuses</option></select>
+      </div>
+      <div id="leadsLoading" class="leads-loading d-none"><span class="spinner-border spinner-border-sm"></span> Loading leads…</div>
+      <div id="leadsList" class="leads-list"></div>
+      <div class="card-footer bg-white d-flex align-items-center justify-content-between"><small id="leadsPageInfo" class="text-muted"></small><div class="btn-group"><button id="leadsPrevious" class="btn btn-sm btn-outline-secondary">Previous</button><button id="leadsNext" class="btn btn-sm btn-outline-secondary">Next</button></div></div>
+    </article>
+
+    <aside class="card border-0 shadow-sm leads-detail-card">
+      <div id="leadsEmpty" class="leads-empty"><span><i class="ti ti-user-search"></i></span><h4>Select a lead</h4><p>Choose a lead to view contact details and update its progress.</p></div>
+      <div id="leadsDetail" class="d-none">
+        <div class="leads-detail-head"><span id="leadInitials" class="leads-avatar">L</span><div><h3 id="leadName"></h3><span id="leadStatusBadge" class="leads-status"></span></div></div>
+        <div class="leads-detail-grid">
+          <div><small>Email</small><strong id="leadEmail">—</strong></div><div><small>Phone</small><strong id="leadPhone">—</strong></div>
+          <div><small>Source</small><strong id="leadSource">—</strong></div><div><small>Estimated value</small><strong id="leadValue">—</strong></div>
+          <div><small>Assigned to</small><strong id="leadAssignee">—</strong></div><div><small>Assigned on</small><strong id="leadAssignedAt">—</strong></div>
+          <div><small>Manager owner</small><strong id="leadManager">—</strong></div>
+        </div>
+        <form id="leadAssignmentForm" class="leads-update-form d-none"><h5 id="leadAssignmentTitle">Assign lead</h5><label class="form-label" for="leadAssignmentTarget" id="leadAssignmentLabel">Assignment target</label><select class="form-select" id="leadAssignmentTarget" required></select><label class="form-label mt-3" for="leadAssignmentNote">Assignment note</label><textarea class="form-control" id="leadAssignmentNote" rows="2" maxlength="1000" placeholder="Optional assignment note"></textarea><button id="leadAssignmentButton" class="btn btn-outline-primary mt-3" type="submit"><i class="ti ti-user-check me-1"></i>Save assignment</button></form>
+        <form id="leadStatusForm" class="leads-update-form">
+          <h5>Update progress</h5>
+          <label class="form-label" for="leadNewStatus">Status</label><select class="form-select" id="leadNewStatus" required></select>
+          <label class="form-label mt-3" for="leadNote">Progress note</label><textarea class="form-control" id="leadNote" rows="3" maxlength="1000" placeholder="Add an optional note about this update"></textarea>
+          <button id="leadUpdateButton" class="btn btn-primary mt-3" type="submit"><i class="ti ti-check me-1"></i>Save progress</button>
+        </form>
+        <div class="leads-history"><div class="d-flex justify-content-between align-items-center"><h5>Activity history</h5><small id="leadUpdatedAt" class="text-muted"></small></div><div id="leadHistory"></div></div>
+      </div>
+    </aside>
+  </section>
+</main></div></div>
+<script src="assets/js/auth-client.js"></script><script src="assets/js/bootstrap.bundle.min.js"></script><script src="assets/leads/leads.js"></script><script src="assets/js/app-navigation.js?v=19"></script>
+</body></html>

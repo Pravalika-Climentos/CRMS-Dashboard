@@ -13,6 +13,8 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.security.access.AccessDeniedException;
+import org.apache.catalina.connector.ClientAbortException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -336,6 +338,29 @@ private String defaultErrorCode(
         default ->
                 status.name();
     };
+}
+
+@ExceptionHandler(AccessDeniedException.class)
+public ResponseEntity<ApiErrorResponse> handleAccessDenied(
+        AccessDeniedException ex,
+        HttpServletRequest request
+) {
+    ApiErrorResponse response = buildError(
+            HttpStatus.FORBIDDEN,
+            "FORBIDDEN",
+            "You do not have permission to perform this action.",
+            request.getRequestURI(),
+            null
+    );
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+}
+
+/* Browsers can cancel static-file requests during navigation or refresh. The
+   response is already closed, so attempting to write JSON creates a second error. */
+@ExceptionHandler(ClientAbortException.class)
+public void handleClientAbort(ClientAbortException ex, HttpServletRequest request) {
+    log.debug("Client closed the connection while reading {}", request.getRequestURI());
 }
 
 }
