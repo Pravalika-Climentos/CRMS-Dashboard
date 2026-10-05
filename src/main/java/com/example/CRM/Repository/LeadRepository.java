@@ -30,6 +30,31 @@ public interface LeadRepository extends JpaRepository<Lead, Long> {
             Pageable pageable
     );
 
+    @EntityGraph(attributePaths = {"source", "assignedUser"})
+    @Query("""
+        SELECT lead FROM Lead lead
+        LEFT JOIN lead.assignedUser publicAssignee
+        WHERE (:status IS NULL OR lead.status = :status)
+          AND (:search = ''
+            OR LOWER(lead.leadName) LIKE LOWER(CONCAT('%', :search, '%'))
+            OR LOWER(lead.publicReference) LIKE LOWER(CONCAT('%', :search, '%')))
+          AND (:assignee = '' OR LOWER(publicAssignee.fullName) = LOWER(:assignee))
+        """)
+    Page<Lead> searchForPublicTracking(
+            @Param("search") String search,
+            @Param("status") LeadStatus status,
+            @Param("assignee") String assignee,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT DISTINCT user.fullName
+        FROM Lead lead JOIN lead.assignedUser user
+        WHERE user.fullName IS NOT NULL AND user.fullName <> ''
+        ORDER BY user.fullName
+        """)
+    List<String> findPublicAssigneeNames();
+
     @EntityGraph(attributePaths = {"company", "contact", "source", "assignedUser"})
     @Query("""
         SELECT lead FROM Lead lead
@@ -79,4 +104,31 @@ public interface LeadRepository extends JpaRepository<Lead, Long> {
     boolean existsByEmailIgnoreCase(String email);
     boolean existsByPhone(String phone);
     boolean existsByDuplicateHash(String duplicateHash);
+
+    @EntityGraph(attributePaths = {"source"})
+    Optional<Lead> findByPublicReference(String publicReference);
+
+    @Query("""
+        SELECT lead.status, COUNT(lead)
+        FROM Lead lead
+        GROUP BY lead.status
+        """)
+    List<Object[]> countByStatusForPublicTracking();
+
+    @Query("""
+        SELECT lead.status, COUNT(lead)
+        FROM Lead lead
+        WHERE lead.managerOwner.userId = :managerId
+           OR lead.assignedUser.manager.userId = :managerId
+        GROUP BY lead.status
+        """)
+    List<Object[]> countByStatusForManager(@Param("managerId") Long managerId);
+
+    @Query("""
+        SELECT lead.status, COUNT(lead)
+        FROM Lead lead
+        WHERE lead.assignedUser.userId = :userId
+        GROUP BY lead.status
+        """)
+    List<Object[]> countByStatusForAssignedUser(@Param("userId") Long userId);
 }

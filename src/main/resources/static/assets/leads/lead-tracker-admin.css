@@ -1,0 +1,28 @@
+.tracker-modal-content {
+  border: 0;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.tracker-modal-content .modal-header,
+.tracker-modal-content .modal-footer { padding: 20px 24px; }
+.tracker-modal-content .modal-body { padding: 22px 24px; }
+.tracker-security-note {
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid #fee4e2;
+  border-radius: 14px;
+  background: #fff8f7;
+}
+.tracker-security-note > i { color: #e41f13; font-size: 28px; }
+.tracker-security-note p { margin: 3px 0 0; color: #667085; }
+.tracker-token-warning { color: #b54708; font-size: .8rem; }
+.tracker-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding-top: 12px;
+  color: #667085;
+  font-size: .82rem;
+}
+.tracker-meta b { color: #344054; font-weight: 600; }

@@ -12,6 +12,7 @@ import com.example.Common.Service.CurrentUserService;
 import com.example.LeadManagement.DTO.LeadHistoryResponse;
 import com.example.LeadManagement.DTO.LeadResponse;
 import com.example.LeadManagement.DTO.LeadNotificationResponse;
+import com.example.LeadManagement.DTO.LeadSummaryResponse;
 import com.example.LeadManagement.Mapper.LeadManagementMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,8 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.EnumMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -83,6 +86,32 @@ public class LeadManagementService {
                 result.getTotalElements(),
                 result.getTotalPages(),
                 result.hasNext()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public LeadSummaryResponse visibleSummary() {
+        User actor = currentUser();
+        Map<LeadStatus, Long> counts = new EnumMap<>(LeadStatus.class);
+        for (LeadStatus status : LeadStatus.values()) counts.put(status, 0L);
+        List<Object[]> groupedCounts = switch (actor.getRole()) {
+            case ADMIN -> leads.countByStatusForPublicTracking();
+            case MANAGER -> leads.countByStatusForManager(actor.getUserId());
+            case SALES_EXECUTIVE -> leads.countByStatusForAssignedUser(
+                    actor.getUserId());
+        };
+        for (Object[] row : groupedCounts) {
+            counts.put((LeadStatus) row[0], (Long) row[1]);
+        }
+        long total = counts.values().stream().mapToLong(Long::longValue).sum();
+        long newCount = counts.get(LeadStatus.NEW);
+        long converted = counts.get(LeadStatus.CONVERTED);
+        long lost = counts.get(LeadStatus.LOST);
+        return new LeadSummaryResponse(
+                total,
+                newCount,
+                Math.max(0, total - newCount - converted - lost),
+                converted
         );
     }
 

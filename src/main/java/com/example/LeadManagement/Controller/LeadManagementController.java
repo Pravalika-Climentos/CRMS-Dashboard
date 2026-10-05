@@ -7,6 +7,7 @@ import com.example.LeadManagement.DTO.AssignLeadManagerRequest;
 import com.example.LeadManagement.DTO.LeadHistoryResponse;
 import com.example.LeadManagement.DTO.LeadResponse;
 import com.example.LeadManagement.DTO.LeadNotificationResponse;
+import com.example.LeadManagement.DTO.LeadSummaryResponse;
 import com.example.LeadManagement.DTO.UpdateLeadStatusRequest;
 import com.example.LeadManagement.Service.LeadManagementService;
 import jakarta.validation.Valid;
@@ -36,6 +37,11 @@ public class LeadManagementController {
             @RequestParam(defaultValue = "20") int size
     ) {
         return leadManagementService.listVisibleLeads(search, status, page, size);
+    }
+
+    @GetMapping("/summary")
+    public LeadSummaryResponse summary() {
+        return leadManagementService.visibleSummary();
     }
 
     @GetMapping("/export")

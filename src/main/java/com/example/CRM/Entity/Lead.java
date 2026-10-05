@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.example.Common.Entity.BaseEntity;
 
@@ -32,6 +33,9 @@ public class Lead extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "lead_id")
     private Long leadId;
+
+    @Column(name = "public_reference", nullable = false, unique = true, length = 24)
+    private String publicReference;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -112,6 +116,15 @@ public class Lead extends BaseEntity {
 
     @Column(nullable = false)
     private Boolean converted = false;
+
+    @PrePersist
+    void ensurePublicReference() {
+        if (publicReference == null || publicReference.isBlank()) {
+            publicReference = "LD-" + UUID.randomUUID()
+                    .toString().replace("-", "")
+                    .substring(0, 12).toUpperCase();
+        }
+    }
 
     @Version
     @Column(nullable = false)

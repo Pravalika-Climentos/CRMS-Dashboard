@@ -372,6 +372,19 @@
       if (link.dataset.crmsWorkInProgress === 'true') return;
       link.dataset.crmsWorkInProgress = 'true';
       link.addEventListener('click', event => {
+        // Some shared-shell links (notably the notification footer) are
+        // repointed after notification data loads. Re-evaluate the live href
+        // so an implemented destination is never trapped by an old WIP mark.
+        const liveHref = link.getAttribute('href');
+        if (liveHref) {
+          try {
+            const liveTarget = new URL(liveHref, location.href);
+            if (liveTarget.origin === location.origin
+                && persistentPages.has(pageFromUrl(liveTarget.href))) return;
+          } catch (_) {
+            // Keep the WIP fallback for an invalid destination.
+          }
+        }
         event.preventDefault();
         event.stopImmediatePropagation();
         const label = link.querySelector('span')?.textContent?.trim() || link.textContent.trim() || 'This page';

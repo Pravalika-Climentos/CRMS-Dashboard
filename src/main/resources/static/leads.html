@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="assets/plugins/tabler-icons/tabler-icons.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/leads/leads.css">
+  <link rel="stylesheet" href="assets/leads/lead-tracker-admin.css">
   <script src="assets/js/theme-script.js"></script>
   <script src="assets/js/auth-guard.js"></script>
 </head>
@@ -16,6 +17,7 @@
   <header class="leads-hero">
     <div><span class="leads-eyebrow">Lead workspace</span><h2 id="leadsTitle">My Assigned Leads</h2><p id="leadsSubtitle">Review your leads, record progress and keep every opportunity current.</p></div>
     <div class="d-flex gap-2 flex-wrap justify-content-end">
+      <button class="btn btn-outline-primary d-none" id="leadTrackerSettings"><i class="ti ti-link me-1"></i>Organization tracker</button>
       <button class="btn btn-outline-primary d-none" id="leadsExport"><i class="ti ti-file-spreadsheet me-1"></i>Download Excel</button>
       <button class="btn btn-outline-primary" id="leadsRefresh"><i class="ti ti-refresh me-1"></i>Refresh</button>
     </div>
@@ -57,5 +59,22 @@
     </aside>
   </section>
 </main></div></div>
-<script src="assets/js/auth-client.js"></script><script src="assets/js/bootstrap.bundle.min.js"></script><script src="assets/leads/leads.js?v=2"></script><script src="assets/js/app-navigation.js?v=20"></script>
+<div class="modal fade" id="leadTrackerModal" tabindex="-1" aria-labelledby="leadTrackerModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content tracker-modal-content">
+    <div class="modal-header"><div><span class="leads-eyebrow">Read-only public portal</span><h4 class="modal-title mt-1" id="leadTrackerModalTitle">Organization lead tracker</h4></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+    <div class="modal-body">
+      <div id="trackerAlert" class="alert d-none" role="alert"></div>
+      <div class="tracker-security-note"><i class="ti ti-shield-lock"></i><div><strong>One secure link for all organization leads</strong><p>The link exposes status and timeline only. Contact details, values, notes and internal user information are never included.</p></div></div>
+      <div class="row g-3 mt-1"><div class="col-md-7"><label class="form-label" for="trackerOrganizationName">Organization name</label><input class="form-control" id="trackerOrganizationName" maxlength="120" value="CRMS"></div><div class="col-md-5"><label class="form-label" for="trackerExpiresAt">Expiry (optional)</label><input class="form-control" id="trackerExpiresAt" type="datetime-local"></div></div>
+      <div id="trackerPortalDetails" class="d-none mt-4">
+        <div class="d-flex align-items-center justify-content-between gap-2 mb-2"><label class="form-label mb-0" for="trackerLink">Permanent tracker link</label><span id="trackerStatus" class="badge text-bg-success">Active</span></div>
+        <div class="input-group"><input class="form-control" id="trackerLink" readonly><button class="btn btn-outline-secondary" id="trackerCopy" type="button"><i class="ti ti-copy me-1"></i>Copy</button><button class="btn btn-outline-primary" id="trackerOpen" type="button"><i class="ti ti-external-link me-1"></i>Open</button></div>
+        <p class="tracker-token-warning mt-2"><i class="ti ti-alert-triangle me-1"></i>The secure token is shown only when generated. Save the complete link; regenerate it if it is lost.</p>
+        <div class="tracker-meta"><span>Created <b id="trackerCreatedAt">—</b></span><span>Last accessed <b id="trackerLastAccessedAt">Never</b></span></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline-danger d-none" id="trackerDisable" type="button">Disable link</button><button class="btn btn-outline-primary d-none" id="trackerRegenerate" type="button"><i class="ti ti-refresh me-1"></i>Regenerate link</button><button class="btn btn-primary" id="trackerGenerate" type="button"><i class="ti ti-link-plus me-1"></i>Generate link</button></div>
+  </div></div>
+</div>
+<script src="assets/js/auth-client.js"></script><script src="assets/js/bootstrap.bundle.min.js"></script><script src="assets/leads/leads.js?v=3"></script><script src="assets/js/app-navigation.js?v=21"></script>
 </body></html>

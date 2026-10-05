@@ -56,6 +56,8 @@ public class SecurityConfig {
                 .exceptionHandling(errors -> errors.authenticationEntryPoint(entryPoint))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/*.html", "/assets/**", "/favicon.ico", "/error").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/public/lead-tracking/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/public/lead-tracking/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/register",
                                 "/api/auth/forgot-password/request", "/api/auth/forgot-password/reset").permitAll()
                         .requestMatchers("/ws-chat", "/ws-chat/**").permitAll()
