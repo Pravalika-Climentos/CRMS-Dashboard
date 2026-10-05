@@ -25,6 +25,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +180,7 @@ public class LeadManagementService {
     ) {
         User actor = currentUser();
         LocalDateTime safeSince = since == null
-                ? LocalDateTime.now().minusDays(7)
+                ? LocalDateTime.now(ZoneOffset.UTC).minusDays(7)
                 : since;
         int limit = Math.min(Math.max(requestedLimit, 1), MAX_NOTIFICATION_LIMIT);
         PageRequest pageable = PageRequest.of(0, limit);
@@ -260,7 +261,7 @@ public class LeadManagementService {
         LeadStatus oldStatus = lead.getStatus();
         lead.setAssignedUser(executive);
         lead.setManagerOwner(executive.getManager());
-        lead.setAssignedAt(LocalDateTime.now());
+        lead.setAssignedAt(LocalDateTime.now(ZoneOffset.UTC));
         if (lead.getStatus() == LeadStatus.NEW) {
             lead.setStatus(LeadStatus.ASSIGNED);
         }

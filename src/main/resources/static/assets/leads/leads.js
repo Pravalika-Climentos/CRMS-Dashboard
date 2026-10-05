@@ -3,7 +3,7 @@ const $=id=>document.getElementById(id),statuses=['NEW','ASSIGNED','CONTACTED','
 async function api(url,options={}){const response=await (window.CrmsAuth?.authenticatedFetch||fetch)(url,{cache:'no-store',...options});if(!response.ok){let body={};try{body=await response.json()}catch(_){}throw new Error(body.message||body.detail||`Request failed (${response.status}).`)}return response.status===204?null:response.json()}
 function esc(value=''){const node=document.createElement('span');node.textContent=String(value??'');return node.innerHTML}
 function initials(name){return String(name||'Lead').trim().split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'L'}
-function date(value){return value?new Date(value).toLocaleString():'—'}
+function date(value){if(!value)return'—';const text=String(value),normalized=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(text)&&!/(?:Z|[+-]\d{2}:?\d{2})$/i.test(text)?`${text}Z`:text,parsed=new Date(normalized);return Number.isNaN(parsed.getTime())?'—':parsed.toLocaleString()}
 function money(value){return new Intl.NumberFormat(undefined,{style:'currency',currency:'INR',maximumFractionDigits:0}).format(Number(value)||0)}
 function alertMessage(message,type='danger'){$('leadsAlert').className=`alert alert-${type}`;$('leadsAlert').textContent=message}
 function clearAlert(){$('leadsAlert').className='alert d-none';$('leadsAlert').textContent=''}

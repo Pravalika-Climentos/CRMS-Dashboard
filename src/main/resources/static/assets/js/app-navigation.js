@@ -466,14 +466,24 @@
     return `crms.lead.notifications.seen.${user.userId || user.id || user.email || 'anonymous'}`;
   }
 
-  function leadNotificationSince() {
-    const stored = localStorage.getItem(leadNotificationSeenKey());
-    const date = stored && !Number.isNaN(new Date(stored).getTime())
-      ? new Date(stored)
-      : new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    // Spring binds the query value to LocalDateTime, so omit the trailing
-    // timezone marker while retaining second precision.
-    return date.toISOString().slice(0, 19);
+  function lastSeenLeadNotificationId() {
+    return Math.max(0, Number(localStorage.getItem(leadNotificationSeenKey())) || 0);
+  }
+
+  function authenticatedNotificationFetch(url) {
+    const request = window.CrmsAuth?.authenticatedFetch || window.fetch.bind(window);
+    return request(url, { cache: 'no-store' });
+  }
+
+  async function optionalNotificationData(url, fallback) {
+    try {
+      const response = await authenticatedNotificationFetch(url);
+      if (!response.ok) throw new Error(`Notification request failed (${response.status}).`);
+      return await response.json();
+    } catch (error) {
+      console.warn(`Notification source unavailable: ${url}`, error);
+      return fallback;
+    }
   }
 
   function clearNotificationIndicators() {
@@ -500,7 +510,7 @@
       .filter(link => link.querySelector('.ti-message-circle-exclamation'));
     if (!links.length) return;
     try {
-      const response = await fetch('/api/chat/conversations', { cache: 'no-store' });
+      const response = await authenticatedNotificationFetch('/api/chat/conversations');
       if (!response.ok) throw new Error(`Chat notifications failed (${response.status}).`);
       const conversations = await response.json();
       const unread = (Array.isArray(conversations) ? conversations : conversations.items || [])
@@ -521,12 +531,12 @@
     if (!invitationBadge && !timeChangeBadge) return;
     const requests = [];
     if (invitationBadge) {
-      requests.push(fetch('/api/calendar/invitations/summary', { cache: 'no-store' })
+      requests.push(authenticatedNotificationFetch('/api/calendar/invitations/summary')
         .then(response => response.ok ? response.json() : Promise.reject(new Error(`Invitations failed (${response.status}).`)))
         .then(summary => setBadge(invitationBadge, summary.pending)));
     }
     if (timeChangeBadge) {
-      requests.push(fetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=1', { cache: 'no-store' })
+      requests.push(authenticatedNotificationFetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=1')
         .then(response => response.ok ? response.json() : Promise.reject(new Error(`Time-change notifications failed (${response.status}).`)))
         .then(page => setBadge(timeChangeBadge, page.totalElements)));
     }
@@ -558,17 +568,15 @@
 
     body.innerHTML = '<div class="p-4 text-center text-muted">Loading notifications…</div>';
     try {
-      const [invitationResponse, timeChangeResponse, leadNotificationResponse] = await Promise.all([
-        fetch('/api/calendar/invitations?status=PENDING&page=0&size=5', { cache: 'no-store' }),
-        fetch('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=5', { cache: 'no-store' }),
-        fetch(`/api/leads/notifications?since=${encodeURIComponent(leadNotificationSince())}&limit=5`, { cache: 'no-store' })
+      const [invitationsPage, timeChangesPage, allLeadNotifications] = await Promise.all([
+        optionalNotificationData('/api/calendar/invitations?status=PENDING&page=0&size=5', { items: [], totalElements: 0 }),
+        optionalNotificationData('/api/calendar/time-change-requests?scope=received&status=PENDING&page=0&size=5', { items: [], totalElements: 0 }),
+        optionalNotificationData('/api/leads/notifications?limit=10', [])
       ]);
-      if (!invitationResponse.ok || !timeChangeResponse.ok || !leadNotificationResponse.ok) {
-        throw new Error('Notification data could not be loaded.');
-      }
-      const invitationsPage = await invitationResponse.json();
-      const timeChangesPage = await timeChangeResponse.json();
-      const leadNotifications = await leadNotificationResponse.json();
+      const seenLeadNotificationId = lastSeenLeadNotificationId();
+      const leadNotifications = (Array.isArray(allLeadNotifications) ? allLeadNotifications : [])
+        .filter(item => Number(item.notificationId) > seenLeadNotificationId)
+        .slice(0, 5);
       const invitations = invitationsPage.items || [];
       const timeChanges = timeChangesPage.items || [];
       const rows = [
@@ -591,11 +599,12 @@
           detail: item.detail || 'A lead was updated.',
           time: item.createdAt,
           href: 'leads.html',
-          leadNotification: true
+          leadNotification: true,
+          notificationId: item.notificationId
         }))
       ];
       body.innerHTML = rows.length ? rows.map((item, index) => `
-        <a class="dropdown-item notification-item py-3 text-wrap border-bottom" href="${item.href || 'calendar.html'}" id="live-notification-${index}"${item.leadNotification ? ' data-lead-notification="true"' : ''}>
+        <a class="dropdown-item notification-item py-3 text-wrap border-bottom" href="${item.href || 'calendar.html'}" id="live-notification-${index}"${item.leadNotification ? ` data-lead-notification="true" data-notification-id="${Number(item.notificationId) || 0}"` : ''}>
           <div class="d-flex gap-2">
             <span class="avatar avatar-md rounded-circle bg-light text-primary d-inline-flex align-items-center justify-content-center flex-shrink-0"><i class="ti ${item.icon} fs-20"></i></span>
             <span class="flex-grow-1 min-width-0">
@@ -613,7 +622,9 @@
         body.dataset.leadNotificationHandler = 'true';
         body.addEventListener('click', event => {
           if (!event.target.closest('[data-lead-notification]')) return;
-          localStorage.setItem(leadNotificationSeenKey(), new Date().toISOString());
+          const highestId = Array.from(body.querySelectorAll('[data-lead-notification]'))
+            .reduce((highest, link) => Math.max(highest, Number(link.dataset.notificationId) || 0), 0);
+          if (highestId) localStorage.setItem(leadNotificationSeenKey(), String(highestId));
         });
       }
       const footerLink = menu.querySelector('.border-top a');
