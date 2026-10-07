@@ -899,6 +899,12 @@
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
 
+            loading: isLoading => {
+                const host = element.closest('.calendar-host');
+                host?.classList.toggle('calendar-loading', isLoading);
+                host?.setAttribute('aria-busy', String(isLoading));
+            },
+
             events: async (info, success, failure) => {
 
                 try {

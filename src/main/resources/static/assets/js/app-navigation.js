@@ -158,9 +158,15 @@
   async function installSharedShell() {
     if (currentPage === 'index.html') return;
     try {
-      const response = await fetch('index.html', { cache: 'no-store' });
-      if (!response.ok) throw new Error(`HTTP_${response.status}`);
-      const source = new DOMParser().parseFromString(await response.text(), 'text/html');
+      const cacheKey = 'crms.shared-shell.v22';
+      let sourceText = sessionStorage.getItem(cacheKey);
+      if (!sourceText) {
+        const response = await fetch('index.html', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP_${response.status}`);
+        sourceText = await response.text();
+        try { sessionStorage.setItem(cacheKey, sourceText); } catch (_) {}
+      }
+      const source = new DOMParser().parseFromString(sourceText, 'text/html');
       const sharedHeader = source.querySelector('.navbar-header');
       const sharedSidebar = source.getElementById('sidebar');
       const currentHeader = document.querySelector('.navbar-header, .header');
@@ -665,15 +671,18 @@
       try {
         await Promise.allSettled([
           refreshChatNotification(),
-          refreshCalendarNotifications(),
-          refreshBellNotifications()
+          currentPage === 'calendar.html' ? Promise.resolve() : refreshCalendarNotifications()
         ]);
       } finally {
         refreshing = false;
       }
     };
+    const bellButton = document.querySelector('.navbar-header button .ti-bell-check')?.closest('button');
+    const bellMenuBody = bellButton?.parentElement?.querySelector('.dropdown-menu .notification-body');
+    if (bellMenuBody) bellMenuBody.innerHTML = '<div class="p-4 text-center text-muted">Open notifications to load the latest updates.</div>';
+    if (bellButton) bellButton.addEventListener('click', () => refreshBellNotifications(), { passive: true });
     refresh(true);
-    const timer = window.setInterval(() => refresh(), 30000);
+    const timer = window.setInterval(() => refresh(), 60000);
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden) refresh(true);
     });
@@ -696,12 +705,16 @@
     await installSharedShell();
     const sidebar = document.getElementById('sidebar');
     const menu = document.getElementById('sidebar-menu');
-    if (!sidebar || !menu) return;
+    if (!sidebar || !menu) {
+      document.documentElement.classList.remove('crms-shell-pending');
+      return;
+    }
     normalizeCallLinks(menu);
     applyRoleBasedNavigation(menu);
     markCurrent(menu);
     populateHeaderUser();
     installInitialAvatars();
+    document.documentElement.classList.remove('crms-shell-pending');
     installNotificationPreference();
     installMobileNavigation(sidebar);
     if (currentPage !== 'index.html') installSubmenus(menu);

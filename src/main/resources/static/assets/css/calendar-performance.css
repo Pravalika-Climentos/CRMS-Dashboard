@@ -1,0 +1,36 @@
+.calendar-host {
+  position: relative;
+  min-height: 620px;
+}
+
+.calendar-host.calendar-loading::before {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .92);
+  content: "";
+}
+
+.calendar-host.calendar-loading::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 6;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 3px solid #fee4e2;
+  border-top-color: #e41f13;
+  border-radius: 50%;
+  content: "";
+  animation: calendar-loading-spin .75s linear infinite;
+}
+
+@keyframes calendar-loading-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calendar-host.calendar-loading::after { animation-duration: 1.5s; }
+}
