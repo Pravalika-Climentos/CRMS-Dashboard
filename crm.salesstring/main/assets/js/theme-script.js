@@ -1,3 +1,59 @@
+/* CRMS shared light/dark theme.
+ * The choice is stored in localStorage so it survives page changes, new tabs and new sessions.
+ * Pages shown inside the persistent-navigation iframes follow the same value live
+ * (storage event + postMessage), so one toggle changes the whole application. */
+(function () {
+    var KEY = "crms-theme", root = document.documentElement;
+    function clean(v) { return v === "dark" || v === "light" ? v : null; }
+    function read() {
+        try { return clean(localStorage.getItem(KEY)); } catch (_) { return null; }
+    }
+    function apply(theme) {
+        theme = clean(theme) || "light";
+        root.setAttribute("data-bs-theme", theme);
+        if (window.config) window.config.theme = theme;
+        try {
+            document.querySelectorAll("#light-dark-mode").forEach(function (b) {
+                b.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+                b.setAttribute("title", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+            });
+        } catch (_) {}
+        return theme;
+    }
+    function broadcast(theme) {
+        var msg = { type: "crms-theme", theme: theme }, targets = [];
+        try { if (window.parent && window.parent !== window) targets.push(window.parent); } catch (_) {}
+        try { document.querySelectorAll("iframe").forEach(function (f) { if (f.contentWindow) targets.push(f.contentWindow); }); } catch (_) {}
+        targets.forEach(function (w) { try { w.postMessage(msg, location.origin); } catch (_) {} });
+    }
+    var api = {
+        get: function () { return clean(root.getAttribute("data-bs-theme")) || "light"; },
+        set: function (theme) {
+            theme = apply(theme);
+            try { localStorage.setItem(KEY, theme); } catch (_) {}
+            broadcast(theme);
+            return theme;
+        },
+        toggle: function () { return api.set(api.get() === "dark" ? "light" : "dark"); },
+        refresh: function () { apply(api.get()); }
+    };
+    window.crmsTheme = api;
+    var saved = read();
+    if (saved) root.setAttribute("data-bs-theme", saved);
+    window.addEventListener("storage", function (e) { if (e.key === KEY && clean(e.newValue)) apply(e.newValue); });
+    window.addEventListener("message", function (e) {
+        if (e.origin !== location.origin || !e.data || e.data.type !== "crms-theme" || !clean(e.data.theme)) return;
+        apply(e.data.theme);
+    });
+    // One delegated handler: works for every page, including buttons added after load.
+    document.addEventListener("click", function (e) {
+        var button = e.target.closest && e.target.closest("#light-dark-mode");
+        if (!button) return;
+        e.preventDefault();
+        api.toggle();
+    });
+    document.addEventListener("DOMContentLoaded", api.refresh);
+})();
 ! function() {
     var t = sessionStorage.getItem("__THEME_CONFIG__"),
         e = document.getElementsByTagName("html")[0],
@@ -53,6 +109,10 @@
         config = JSON.parse(t);
     }
 
+    var savedTheme = null;
+    try { var storedTheme = localStorage.getItem("crms-theme"); if (storedTheme === "dark" || storedTheme === "light") savedTheme = storedTheme; } catch (_) {}
+    if (savedTheme) config.theme = savedTheme;
+
     window.config = config;
     if ("vertical" == config.nav) {
         let t = config.sidenav.size;
@@ -87,7 +147,7 @@ class ThemeCustomizer {
         this.config.color.color = e, this.html.setAttribute("data-color", e), this.setSwitchFromConfig()
     }
     changeLayoutColor(e) {
-        this.config.theme = e, this.html.setAttribute("data-bs-theme", e), this.setSwitchFromConfig()
+        this.config.theme = e, window.crmsTheme ? window.crmsTheme.set(e) : this.html.setAttribute("data-bs-theme", e), this.setSwitchFromConfig()
     }
     changeTopbarColor(e) {
         this.config.topbar.color = e, this.html.setAttribute("data-topbar", e), this.setSwitchFromConfig()
@@ -117,7 +177,7 @@ class ThemeCustomizer {
                 t.addEventListener("change", function(e) {
                     a.changeTopbarColor(t.value)
                 })
-            }), document.getElementById("light-dark-mode")),
+            }), null),
             e = (e && e.addEventListener("click", function(e) {
                 "light" === a.config.theme ? a.changeLayoutColor("dark") : a.changeLayoutColor("light")
             }), document.querySelector("#reset-layout")),
@@ -171,6 +231,14 @@ class ThemeCustomizer {
     }
 }
 document.addEventListener("DOMContentLoaded", function(e) {
+    if (new URLSearchParams(window.location.search).get('crmsEmbedded') === '1'
+            || document.getElementById('theme-settings-offcanvas')
+            || document.querySelector('.sidebar-contact .toggle-theme')) return;
+    // The theme settings gear/panel is hidden. Set window.CRMS_SHOW_THEME_SETTINGS = true before this script to bring it back.
+    if (!window.CRMS_SHOW_THEME_SETTINGS) {
+        (new ThemeCustomizer).init();
+        return;
+    }
     let themesetting = `
 	<div class="sidebar-contact">
     	<div class="toggle-theme"  data-bs-toggle="offcanvas" data-bs-target="#theme-settings-offcanvas"><i class="ti ti-settings"></i></div>
