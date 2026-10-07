@@ -17301,3 +17301,6 @@ th.fc-day-header {
 
 .performance-scroll-list::-webkit-scrollbar { width: 6px; }
 .performance-scroll-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+
+/* The topbar already provides the theme toggle; keep the floating settings handle hidden. */
+.sidebar-contact { display: none !important; }
