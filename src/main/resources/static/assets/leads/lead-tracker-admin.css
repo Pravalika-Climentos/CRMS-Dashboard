@@ -26,3 +26,9 @@
   font-size: .82rem;
 }
 .tracker-meta b { color: #344054; font-weight: 600; }
+
+/* ---- Dark mode ([data-bs-theme=dark]) ---- */
+[data-bs-theme=dark] .tracker-security-note{background:rgba(228,31,19,.12);border-color:rgba(228,31,19,.4)}
+[data-bs-theme=dark] .tracker-security-note p,[data-bs-theme=dark] .tracker-meta{color:var(--bs-secondary-color)}
+[data-bs-theme=dark] .tracker-meta b{color:var(--bs-body-color)}
+[data-bs-theme=dark] .tracker-token-warning{color:#fdba74}
