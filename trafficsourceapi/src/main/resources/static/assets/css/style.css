@@ -17290,3 +17290,5 @@ th.fc-day-header {
     font-weight: 600;
 }
 /*# sourceMappingURL=style.css.map */
+/* The topbar already provides the theme toggle; keep the floating settings handle hidden. */
+.sidebar-contact { display: none !important; }
