@@ -34,3 +34,6 @@
 @media (prefers-reduced-motion: reduce) {
   .calendar-host.calendar-loading::after { animation-duration: 1.5s; }
 }
+
+:root[data-bs-theme="dark"] .calendar-host.calendar-loading::before { background: rgba(16, 20, 26, .92); }
+:root[data-bs-theme="dark"] .calendar-host.calendar-loading::after { border-color: #3b4653; border-top-color: var(--bs-primary); }
