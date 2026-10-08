@@ -158,7 +158,7 @@
   async function installSharedShell() {
     if (currentPage === 'index.html') return;
     try {
-      const cacheKey = 'crms.shared-shell.v22';
+      const cacheKey = 'crms.shared-shell.v23';
       let sourceText = sessionStorage.getItem(cacheKey);
       if (!sourceText) {
         const response = await fetch('index.html', { cache: 'no-store' });
