@@ -117,10 +117,8 @@ class ThemeCustomizer {
                 t.addEventListener("change", function(e) {
                     a.changeTopbarColor(t.value)
                 })
-            }), document.getElementById("light-dark-mode")),
-            e = (e && e.addEventListener("click", function(e) {
-                "light" === a.config.theme ? a.changeLayoutColor("dark") : a.changeLayoutColor("light")
-            }), document.querySelector("#reset-layout")),
+            })),
+            e = document.querySelector("#reset-layout"),
             e = (e && e.addEventListener("click", function(e) {
                 a.resetTheme()
             }), document.querySelector(".sidenav-toggle-button")),
@@ -170,6 +168,17 @@ class ThemeCustomizer {
         this.initConfig(), this.initSwitchListener(), this.initWindowSize(), this._adjustLayout(), this.setSwitchFromConfig()
     }
 }
+// The shared header is installed after this script has initialized on pages
+// such as calls.html. Delegation keeps the theme control working when the
+// header button is added or replaced by client-side navigation.
+document.addEventListener("click", function(event) {
+    const toggle = event.target.closest("#light-dark-mode");
+    const customizer = window.themeCustomizer;
+    if (!toggle || !customizer) return;
+    event.preventDefault();
+    customizer.changeLayoutColor(customizer.config.theme === "light" ? "dark" : "light");
+});
+
 document.addEventListener("DOMContentLoaded", function(e) {
     if (new URLSearchParams(window.location.search).get('crmsEmbedded') === '1'
             || document.getElementById('theme-settings-offcanvas')
@@ -538,5 +547,6 @@ document.addEventListener("DOMContentLoaded", function(e) {
     while (wrapper.firstChild) {
         document.body.appendChild(wrapper.firstChild);
     }
-    (new ThemeCustomizer).init()
+    window.themeCustomizer = new ThemeCustomizer();
+    window.themeCustomizer.init()
 });
