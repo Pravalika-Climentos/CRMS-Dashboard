@@ -180,29 +180,94 @@ body{background:var(--comm-bg)}
   #teamGrid.has-screen .team-cam-grid .tile-name{font-size:10px;left:4px;bottom:4px;max-width:calc(100% - 8px);padding:2px 5px}
 }
 
-/* ---- Dark mode ([data-bs-theme=dark]) for Calls & Conversations ---- */
-[data-bs-theme=dark] :root,:root[data-bs-theme=dark],[data-bs-theme=dark] .calls-page{--comm-bg:var(--bs-body-bg);--comm-card:var(--bs-tertiary-bg);--comm-border:var(--bs-border-color);--comm-text:var(--bs-body-color);--comm-muted:var(--bs-secondary-color)}
-[data-bs-theme=dark] .calls-page,[data-bs-theme=dark] body{background:var(--bs-body-bg);color:var(--bs-body-color)}
-[data-bs-theme=dark] .comm-stat,[data-bs-theme=dark] .comm-shell,[data-bs-theme=dark] .comm-sidebar,[data-bs-theme=dark] .comm-details,[data-bs-theme=dark] .calls-page .comm-sidebar.mobile-show,[data-bs-theme=dark] .calls-page .comm-hero,[data-bs-theme=dark] .icon-btn,[data-bs-theme=dark] .mode-card,[data-bs-theme=dark] .comm-view-switcher a,[data-bs-theme=dark] .incoming{background:var(--bs-tertiary-bg);border-color:var(--bs-border-color);color:var(--bs-body-color)}
-[data-bs-theme=dark] .comm-stat .icon,[data-bs-theme=dark] .avatar-fallback,[data-bs-theme=dark] .comm-tabs .nav-link.active{background:rgba(99,102,241,.2)}
-[data-bs-theme=dark] .contact-item:hover,[data-bs-theme=dark] .contact-item.active,[data-bs-theme=dark] .icon-btn:hover,[data-bs-theme=dark] .mode-card:hover,[data-bs-theme=dark] .mode-card.selected,[data-bs-theme=dark] .comm-view-switcher a:hover,[data-bs-theme=dark] .calls-page .comm-actions .btn:hover{background:var(--bs-secondary-bg);border-color:var(--bs-border-color)}
-[data-bs-theme=dark] .presence{border-color:var(--bs-tertiary-bg)}
-[data-bs-theme=dark] .contact-time,[data-bs-theme=dark] .day-label,[data-bs-theme=dark] .bubble-author,[data-bs-theme=dark] .empty-state i{color:var(--bs-secondary-color)}
-[data-bs-theme=dark] .bubble{background:var(--bs-secondary-bg);color:var(--bs-body-color)}
-[data-bs-theme=dark] .mine .bubble{background:var(--comm-primary);color:#fff}
-[data-bs-theme=dark] .calls-page .comm-search{background:var(--bs-secondary-bg);border-color:var(--bs-border-color);color:var(--bs-body-color)}
-[data-bs-theme=dark] .calls-page .comm-search:focus{background:var(--bs-tertiary-bg)}
-[data-bs-theme=dark] .calls-page .comm-actions .btn:not(#newConversation){background:var(--bs-tertiary-bg);border-color:var(--bs-border-color);color:var(--bs-body-color)}
-[data-bs-theme=dark] .calls-page .chat-area{scrollbar-color:#4b5563 var(--bs-secondary-bg)}
-[data-bs-theme=dark] .calls-page .chat-area::-webkit-scrollbar-track{background:var(--bs-secondary-bg)}
-[data-bs-theme=dark] .calls-page .chat-area::-webkit-scrollbar-thumb{background:#4b5563;border-color:var(--bs-secondary-bg)}
-[data-bs-theme=dark] .composer input:focus{box-shadow:0 0 0 3px rgba(99,102,241,.25)}
-[data-bs-theme=dark] .team-sidepanel,[data-bs-theme=dark] .team-panel-tabs,[data-bs-theme=dark] .team-panel-content{background:var(--bs-tertiary-bg);color:var(--bs-body-color);border-color:var(--bs-border-color)}
-[data-bs-theme=dark] .team-panel-tab{color:var(--bs-secondary-color)}
-[data-bs-theme=dark] .team-panel-tab.active{background:rgba(99,102,241,.22);color:#a5b4fc}
-[data-bs-theme=dark] .team-message{background:var(--bs-secondary-bg);color:var(--bs-body-color)}
-[data-bs-theme=dark] .team-message strong{color:#a5b4fc}
-[data-bs-theme=dark] .team-message time,[data-bs-theme=dark] .team-panel-help{color:var(--bs-secondary-color)}
-[data-bs-theme=dark] .team-composer input,[data-bs-theme=dark] .team-sidepanel textarea{background:var(--bs-secondary-bg);border-color:var(--bs-border-color);color:var(--bs-body-color)}
-[data-bs-theme=dark] .bg-light{background-color:var(--bs-secondary-bg)!important}
-[data-bs-theme=dark] .text-dark{color:var(--bs-body-color)!important}
+/* Dark palette for the custom Calls workspace. */
+:root[data-bs-theme="dark"] .calls-page {
+  --comm-bg: #0b0f14;
+  --comm-card: #141a22;
+  --comm-border: #2b3440;
+  --comm-text: #e6edf5;
+  --comm-muted: #a2adba;
+  --comm-shadow: 0 12px 36px rgba(0,0,0,.24);
+  background: var(--comm-bg);
+  color: var(--comm-text);
+}
+:root[data-bs-theme="dark"] .calls-page .comm-hero,
+:root[data-bs-theme="dark"] .calls-page .comm-shell,
+:root[data-bs-theme="dark"] .calls-page .comm-stat,
+:root[data-bs-theme="dark"] .calls-page .comm-sidebar,
+:root[data-bs-theme="dark"] .calls-page .comm-details,
+:root[data-bs-theme="dark"] .calls-page .center-head,
+:root[data-bs-theme="dark"] .calls-page .composer,
+:root[data-bs-theme="dark"] .calls-page .mode-picker {
+  color: var(--comm-text);
+  background: var(--comm-card);
+  border-color: var(--comm-border);
+}
+:root[data-bs-theme="dark"] .calls-page .comm-title,
+:root[data-bs-theme="dark"] .calls-page .comm-panel-head h5,
+:root[data-bs-theme="dark"] .calls-page .comm-stat h3,
+:root[data-bs-theme="dark"] .calls-page .person h5,
+:root[data-bs-theme="dark"] .calls-page .contact-name,
+:root[data-bs-theme="dark"] .calls-page .detail-row span:last-child,
+:root[data-bs-theme="dark"] .calls-page .profile-card h5,
+:root[data-bs-theme="dark"] .calls-page .comm-center h5,
+:root[data-bs-theme="dark"] .calls-page .comm-center p {
+  color: var(--comm-text);
+}
+:root[data-bs-theme="dark"] .calls-page .contact-item,
+:root[data-bs-theme="dark"] .calls-page .mode-card,
+:root[data-bs-theme="dark"] .calls-page .icon-btn {
+  color: var(--comm-text);
+  background: #171f29;
+  border-color: var(--comm-border);
+}
+:root[data-bs-theme="dark"] .calls-page .contact-item { border-color: var(--comm-border); }
+:root[data-bs-theme="dark"] .calls-page .contact-item:hover,
+:root[data-bs-theme="dark"] .calls-page .contact-item.active,
+:root[data-bs-theme="dark"] .calls-page .mode-card:hover,
+:root[data-bs-theme="dark"] .calls-page .mode-card.selected {
+  background: #202a36;
+  border-color: rgba(var(--primary-rgb, 228, 31, 7), .55);
+}
+:root[data-bs-theme="dark"] .calls-page .chat-area {
+  color: var(--comm-text);
+  background: linear-gradient(180deg, #141a22, #10151c);
+}
+:root[data-bs-theme="dark"] .calls-page .bubble:not(.mine .bubble) {
+  color: var(--comm-text);
+  background: #27313d;
+}
+:root[data-bs-theme="dark"] .calls-page .composer input,
+:root[data-bs-theme="dark"] .calls-page .comm-search {
+  color: var(--comm-text);
+  background: #0f151c;
+  border-color: var(--comm-border);
+}
+:root[data-bs-theme="dark"] .calls-page .composer input::placeholder,
+:root[data-bs-theme="dark"] .calls-page .comm-search::placeholder,
+:root[data-bs-theme="dark"] .calls-page .comm-subtitle,
+:root[data-bs-theme="dark"] .calls-page .comm-stat p,
+:root[data-bs-theme="dark"] .calls-page .contact-time,
+:root[data-bs-theme="dark"] .calls-page .contact-preview,
+:root[data-bs-theme="dark"] .calls-page .person small,
+:root[data-bs-theme="dark"] .calls-page .mode-card span,
+:root[data-bs-theme="dark"] .calls-page .detail-row span:first-child {
+  color: var(--comm-muted);
+}
+:root[data-bs-theme="dark"] .calls-page .comm-actions .btn:not(#newConversation),
+:root[data-bs-theme="dark"] .calls-page .badge.bg-light.text-dark {
+  color: var(--comm-text) !important;
+  background: #171f29 !important;
+  border-color: var(--comm-border) !important;
+}
+:root[data-bs-theme="dark"] .calls-page .profile-avatar { border-color: #27313d; }
+:root[data-bs-theme="dark"] .calls-page .team-sidepanel,
+:root[data-bs-theme="dark"] .calls-page .team-panel-tabs,
+:root[data-bs-theme="dark"] .calls-page .team-panel-content {
+  color: var(--comm-text);
+  background: #171f29;
+  border-color: var(--comm-border);
+}
+:root[data-bs-theme="dark"] .calls-page .team-message { color: var(--comm-text); background: #27313d; }
+:root[data-bs-theme="dark"] .calls-page .team-message strong { color: #ff9a8e; }
+:root[data-bs-theme="dark"] .calls-page .team-panel-tab { color: var(--comm-muted); }
