@@ -158,7 +158,7 @@ class ThemeCustomizer {
         window.innerWidth <= 767.98 ? e.changeLeftbarSize("full-width", !1) : 767 <= window.innerWidth && window.innerWidth <= 1140 ? "full-width" !== e.config.sidenav.size && "hidden" !== e.config.sidenav.size && ("hover-view" === e.config.sidenav.size ? e.changeLeftbarSize("condensed") : e.changeLeftbarSize("condensed", !1)) : (e.changeLeftbarSize(e.config.sidenav.size))
     }
     setSwitchFromConfig() {
-        localStorage.setItem("__THEME_CONFIG__", JSON.stringify(this.config)), document.querySelectorAll(".right-bar input[type=checkbox]").forEach(function(e) {
+        localStorage.setItem("__THEME_CONFIG__", JSON.stringify(this.config)), window.__crmsBroadcastTheme && window.__crmsBroadcastTheme(this.config), document.querySelectorAll(".right-bar input[type=checkbox]").forEach(function(e) {
             e.checked = !1
         });
         var e, t, a, n, i, o = this.config;
@@ -176,7 +176,14 @@ document.addEventListener("click", function(event) {
     const customizer = window.themeCustomizer;
     if (!toggle || !customizer) return;
     event.preventDefault();
-    customizer.changeLayoutColor(customizer.config.theme === "light" ? "dark" : "light");
+    const next = customizer.config.theme === "light" ? "dark" : "light";
+    // The mode button always restores the matching default sidebar/topbar so the
+    // header, sidebar and page content can never end up in different modes.
+    customizer.config.menu.color = "light";
+    customizer.config.topbar.color = "white";
+    customizer.html.setAttribute("data-sidebar", "light");
+    customizer.html.setAttribute("data-topbar", "white");
+    customizer.changeLayoutColor(next);
 });
 
 document.addEventListener("DOMContentLoaded", function(e) {
@@ -550,3 +557,80 @@ document.addEventListener("DOMContentLoaded", function(e) {
     window.themeCustomizer = new ThemeCustomizer();
     window.themeCustomizer.init()
 });
+
+
+/* ------------------------------------------------------------------
+ * Theme synchronisation
+ * The CRMS shell (index.html / shared header) keeps every other page open
+ * inside a persistent iframe. Each document used to read the theme once on
+ * load, so toggling light/dark only changed the shell and left the embedded
+ * pages in the old mode. This block keeps every document in step:
+ *   - the shell pushes the new config straight into all embedded views,
+ *   - other tabs / windows are updated through the "storage" event,
+ *   - the header + sidebar are reset once to the mode defaults so an old
+ *     dark-sidebar / light-content combination is not carried over.
+ * ------------------------------------------------------------------ */
+(function() {
+    var KEY = "__THEME_CONFIG__";
+    var MIGRATION = "__THEME_CHROME_V2__";
+    var html = document.documentElement;
+
+    function readConfig() {
+        try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { return null; }
+    }
+
+    function applyConfig(cfg) {
+        if (!cfg || typeof cfg !== "object") return;
+        window.config = cfg;
+        if (window.themeCustomizer) {
+            window.themeCustomizer.config = JSON.parse(JSON.stringify(cfg));
+            try { window.themeCustomizer.setSwitchFromConfigUI && window.themeCustomizer.setSwitchFromConfigUI(); } catch (e) {}
+        }
+        if (cfg.theme) html.setAttribute("data-bs-theme", cfg.theme);
+        if (cfg.menu && cfg.menu.color) html.setAttribute("data-sidebar", cfg.menu.color);
+        if (cfg.topbar && cfg.topbar.color) html.setAttribute("data-topbar", cfg.topbar.color);
+        if (cfg.color && cfg.color.color) html.setAttribute("data-color", cfg.color.color);
+        try {
+            window.dispatchEvent(new CustomEvent("crms:theme-change", { detail: { theme: cfg.theme } }));
+        } catch (e) {}
+    }
+
+    function broadcast(cfg) {
+        var frames = document.querySelectorAll("iframe");
+        for (var i = 0; i < frames.length; i++) {
+            try {
+                var w = frames[i].contentWindow;
+                if (w && typeof w.__crmsApplyTheme === "function") w.__crmsApplyTheme(cfg);
+            } catch (e) { /* cross-origin or still loading: it reads storage on load */ }
+        }
+    }
+
+    window.__crmsBroadcastTheme = broadcast;
+    window.__crmsApplyTheme = function(cfg) { applyConfig(cfg); broadcast(cfg); };
+
+    window.addEventListener("storage", function(event) {
+        if (event.key === KEY) window.__crmsApplyTheme(readConfig());
+    });
+
+    // Embedded views that finish loading after a toggle must pick up the latest mode.
+    window.addEventListener("pageshow", function() {
+        var cfg = readConfig();
+        if (cfg && cfg.theme && html.getAttribute("data-bs-theme") !== cfg.theme) applyConfig(cfg);
+    });
+
+    // One-time reset of stale sidebar/topbar colours that no longer match the page mode.
+    try {
+        var cfg = readConfig();
+        if (cfg && !localStorage.getItem(MIGRATION)) {
+            cfg.menu = cfg.menu || {};
+            cfg.topbar = cfg.topbar || {};
+            cfg.menu.color = "light";
+            cfg.topbar.color = "white";
+            localStorage.setItem(KEY, JSON.stringify(cfg));
+            localStorage.setItem(MIGRATION, "1");
+            applyConfig(cfg);
+        } else if (!cfg) {
+            localStorage.setItem(MIGRATION, "1");
+        }
+    } catch (e) {}
+})();

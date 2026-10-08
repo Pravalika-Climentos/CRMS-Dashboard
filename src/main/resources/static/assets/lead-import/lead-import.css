@@ -36,3 +36,7 @@
   .li-steps { grid-template-columns: repeat(5, minmax(42px, 1fr)); overflow-x: auto; }
   .li-preview { max-width: calc(100vw - 36px); }
 }
+
+/* Dropzone: calmer surface in dark mode */
+:root[data-bs-theme="dark"] .li-drop{background:rgba(255,255,255,.03);border-color:#3a4260;color:var(--bs-body-color)}
+:root[data-bs-theme="dark"] .li-drop:hover{background:rgba(228,31,19,.08);border-color:#e41f13}
