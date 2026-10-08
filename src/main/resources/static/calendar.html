@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="assets/plugins/flatpickr/flatpickr.min.css">
     <link rel="stylesheet" href="assets/plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="assets/css/style.css?v=4" id="app-style">
-    <link rel="stylesheet" href="assets/css/calendar-performance.css?v=2">
+    <link rel="stylesheet" href="assets/css/calendar-performance.css?v=3">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="assets/img/favicon.png">
@@ -23,9 +23,19 @@
     <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
 
     <!-- Theme Config Js -->
-    <script src="assets/js/theme-script.js?v=4"></script>
+    <script src="assets/js/theme-script.js?v=5"></script>
     <script src="assets/js/auth-guard.js"></script>
 
+<style id="cat-fix">
+  #categoryList, #categoryList * { opacity: 1 !important; -webkit-text-fill-color: currentColor !important; filter: none !important; }
+  #categoryList > * { font-weight: 600; padding: 8px 10px; cursor: pointer; border-radius: 8px; }
+  #categoryList > *:hover { background: rgba(255,255,255,.08); }
+  #categoryList > *:nth-child(1), #categoryList > *:nth-child(1) * { color: #60a5fa !important; }
+  #categoryList > *:nth-child(2), #categoryList > *:nth-child(2) * { color: #4ade80 !important; }
+  #categoryList > *:nth-child(3), #categoryList > *:nth-child(3) * { color: #fbbf24 !important; }
+  #categoryList > *:nth-child(4), #categoryList > *:nth-child(4) * { color: #f87171 !important; }
+  #categoryList > *:nth-child(5), #categoryList > *:nth-child(5) * { color: #c084fc !important; }
+</style>
 </head>
 
 <body>
