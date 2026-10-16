@@ -546,6 +546,23 @@ return response;
                 .toList();
     }
 
+    @Override
+    public List<MessageResponse> searchMessages(String query, int size) {
+        String normalizedQuery = query == null ? "" : query.trim();
+        if (normalizedQuery.length() < 2) {
+            return List.of();
+        }
+        int safeSize = Math.min(Math.max(size, 1), 25);
+        Long currentUserId = currentUserService.getCurrentUserId();
+        return messageRepository.searchAccessibleMessages(
+                        currentUserId,
+                        normalizedQuery,
+                        PageRequest.of(0, safeSize))
+                .stream()
+                .map(message -> mapMessage(message, List.of()))
+                .toList();
+    }
+
 
     @Override
     @Transactional

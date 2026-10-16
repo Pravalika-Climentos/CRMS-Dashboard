@@ -221,6 +221,41 @@ List<MessageProjection> findMessagePage(
     SELECT
         m.message_id AS messageId,
         m.conversation_id AS conversationId,
+        m.sender_user_id AS senderUserId,
+        u.full_name AS senderName,
+        u.avatar AS senderAvatar,
+        m.message_type AS messageType,
+        m.content AS content,
+        m.reply_to_message_id AS replyToMessageId,
+        m.forwarded_from_message_id AS forwardedFromMessageId,
+        COALESCE(s.is_favorite, 0) AS favorite,
+        m.created_at AS createdAt,
+        m.updated_at AS updatedAt,
+        m.deleted_at AS deletedAt
+    FROM chat_messages m
+    JOIN chat_participants cp
+      ON cp.conversation_id = m.conversation_id
+     AND cp.user_id = :userId
+    JOIN users u
+      ON u.user_id = m.sender_user_id
+    LEFT JOIN chat_message_user_state s
+      ON s.message_id = m.message_id
+     AND s.user_id = :userId
+     AND s.is_favorite = 1
+    WHERE m.deleted_at IS NULL
+      AND LOWER(m.content) LIKE LOWER(CONCAT('%', :query, '%'))
+    ORDER BY m.created_at DESC, m.message_id DESC
+    """, nativeQuery = true)
+List<MessageProjection> searchAccessibleMessages(
+        @Param("userId") Long userId,
+        @Param("query") String query,
+        Pageable pageable
+);
+
+@Query(value = """
+    SELECT
+        m.message_id AS messageId,
+        m.conversation_id AS conversationId,
 
         m.sender_user_id AS senderUserId,
         u.full_name AS senderName,

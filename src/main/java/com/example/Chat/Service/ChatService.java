@@ -37,6 +37,10 @@ public interface ChatService {
                         int page,
                         int size);
 
+        List<MessageResponse> searchMessages(
+                        String query,
+                        int size);
+
         MessageResponse sendMessage(
                         SendMessageRequest request);
 

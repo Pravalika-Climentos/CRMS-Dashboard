@@ -2,6 +2,18 @@
   const $ = id => document.getElementById(id);
   document.body.classList.add('calls-page');
   const normalizeEmail = value => String(value || '').trim().toLowerCase();
+  const searchInput = $('searchInput');
+  if (searchInput && !searchInput.parentElement.classList.contains('comm-search-wrap')) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'comm-search-wrap';
+    searchInput.parentNode.insertBefore(wrapper, searchInput);
+    wrapper.innerHTML = '<i class="ti ti-user-search" aria-hidden="true"></i>';
+    wrapper.appendChild(searchInput);
+    searchInput.type = 'search';
+    searchInput.autocomplete = 'off';
+    searchInput.placeholder = 'Search name or email...';
+    searchInput.setAttribute('aria-label', 'Search customers by name or email');
+  }
   // Most platforms (desktop, iOS Safari) deliver the true, unflipped camera
   // image via getUserMedia, so we CSS-mirror the self-preview for a natural
   // "looking in a mirror" feel — same as Meet/Zoom. Many Android browsers,
@@ -71,6 +83,11 @@
   let contacts = [];
   let selected = null;
   let filter = 'all';
+  let contactSearch = '';
+  let messageSearch = '';
+  let conversationCandidate = null;
+  let globalMessageSearchTimer = null;
+  let globalSearchConversations = null;
   let webrtcConfig = null;
   const launchParams = new URLSearchParams(location.search);
   let requestedCallMode = ['audio','video'].includes(launchParams.get('mode')) ? launchParams.get('mode') : null;
@@ -1015,9 +1032,15 @@
 
   function renderContacts() {
     const list = $('contactList');
-    const filtered = contacts.filter(c => filter === 'all' || c.status === 'online');
+    const query = contactSearch.trim().toLowerCase();
+    const filtered = contacts.filter(c => {
+      if (filter !== 'all' && c.status !== 'online') return false;
+      if (!query) return true;
+      return [c.name, c.email, c.preview, c.status]
+        .some(value => String(value || '').toLowerCase().includes(query));
+    });
     if (!filtered.length) {
-      list.innerHTML = '<div class="p-4 text-center text-muted small">No contacts yet. Use “New conversation” to add a customer by email.</div>';
+      list.innerHTML = `<div class="p-4 text-center text-muted small">${query ? 'No customers match your search.' : 'No contacts yet. Use “New conversation” to find a CRM user.'}</div>`;
     } else {
       list.innerHTML = filtered.map(c => `
         <div class="contact-item ${selected?.id === c.id ? 'active' : ''}" data-id="${escapeHtml(c.id)}" data-email="${escapeHtml(c.email || '')}">
@@ -1031,6 +1054,111 @@
     }
     $('onlineCount').textContent = `${contacts.filter(c => c.status === 'online').length} online`;
   }
+
+  function bindSharedHeaderSearch() {
+    const documents = [document];
+    try {
+      if (window.parent && window.parent !== window && window.parent.document) documents.push(window.parent.document);
+    } catch (_) {}
+    documents.forEach(root => {
+      const input = root.querySelector('.navbar-header .header-search input[placeholder="Search Keyword"], .header-search input[placeholder="Search Keyword"]');
+      if (!input || input.dataset.callsSearchBound === 'true') return;
+      input.dataset.callsSearchBound = 'true';
+      input.placeholder = 'Search messages';
+      input.setAttribute('aria-label', 'Search messages across all conversations');
+      const icon = input.closest('.header-search')?.querySelector('.header-search-icon i');
+      if (icon) icon.className = 'ti ti-message-search';
+      input.addEventListener('input', () => {
+        window.clearTimeout(globalMessageSearchTimer);
+        const query = input.value.trim();
+        if (!query) {
+          closeGlobalMessageResults(root);
+          messageSearch = '';
+          searchConversationMessages();
+          return;
+        }
+        globalMessageSearchTimer = window.setTimeout(() => runGlobalMessageSearch(input, root), 300);
+      });
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeGlobalMessageResults(root);
+      });
+    });
+  }
+
+  function ensureGlobalMessageSearchStyles(root) {
+    if (root.getElementById('callsGlobalMessageSearchStyles')) return;
+    const style = root.createElement('style');
+    style.id = 'callsGlobalMessageSearchStyles';
+    style.textContent = `.header-search .input-icon{position:relative}.header-search .input-icon .form-control{padding-left:12px!important;padding-right:40px!important}.header-search .header-search-icon{left:auto!important;right:8px!important;width:24px!important;padding:0!important}.calls-global-message-results{position:absolute;top:calc(100% + 8px);left:0;width:min(520px,calc(100vw - 32px));max-height:430px;overflow-y:auto;background:#fff;border:1px solid #e4e7ec;border-radius:12px;box-shadow:0 16px 40px rgba(15,23,42,.18);z-index:1200}.calls-global-message-head{display:flex;justify-content:space-between;align-items:center;padding:10px 13px;border-bottom:1px solid #edf0f4;font-size:12px;font-weight:700;color:#344054}.calls-global-message-head button{border:0;background:transparent;color:#667085;font-size:18px}.calls-global-message-item{display:block;width:100%;padding:11px 13px;border:0;border-bottom:1px solid #f0f2f5;background:#fff;text-align:left}.calls-global-message-item:hover{background:#fff6f4}.calls-global-message-item strong,.calls-global-message-item span,.calls-global-message-item small{display:block}.calls-global-message-item strong{font-size:12px;color:#182230}.calls-global-message-item span{margin:4px 0;color:#475467;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.calls-global-message-item small{color:#98a2b3;font-size:10px}.calls-global-message-empty{padding:22px;text-align:center;color:#667085;font-size:12px}`;
+    root.head.appendChild(style);
+  }
+
+  function closeGlobalMessageResults(root) {
+    root.getElementById('callsGlobalMessageResults')?.remove();
+  }
+
+  async function runGlobalMessageSearch(input, root) {
+    const query = input.value.trim();
+    if (query.length < 2) {
+      closeGlobalMessageResults(root);
+      return;
+    }
+    ensureGlobalMessageSearchStyles(root);
+    closeGlobalMessageResults(root);
+    const results = root.createElement('div');
+    results.id = 'callsGlobalMessageResults';
+    results.className = 'calls-global-message-results';
+    results.innerHTML = '<div class="calls-global-message-empty">Searching messages…</div>';
+    input.closest('.input-icon')?.appendChild(results);
+    try {
+      const [messages, conversations] = await Promise.all([
+        api(`/api/chat/messages/search?query=${encodeURIComponent(query)}&size=20`),
+        globalSearchConversations ? Promise.resolve(globalSearchConversations) : api('/api/chat/conversations')
+      ]);
+      globalSearchConversations = conversations;
+      if (input.value.trim() !== query || !results.isConnected) return;
+      const receiverName = conversationId => {
+        const conversation = conversations.find(item => String(item.conversationId) === String(conversationId));
+        if (!conversation) return 'Conversation';
+        if (String(conversation.conversationType).toUpperCase() === 'DIRECT') {
+          return conversation.participants?.find(participant => String(participant.userId) !== String(identityUserId))?.fullName || 'Direct conversation';
+        }
+        return conversation.title || 'Group conversation';
+      };
+      results.innerHTML = `<div class="calls-global-message-head"><span>${messages.length} result${messages.length === 1 ? '' : 's'}</span><button type="button" aria-label="Close search results">×</button></div>${messages.length ? messages.map(message => `<button type="button" class="calls-global-message-item" data-message-id="${escapeHtml(message.messageId)}" data-conversation-id="${escapeHtml(message.conversationId)}"><strong>${escapeHtml(receiverName(message.conversationId))}</strong><span>${escapeHtml(message.content || '')}</span><small>${escapeHtml(formatDateTime(message.createdAt))}</small></button>`).join('') : '<div class="calls-global-message-empty">No messages contain that keyword.</div>'}`;
+      results.querySelector('.calls-global-message-head button')?.addEventListener('click', () => closeGlobalMessageResults(root));
+      results.querySelectorAll('[data-conversation-id]').forEach(button => button.addEventListener('click', () => openGlobalMessageResult(button.dataset.conversationId, button.dataset.messageId, query, root)));
+    } catch (error) {
+      results.innerHTML = '<div class="calls-global-message-empty">Message search is temporarily unavailable.</div>';
+    }
+  }
+
+  async function openGlobalMessageResult(conversationId, messageId, query, root) {
+    try {
+      globalSearchConversations ||= await api('/api/chat/conversations');
+      const conversation = globalSearchConversations.find(item => String(item.conversationId) === String(conversationId));
+      const otherParticipant = conversation?.participants?.find(participant => String(participant.userId) !== String(identityUserId));
+      const contact = otherParticipant && contacts.find(item => String(item.id) === String(otherParticipant.userId));
+      closeGlobalMessageResults(root);
+      if (!contact || String(conversation?.conversationType).toUpperCase() !== 'DIRECT') {
+        const destination = `chat.html?conversationId=${encodeURIComponent(conversationId)}&messageId=${encodeURIComponent(messageId)}`;
+        if (window.parent && window.parent !== window) window.parent.location.href = destination;
+        else window.location.href = destination;
+        return;
+      }
+      messageSearch = query;
+      selectCustomer(String(contact.id));
+    } catch (error) {
+      toast('The matching conversation could not be opened.', 'warning');
+    }
+  }
+
+  bindSharedHeaderSearch();
+  let headerSearchAttempts = 0;
+  const headerSearchTimer = window.setInterval(() => {
+    bindSharedHeaderSearch();
+    if (++headerSearchAttempts >= 30) window.clearInterval(headerSearchTimer);
+  }, 250);
 
   function selectCustomer(id, refreshUi = true) {
     selected = contacts.find(c => c.id === id) || selected;
@@ -1071,6 +1199,34 @@
         senderName: String(m.sender?.userId) === identityUserId ? 'You' : (m.sender?.fullName || selected.name)
       }));
     }
+    searchConversationMessages();
+  }
+
+  function searchConversationMessages() {
+    const area = $('chatArea');
+    if (!area) return;
+    area.querySelector('.message-search-summary')?.remove();
+    const query = messageSearch.trim().toLowerCase();
+    const rows = [...area.querySelectorAll('.bubble-row')];
+    rows.forEach(row => {
+      row.style.display = '';
+      row.classList.remove('message-search-match');
+    });
+    if (!query) return;
+    let matches = 0;
+    rows.forEach(row => {
+      const match = row.textContent.toLowerCase().includes(query);
+      row.style.display = match ? '' : 'none';
+      row.classList.toggle('message-search-match', match);
+      if (match) matches++;
+    });
+    const summary = document.createElement('div');
+    summary.className = `message-search-summary${matches ? '' : ' empty'}`;
+    summary.textContent = selected
+      ? `${matches} message${matches === 1 ? '' : 's'} found for “${messageSearch.trim()}”`
+      : 'Select a conversation before searching messages.';
+    area.prepend(summary);
+    if (matches) area.querySelector('.message-search-match')?.scrollIntoView({ block:'nearest' });
   }
 
   async function directConversation(create) {
@@ -1118,6 +1274,7 @@
     row.className = `bubble-row ${m.mine ? 'mine' : ''}`;
     row.innerHTML = `<div class="bubble"><div class="bubble-author">${escapeHtml(m.senderName || (m.mine ? 'You' : selected?.name || 'User'))}</div>${escapeHtml(m.text)}<div class="bubble-meta">${escapeHtml(m.time || '')}</div></div>`;
     area.appendChild(row);
+    if (messageSearch.trim()) searchConversationMessages();
     area.scrollTop = area.scrollHeight;
   }
 
@@ -1441,19 +1598,68 @@
   }
 
   async function newConversation() {
-    const raw = prompt('Enter email address');
-    const email = normalizeEmail(raw);
-    if (!email) return;
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Enter a valid email address.', 'warning');
-    try {
-      await loadContacts();
-      const added = contacts.find(c => normalizeEmail(c.email) === email);
-      if (!added) return toast('No active CRM user has that email address.', 'warning');
-      selectCustomer(added.id);
-      toast('User selected.', 'success');
-    } catch (e) {
-      toast(e.message, 'warning');
-    }
+    ensureConversationPicker();
+    conversationCandidate = null;
+    $('conversationUserSearch').value = '';
+    $('conversationUserResults').innerHTML = '';
+    $('conversationUserHint').textContent = 'Start typing to see matching users.';
+    $('startConversationBtn').disabled = true;
+    bootstrap.Modal.getOrCreateInstance($('newConversationModal')).show();
+  }
+
+  function ensureConversationPicker() {
+    if ($('newConversationModal')) return;
+    document.body.insertAdjacentHTML('beforeend', `
+      <div class="modal fade" id="newConversationModal" tabindex="-1" aria-labelledby="newConversationTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+          <div class="modal-header"><div><h5 class="modal-title" id="newConversationTitle">Start a new conversation</h5><p class="text-muted small mb-0">Search by username or email address.</p></div><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+          <div class="modal-body"><label class="form-label" for="conversationUserSearch">CRM user</label><div class="conversation-user-search"><i class="ti ti-user-search"></i><input id="conversationUserSearch" class="form-control" autocomplete="off" placeholder="Type a username or email…" role="combobox" aria-autocomplete="list" aria-controls="conversationUserResults" aria-expanded="false"></div><div id="conversationUserResults" class="conversation-user-results" role="listbox"></div><div id="conversationUserHint" class="text-muted small mt-2">Start typing to see matching users.</div></div>
+          <div class="modal-footer"><button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="startConversationBtn" disabled>Start conversation</button></div>
+        </div></div>
+      </div>`);
+    const input = $('conversationUserSearch');
+    input.addEventListener('input', () => renderConversationSuggestions(input.value));
+    input.addEventListener('keydown', event => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      const first = $('conversationUserResults').querySelector('[data-user-id]');
+      if (first) chooseConversationCandidate(first.dataset.userId);
+      else if (conversationCandidate) startSelectedConversation();
+    });
+    $('conversationUserResults').addEventListener('click', event => {
+      const option = event.target.closest('[data-user-id]');
+      if (option) chooseConversationCandidate(option.dataset.userId);
+    });
+    $('startConversationBtn').onclick = startSelectedConversation;
+    $('newConversationModal').addEventListener('shown.bs.modal', () => input.focus());
+  }
+
+  function renderConversationSuggestions(value) {
+    conversationCandidate = null;
+    $('startConversationBtn').disabled = true;
+    const query = String(value || '').trim().toLowerCase();
+    const matches = query ? contacts.filter(contact => [contact.name, contact.email]
+      .some(field => String(field || '').toLowerCase().includes(query))).slice(0, 8) : [];
+    $('conversationUserSearch').setAttribute('aria-expanded', matches.length ? 'true' : 'false');
+    $('conversationUserResults').innerHTML = matches.map(contact => `<button type="button" class="conversation-user-option" data-user-id="${escapeHtml(contact.id)}" role="option"><span class="conversation-user-initials">${escapeHtml(participantInitials(contact.name))}</span><span><strong>${escapeHtml(contact.name || 'CRM user')}</strong><small>${escapeHtml(contact.email || 'No email address')}</small></span></button>`).join('');
+    $('conversationUserHint').textContent = matches.length ? `${matches.length} matching user${matches.length === 1 ? '' : 's'}` : (query ? 'No active CRM user matches that username or email.' : 'Start typing to see matching users.');
+  }
+
+  function chooseConversationCandidate(id) {
+    conversationCandidate = contacts.find(contact => String(contact.id) === String(id)) || null;
+    if (!conversationCandidate) return;
+    $('conversationUserSearch').value = `${conversationCandidate.name} · ${conversationCandidate.email || 'No email'}`;
+    $('conversationUserResults').innerHTML = '';
+    $('conversationUserSearch').setAttribute('aria-expanded', 'false');
+    $('conversationUserHint').textContent = 'User selected. You can start the conversation.';
+    $('startConversationBtn').disabled = false;
+  }
+
+  function startSelectedConversation() {
+    if (!conversationCandidate) return;
+    selectCustomer(String(conversationCandidate.id));
+    bootstrap.Modal.getOrCreateInstance($('newConversationModal')).hide();
+    toast('User selected.', 'success');
   }
 
   async function boot(nextSession) {
@@ -1564,10 +1770,8 @@
   $('recordBtn').onclick = () => { isRecording ? stopRecording() : startRecording(); };
 
   $('searchInput').oninput = e => {
-    const q = e.target.value.toLowerCase();
-    document.querySelectorAll('.contact-item').forEach(el => {
-      el.style.display = (el.textContent.toLowerCase().includes(q) || (el.dataset.email || '').includes(normalizeEmail(q))) ? 'flex' : 'none';
-    });
+    contactSearch = e.target.value;
+    renderContacts();
   };
   document.querySelectorAll('[data-filter]').forEach(button => button.onclick = () => {
     document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));

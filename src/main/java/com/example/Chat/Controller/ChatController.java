@@ -103,6 +103,13 @@ public class ChatController {
                                                 size));
         }
 
+        @GetMapping("/messages/search")
+        public ResponseEntity<List<MessageResponse>> searchMessages(
+                        @RequestParam String query,
+                        @RequestParam(defaultValue = "20") int size) {
+                return ResponseEntity.ok(chatService.searchMessages(query, size));
+        }
+
         @PostMapping("/messages")
         public ResponseEntity<MessageResponse> sendMessage(
                         @Valid @RequestBody SendMessageRequest request) {
