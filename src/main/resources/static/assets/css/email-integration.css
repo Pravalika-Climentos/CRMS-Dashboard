@@ -55,3 +55,51 @@
   .mail-notifications { max-height: none; min-height: 60vh; }
   #compose-view .compose-view { margin: 0; width: 100%; max-height: 92vh; }
 }
+
+:root[data-bs-theme="dark"] .email-page {
+  color: var(--bs-body-color);
+  background: var(--bs-body-bg);
+}
+:root[data-bs-theme="dark"] .email-sidebar,
+:root[data-bs-theme="dark"] .mail-notifications,
+:root[data-bs-theme="dark"] .email-account-card,
+:root[data-bs-theme="dark"] .email-row .dropdown-menu,
+:root[data-bs-theme="dark"] .email-profile-card,
+:root[data-bs-theme="dark"] .email-toolbar,
+:root[data-bs-theme="dark"] .email-page .card,
+:root[data-bs-theme="dark"] .email-page .modal-content {
+  color: var(--bs-body-color);
+  background: var(--bs-tertiary-bg) !important;
+  border-color: var(--bs-border-color) !important;
+}
+:root[data-bs-theme="dark"] .email-page .email-profile-card {
+  background: linear-gradient(135deg, var(--bs-secondary-bg), var(--bs-tertiary-bg)) !important;
+}
+:root[data-bs-theme="dark"] .email-folder:hover,
+:root[data-bs-theme="dark"] .email-row:hover {
+  background: var(--bs-secondary-bg) !important;
+}
+:root[data-bs-theme="dark"] .email-summary-filter,
+:root[data-bs-theme="dark"] .email-account-badge {
+  color: var(--bs-secondary-color);
+  background: var(--bs-secondary-bg);
+  border-color: var(--bs-border-color);
+}
+:root[data-bs-theme="dark"] .email-page .form-control,
+:root[data-bs-theme="dark"] .email-page .form-select,
+:root[data-bs-theme="dark"] .email-page textarea {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+}
+:root[data-bs-theme="dark"] .email-page .form-control::placeholder,
+:root[data-bs-theme="dark"] .email-page .text-muted,
+:root[data-bs-theme="dark"] .email-page .text-secondary {
+  color: var(--bs-secondary-color) !important;
+}
+:root[data-bs-theme="dark"] .email-html-viewer { background: var(--bs-body-bg); }
+@media (max-width: 575.98px) {
+  .email-page { padding: 8px !important; }
+  .email-sidebar { width: 100%; }
+  .email-page .email-toolbar { flex-wrap: wrap; gap: 8px; }
+}

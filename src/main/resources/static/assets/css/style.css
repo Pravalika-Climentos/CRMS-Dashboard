@@ -17290,6 +17290,9 @@ th.fc-day-header {
     font-weight: 600;
 }
 /*# sourceMappingURL=style.css.map */
+
+/* The topbar already provides the theme control; keep the floating customizer handle hidden. */
+.sidebar-contact { display: none !important; }
 /* Keep the current user visible while the ranked performance list scrolls independently. */
 .performance-scroll-list {
     max-height: 315px;
